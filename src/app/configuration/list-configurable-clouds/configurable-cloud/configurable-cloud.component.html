@@ -1,0 +1,14 @@
+<mat-card>
+  <div fxLayout="row" fxLayoutAlign="space-around center">
+    <div>
+      <i class="fas fa-cloud fa-4x"></i>
+    </div>
+    <mat-form-field>
+      <mat-label>Select LPDS type</mat-label>
+      <mat-select [(ngModel)]="selectedLPDStype">
+        <mat-option *ngFor="let lpdsType of lpdsTypes" [value]="lpdsType"> {{ lpdsType }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</mat-card>
+<p>You selected: {{ selectedLPDStype }}</p>
