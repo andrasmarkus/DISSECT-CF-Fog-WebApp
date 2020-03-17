@@ -1,5 +1,5 @@
-import { Component, OnInit,Output, EventEmitter  } from '@angular/core';
-import { FormGroup, FormControl, Validators,FormBuilder } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-cloud-number-form',
@@ -7,44 +7,40 @@ import { FormGroup, FormControl, Validators,FormBuilder } from '@angular/forms';
   styleUrls: ['./cloud-number-form.component.css']
 })
 export class CloudNumberFormComponent implements OnInit {
- /*  @Output() numOfCloudsEvent = new EventEmitter<any>();
+  /*  @Output() numOfCloudsEvent = new EventEmitter<any>();
   @Output() numOfFogsEvent = new EventEmitter<any>(); */
-  
-  public numOfClouds:string;
-  public numOfFogs:number;
+
+  public numOfClouds: string;
+  public numOfFogs: number;
   public numOfComputingNodes: FormGroup;
-  
-  constructor(private formBuilder: FormBuilder) { 
+
+  constructor(private formBuilder: FormBuilder) {
     this.initForm();
   }
 
   ngOnInit(): void {
-   
     this.initValues();
   }
 
   initForm() {
     this.numOfComputingNodes = this.formBuilder.group({
-      numOfClouds : ['', Validators.required],
-      numOfFogs: new FormControl('', []),
+      numOfClouds: ['', Validators.required],
+      numOfFogs: new FormControl('', [])
     });
   }
 
-  initValues(){
-    this.numOfComputingNodes.get('numOfClouds').valueChanges
-      .subscribe(val => {
-        this.numOfClouds = val;
-      });
-    this.numOfComputingNodes.get('numOfFogs').valueChanges
-      .subscribe(val => {
-        this.numOfFogs = val;
-      });
+  initValues() {
+    this.numOfComputingNodes.get('numOfClouds').valueChanges.subscribe(val => {
+      this.numOfClouds = val;
+    });
+    this.numOfComputingNodes.get('numOfFogs').valueChanges.subscribe(val => {
+      this.numOfFogs = val;
+    });
   }
- /*  onCloudsChange(){
+  /*  onCloudsChange(){
     this.numOfCloudsEvent.emit(this.numOfComputingNodes.get('numOfClouds').value);
   }
   onFogChange(){
     this.numOfFogsEvent.emit(this.numOfComputingNodes.get('numOfFogs').value);
   } */
-
 }

@@ -8,9 +8,8 @@ describe('CloudNumberFormComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CloudNumberFormComponent ]
-    })
-    .compileComponents();
+      declarations: [CloudNumberFormComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

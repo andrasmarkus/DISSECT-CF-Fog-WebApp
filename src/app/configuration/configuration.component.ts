@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { CloudNumberFormComponent } from '../cloud-number-form/cloud-number-form.component';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-configuration',
@@ -8,20 +8,16 @@ import {FormBuilder, FormGroup} from '@angular/forms';
   styleUrls: ['./configuration.component.css']
 })
 export class ConfigurationComponent implements OnInit, AfterViewChecked {
+  public numOfClouds: number;
+  public numOfFogs: number;
 
-  public numOfClouds:number;
-  public numOfFogs:number;
-
-  isLinear= true;
+  isLinear = true;
 
   @ViewChild(CloudNumberFormComponent) numOfCloudsForm: CloudNumberFormComponent;
 
-  constructor(private _formBuilder: FormBuilder,
-    private changeDetect: ChangeDetectorRef) { }
+  constructor(private _formBuilder: FormBuilder, private changeDetect: ChangeDetectorRef) {}
 
-  ngOnInit(): void {
-     
-  }
+  ngOnInit(): void {}
 
   ngAfterViewChecked(): void {
     this.changeDetect.detectChanges();
@@ -36,6 +32,5 @@ export class ConfigurationComponent implements OnInit, AfterViewChecked {
  */
   get numOfCloudsFromGroup() {
     return this.numOfCloudsForm ? this.numOfCloudsForm.numOfComputingNodes : null;
- }
-
+  }
 }

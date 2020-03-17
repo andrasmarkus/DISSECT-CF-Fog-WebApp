@@ -11,11 +11,7 @@ import { ConfigurationComponent } from './configuration/configuration.component'
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    CloudNumberFormComponent,
-    ConfigurationComponent
-  ],
+  declarations: [AppComponent, CloudNumberFormComponent, ConfigurationComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -26,6 +22,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     FlexLayoutModule
   ],
   providers: [],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

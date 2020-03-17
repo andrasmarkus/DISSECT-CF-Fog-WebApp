@@ -1,24 +1,22 @@
-
-<div fxLayout="column" fxFlex  fxLayoutAlign="space-between center" >
-    <form [formGroup]="numOfComputingNodes">
-        <div class="margin-around">
-            <mat-form-field appearance="outline">
-                <mat-label>Number of clouds</mat-label>
-                <input class="setText-center" matInput type="number" formControlName="numOfClouds">
-                <mat-error *ngIf="numOfComputingNodes.get('numOfClouds').hasError('required')">
-                    Cloud is <strong>required</strong>
-                </mat-error>
-            </mat-form-field>
-        </div>
-        <div class="margin-around">
-            <mat-form-field appearance="outline">
-                <mat-label>Number of fogs</mat-label>
-                <input class="setText-center" matInput type="number" 
-                    formControlName="numOfFogs">
-            </mat-form-field>
-        </div>
-        <div class="setText-center margin-around">
-            <button mat-raised-button color="primary" matStepperNext>Next</button>
-        </div>
-    </form>
+<div fxLayout="column" fxFlex fxLayoutAlign="space-between center">
+  <form [formGroup]="numOfComputingNodes">
+    <div class="margin-around">
+      <mat-form-field appearance="outline">
+        <mat-label>Number of clouds</mat-label>
+        <input class="setText-center" matInput type="number" formControlName="numOfClouds" />
+        <mat-error *ngIf="numOfComputingNodes.get('numOfClouds').hasError('required')">
+          Cloud is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="margin-around">
+      <mat-form-field appearance="outline">
+        <mat-label>Number of fogs</mat-label>
+        <input class="setText-center" matInput type="number" formControlName="numOfFogs" />
+      </mat-form-field>
+    </div>
+    <div class="setText-center margin-around">
+      <button mat-raised-button color="primary" matStepperNext>Next</button>
+    </div>
+  </form>
 </div>

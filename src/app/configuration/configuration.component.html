@@ -1,14 +1,9 @@
 <mat-horizontal-stepper [linear]="isLinear" #stepper>
-    <mat-step [stepControl]="numOfCloudsFromGroup">
-		<ng-template matStepLabel>Number of clouds</ng-template>
-        <app-cloud-number-form></app-cloud-number-form>
-	</mat-step>
-    <mat-step >
-		
-	</mat-step>
+  <mat-step [stepControl]="numOfCloudsFromGroup">
+    <ng-template matStepLabel>Number of clouds</ng-template>
+    <app-cloud-number-form></app-cloud-number-form>
+  </mat-step>
+  <mat-step> </mat-step>
 </mat-horizontal-stepper>
 
-{{numOfCloudsForm?.numOfComputingNodes.get('numOfClouds').value}}
-
-
-
+{{ numOfCloudsForm?.numOfComputingNodes.get('numOfClouds').value }}
