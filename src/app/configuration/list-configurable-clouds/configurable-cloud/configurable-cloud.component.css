@@ -1,0 +1,9 @@
+@import '../../../../assets/css/formStyle.css';
+
+.input-size-min {
+  width: 50px;
+}
+
+.card-width {
+  width: 75%;
+}

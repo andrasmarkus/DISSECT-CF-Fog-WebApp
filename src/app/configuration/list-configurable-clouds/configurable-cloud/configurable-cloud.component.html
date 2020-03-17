@@ -1,14 +1,37 @@
 <mat-card>
-  <div fxLayout="row" fxLayoutAlign="space-around center">
-    <div>
-      <i class="fas fa-cloud fa-4x"></i>
+  <form>
+    <div fxLayout="row" fxLayoutAlign="space-around center">
+      <div>
+        <i class="fas fa-cloud fa-4x"></i>
+      </div>
+      <mat-form-field>
+        <mat-label>Select LPDS type</mat-label>
+        <mat-select [(ngModel)]="selectedLPDStype" name="selectedLPDStype">
+          <mat-option *ngFor="let lpdsType of lpdsTypes" [value]="lpdsType"> {{ lpdsType }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div>
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>x</mat-label>
+          <input class="setText-center" matInput type="number" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>y</mat-label>
+          <input class="setText-center" matInput type="number" />
+        </mat-form-field>
+      </div>
+      <div fxLayout="column" fxLayoutAlign="space-around center">
+        <label for="numOfApps">Number of applications</label>
+        <mat-form-field appearance="outline" class="input-size-min">
+          <input id="numOfApps" class="setText-center" matInput type="number" />
+        </mat-form-field>
+      </div>
+      <div>
+        <button mat-icon-button aria-label="Example icon-button with a heart icon">
+          <i class="fas fa-edit fa-2x"></i>
+        </button>
+      </div>
     </div>
-    <mat-form-field>
-      <mat-label>Select LPDS type</mat-label>
-      <mat-select [(ngModel)]="selectedLPDStype">
-        <mat-option *ngFor="let lpdsType of lpdsTypes" [value]="lpdsType"> {{ lpdsType }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+  </form>
 </mat-card>
-<p>You selected: {{ selectedLPDStype }}</p>
+<!-- <p>You selected: {{ selectedLPDStype }}</p> -->

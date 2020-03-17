@@ -1,1 +1,7 @@
-<app-configurable-cloud></app-configurable-cloud>
+<div fxLayout="column" fxLayoutAlign="space-around center">
+  <form class="form-width">
+    <ng-container *ngFor="let i of [].constructor(numOfClouds)">
+      <app-configurable-cloud></app-configurable-cloud>
+    </ng-container>
+  </form>
+</div>

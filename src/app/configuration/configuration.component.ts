@@ -8,9 +8,6 @@ import { CloudNumberFormComponent } from './cloud-number-form/cloud-number-form.
   styleUrls: ['./configuration.component.css']
 })
 export class ConfigurationComponent implements OnInit, AfterViewChecked {
-  public numOfClouds: number;
-  public numOfFogs: number;
-
   isLinear = true;
 
   @ViewChild(CloudNumberFormComponent) numOfCloudsForm: CloudNumberFormComponent;
