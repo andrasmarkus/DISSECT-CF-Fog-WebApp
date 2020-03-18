@@ -11,6 +11,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { CloudNumberFormComponent } from './configuration/cloud-number-form/cloud-number-form.component';
 import { ListConfigurableCloudsComponent } from './configuration/list-configurable-clouds/list-configurable-clouds.component';
 import { ConfigurableCloudComponent } from './configuration/list-configurable-clouds/configurable-cloud/configurable-cloud.component';
+import { ApplicationsDialogComponent } from './configuration/list-configurable-clouds/configurable-cloud/applications-dialog/applications-dialog.component';
+import { ApplicationCardComponent } from './configuration/list-configurable-clouds/configurable-cloud/applications-dialog/application-card/application-card.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { ConfigurableCloudComponent } from './configuration/list-configurable-cl
     CloudNumberFormComponent,
     ConfigurationComponent,
     ListConfigurableCloudsComponent,
-    ConfigurableCloudComponent
+    ConfigurableCloudComponent,
+    ApplicationsDialogComponent,
+    ApplicationCardComponent
   ],
   imports: [
     BrowserModule,

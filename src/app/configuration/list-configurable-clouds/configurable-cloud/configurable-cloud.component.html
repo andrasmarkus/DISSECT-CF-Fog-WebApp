@@ -1,8 +1,8 @@
 <mat-card>
-  <form>
+  <form [formGroup]="cloudCardForm">
     <div fxLayout="row" fxLayoutAlign="space-around center">
       <div>
-        <i class="fas fa-cloud fa-4x"></i>
+        <i [class]="icon"></i>
       </div>
       <mat-form-field>
         <mat-label>Select LPDS type</mat-label>
@@ -21,13 +21,19 @@
         </mat-form-field>
       </div>
       <div fxLayout="column" fxLayoutAlign="space-around center">
-        <label for="numOfApps">Number of applications</label>
+        <label>Number of applications</label>
         <mat-form-field appearance="outline" class="input-size-min">
-          <input id="numOfApps" class="setText-center" matInput type="number" />
+          <input
+            class="setText-center"
+            matInput
+            type="number"
+            [(ngModel)]="numOfApps"
+            formControlName="numOfApplications"
+          />
         </mat-form-field>
       </div>
       <div>
-        <button mat-icon-button aria-label="Example icon-button with a heart icon">
+        <button mat-icon-button (click)="openDialog()">
           <i class="fas fa-edit fa-2x"></i>
         </button>
       </div>

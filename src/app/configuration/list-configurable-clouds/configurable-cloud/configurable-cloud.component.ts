@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroupDirective, ControlContainer, Validators, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { ApplicationsDialogComponent } from './applications-dialog/applications-dialog.component';
 
 @Component({
   selector: 'app-configurable-cloud',
@@ -8,15 +10,33 @@ import { FormBuilder, FormGroupDirective, ControlContainer, Validators, FormGrou
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }]
 })
 export class ConfigurableCloudComponent implements OnInit {
+  @Input() icon: string;
   public readonly lpdsTypes: string[] = ['LPDS_Fog_T1', 'LPDS_Fog_T2', 'LPDS_original'];
-  cardForm: FormGroup;
+  cloudCardForm: FormGroup;
   selectedLPDStype = this.lpdsTypes[0];
+  numOfApps = 1;
 
-  constructor(private formBuilder: FormBuilder) {}
+  animal: string;
+  name: string;
+
+  constructor(private formBuilder: FormBuilder, public dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.cardForm = this.formBuilder.group({
+    this.cloudCardForm = this.formBuilder.group({
       numOfApplications: ['', Validators.required]
+    });
+  }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(ApplicationsDialogComponent, {
+      width: '80%',
+      height: '80%',
+      data: { apps: this.numOfApps }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.animal = result;
     });
   }
 }

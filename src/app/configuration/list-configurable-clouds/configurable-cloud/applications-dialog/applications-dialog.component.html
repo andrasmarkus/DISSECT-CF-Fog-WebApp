@@ -1,0 +1,12 @@
+<h1 mat-dialog-title class="setText-center">Number of applications {{ data.apps }}</h1>
+<div mat-dialog-content>
+  <div [style.margin]="'3%'" fxLayout="row" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="0.5%" fxLayoutAlign="center">
+    <ng-container *ngFor="let index of [].constructor(data.apps); let i = index">
+      <app-application-card [index]="i + 1"></app-application-card>
+    </ng-container>
+  </div>
+</div>
+<div mat-dialog-actions fxLayout="row" fxLayoutAlign="center end">
+  <button mat-button (click)="onNoClick()">No Thanks</button>
+  <button mat-button [mat-dialog-close]="data.apps" cdkFocusInitial>Ok</button>
+</div>

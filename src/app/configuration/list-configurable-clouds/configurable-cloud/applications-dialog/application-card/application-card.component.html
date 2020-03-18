@@ -1,0 +1,43 @@
+<mat-card fxLayout="column" fxLayoutAlign="center center">
+  <mat-card-header>
+    <mat-card-title>Application {{ index }}</mat-card-title>
+  </mat-card-header>
+  <form [formGroup]="appFormGroup">
+    <div fxLayout="column" fxLayoutAlign="center center">
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input class="setText-center" matInput type="text" formControlName="name" />
+      </mat-form-field>
+      <div fxLayout="row" fxLayoutAlign="space-evenly center">
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Taksize</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="taksize" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Frequency</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="freq" />
+        </mat-form-field>
+      </div>
+      <mat-form-field appearance="outline">
+        <mat-label>Instance</mat-label>
+        <input class="setText-center" matInput type="text" formControlName="instance" />
+      </mat-form-field>
+      <div fxLayout="row" fxLayoutAlign="space-evenly center">
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Number of Instruciton</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="numOfInstruction" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Threshold</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="threshold" />
+        </mat-form-field>
+      </div>
+      <mat-form-field appearance="outline">
+        <mat-label>Strategy</mat-label>
+        <input class="setText-center" matInput type="text" formControlName="strategy" />
+      </mat-form-field>
+      <mat-checkbox [(ngModel)]="canJoin">Can join</mat-checkbox>
+    </div>
+    <div *ngIf="checkValidation()"></div>
+  </form>
+</mat-card>
