@@ -8,6 +8,8 @@ import { CloudNumberFormComponent } from './cloud-number-form/cloud-number-form.
   styleUrls: ['./configuration.component.css']
 })
 export class ConfigurationComponent implements OnInit, AfterViewChecked {
+  public numOfClouds: number;
+  public numOfFogs: number;
   isLinear = true;
 
   @ViewChild(CloudNumberFormComponent) numOfCloudsForm: CloudNumberFormComponent;
@@ -18,6 +20,8 @@ export class ConfigurationComponent implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked(): void {
     this.changeDetect.detectChanges();
+    this.numOfClouds = this.numOfCloudsFromGroup.get('numOfClouds').value;
+    this.numOfFogs = this.numOfCloudsFromGroup.get('numOfFogs').value;
   }
 
   get numOfCloudsFromGroup() {
