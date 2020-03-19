@@ -24,7 +24,7 @@ export class CloudNumberFormComponent implements OnInit {
 
   initForm() {
     this.numOfComputingNodes = this.formBuilder.group({
-      numOfClouds: ['', Validators.required],
+      numOfClouds: new FormControl('', [Validators.required]),
       numOfFogs: new FormControl('', [])
     });
   }

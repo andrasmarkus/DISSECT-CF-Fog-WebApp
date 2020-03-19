@@ -13,10 +13,7 @@ export class ListConfigurableCloudsComponent implements OnInit, OnChanges {
   private readonly instaces: string[] = ['LPDS_Fog_T1', 'LPDS_Fog_T2', 'LPDS_original'];
   constructor() {}
 
-  ngOnChanges() {
-    console.log(this.numOfClouds);
-    console.log(this.numOfFogs);
-  }
+  ngOnChanges() {}
 
   ngOnInit(): void {}
 }

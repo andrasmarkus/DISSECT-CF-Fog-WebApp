@@ -36,7 +36,7 @@
         <mat-label>Strategy</mat-label>
         <input class="setText-center" matInput type="text" formControlName="strategy" />
       </mat-form-field>
-      <mat-checkbox [(ngModel)]="canJoin">Can join</mat-checkbox>
+      <mat-checkbox value="canJoin" (click)="changeValue(canJoin)">Can join</mat-checkbox>
     </div>
     <div *ngIf="checkValidation()"></div>
   </form>

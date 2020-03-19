@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Application } from 'src/app/models/application';
 
@@ -9,9 +9,10 @@ import { Application } from 'src/app/models/application';
 })
 export class ApplicationCardComponent implements OnInit, OnChanges {
   @Input() index: number;
+  @Output() validFormChange: EventEmitter<Application> = new EventEmitter<Application>();
   private app: Application;
   public appFormGroup: FormGroup;
-  public canJoin = false;
+  public canJoin: boolean;
 
   constructor(private formBuilder: FormBuilder) {
     this.initForm();
@@ -32,6 +33,11 @@ export class ApplicationCardComponent implements OnInit, OnChanges {
       threshold: new FormControl('', [Validators.required]),
       strategy: new FormControl('', [Validators.required]) //shuld be select
     });
+    this.canJoin = false;
+  }
+
+  changeValue(value) {
+    this.canJoin = !value;
   }
 
   checkValidation() {
@@ -45,7 +51,7 @@ export class ApplicationCardComponent implements OnInit, OnChanges {
       this.app.threshold = this.appFormGroup.get('threshold').value;
       this.app.strategy = this.appFormGroup.get('strategy').value;
       this.app.canJoin = this.canJoin;
-      console.log(this.app);
+      this.validFormChange.emit(this.app);
     }
   }
 }
