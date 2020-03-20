@@ -1,10 +1,10 @@
 <div fxLayout="column" fxLayoutAlign="space-around center">
   <form class="form-width">
     <ng-container *ngFor="let i of [].constructor(numOfClouds)">
-      <app-configurable-cloud icon="fas fa-cloud fa-4x"></app-configurable-cloud>
+      <app-configurable-cloud cloudIcon="fas fa-cloud fa-4x"></app-configurable-cloud>
     </ng-container>
     <ng-container *ngFor="let i of [].constructor(numOfFogs)">
-      <app-configurable-cloud icon="fas fa-smog fa-4x"></app-configurable-cloud>
+      <app-configurable-cloud cloudIcon="fas fa-smog fa-4x"></app-configurable-cloud>
     </ng-container>
   </form>
 </div>

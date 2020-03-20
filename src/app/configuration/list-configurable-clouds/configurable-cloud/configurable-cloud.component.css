@@ -1,9 +1,17 @@
 @import '../../../../assets/css/formStyle.css';
 
 .input-size-min {
+  width: 100px;
+}
+
+.coord-input-size {
   width: 50px;
 }
 
 .card-width {
   width: 75%;
+}
+
+.status-margin {
+  margin: 0 50px;
 }

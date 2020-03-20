@@ -7,6 +7,13 @@
   </div>
 </div>
 <div mat-dialog-actions fxLayout="row" fxLayoutAlign="center end">
-  <button mat-button (click)="onNoClick()">No Thanks</button>
-  <button mat-button [mat-dialog-close]="data.apps" cdkFocusInitial>Ok</button>
+  <button mat-button matDialogClose (click)="onNoClick()">No Thanks</button>
+  <button
+    mat-button
+    [mat-dialog-close]="data.apps"
+    [disabled]="!checkDialogIsValid()"
+    (click)="submitApplicationCards()"
+  >
+    Ok
+  </button>
 </div>

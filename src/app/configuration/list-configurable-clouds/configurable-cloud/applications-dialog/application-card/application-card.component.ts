@@ -28,10 +28,10 @@ export class ApplicationCardComponent implements OnInit, OnChanges {
       taksize: new FormControl('', [Validators.required]),
       name: new FormControl('', [Validators.required]),
       freq: new FormControl('', [Validators.required]),
-      instance: new FormControl('', [Validators.required]), //shuld be select
+      instance: new FormControl('', [Validators.required]), // shuld be select
       numOfInstruction: new FormControl('', [Validators.required]),
       threshold: new FormControl('', [Validators.required]),
-      strategy: new FormControl('', [Validators.required]) //shuld be select
+      strategy: new FormControl('', [Validators.required]) // shuld be select
     });
     this.canJoin = false;
   }
@@ -40,7 +40,7 @@ export class ApplicationCardComponent implements OnInit, OnChanges {
     this.canJoin = !value;
   }
 
-  checkValidation() {
+  public getValidApplication() {
     if (this.appFormGroup.valid) {
       this.app = new Application();
       this.app.taksize = this.appFormGroup.get('taksize').value;
@@ -51,7 +51,12 @@ export class ApplicationCardComponent implements OnInit, OnChanges {
       this.app.threshold = this.appFormGroup.get('threshold').value;
       this.app.strategy = this.appFormGroup.get('strategy').value;
       this.app.canJoin = this.canJoin;
-      this.validFormChange.emit(this.app);
+      return this.app;
     }
+    return null;
+  }
+
+  public checkValidation(): boolean {
+    return this.appFormGroup.valid;
   }
 }
