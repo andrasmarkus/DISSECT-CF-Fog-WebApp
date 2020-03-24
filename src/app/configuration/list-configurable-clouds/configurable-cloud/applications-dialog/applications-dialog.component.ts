@@ -1,4 +1,13 @@
-import { Component, OnInit, Inject, QueryList, ViewChildren, OnChanges } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Inject,
+  QueryList,
+  ViewChildren,
+  OnChanges,
+  AfterViewInit,
+  ChangeDetectorRef
+} from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Application } from 'src/app/models/application';
 import { ApplicationCardComponent } from './application-card/application-card.component';
@@ -8,20 +17,26 @@ import { ApplicationCardComponent } from './application-card/application-card.co
   templateUrl: './applications-dialog.component.html',
   styleUrls: ['./applications-dialog.component.css']
 })
-export class ApplicationsDialogComponent implements OnInit {
-  public applications: Application[] = [];
-
+export class ApplicationsDialogComponent implements AfterViewInit {
   @ViewChildren(ApplicationCardComponent) applicationCards: QueryList<ApplicationCardComponent>;
 
   constructor(
     public dialogRef: MatDialogRef<ApplicationsDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { apps: number }
+    private cdRef: ChangeDetectorRef,
+    @Inject(MAT_DIALOG_DATA) public data: { numOfApps: number; counter: number; applications: Map<number, Application> }
   ) {}
 
-  ngOnInit(): void {}
+  ngAfterViewInit() {
+    this.cdRef.detectChanges();
+  }
 
   onNoClick(): void {
-    this.dialogRef.close([] as Application[]); // if the user click the back button, there are won't be configured applications
+    const dialogResult = {
+      applications: this.data.applications,
+      valid: this.checkDialogIsValid()
+    };
+
+    this.dialogRef.close(dialogResult); // if the user click the back button, there are won't be configured applications
   }
 
   submitApplicationCards(): void {
@@ -29,7 +44,7 @@ export class ApplicationsDialogComponent implements OnInit {
       this.applicationCards.forEach(appCard => {
         const app = appCard.getValidApplication();
         if (app !== null) {
-          this.applications.push(app);
+          this.data.applications.set(this.data.counter++, app);
         } else {
           // here the form would be invalid, which now is not reacheble
         }
@@ -46,19 +61,16 @@ export class ApplicationsDialogComponent implements OnInit {
           validAll = false;
         }
       });
-    } else {
-      validAll = false;
     }
     return validAll;
   }
 
   closeWithData() {
-    this.dialogRef.close(this.applications);
-  }
+    const dialogResult = {
+      applications: this.data.applications,
+      valid: this.checkDialogIsValid()
+    };
 
-  onChangeApplication(app) {
-    console.log(app);
-    this.applications.push(app);
-    console.log(this.applications);
+    this.dialogRef.close(dialogResult);
   }
 }

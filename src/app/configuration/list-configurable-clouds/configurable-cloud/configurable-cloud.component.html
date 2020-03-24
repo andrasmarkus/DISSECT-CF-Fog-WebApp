@@ -14,11 +14,11 @@
         <div>
           <mat-form-field appearance="outline" class="coord-input-size">
             <mat-label>x</mat-label>
-            <input class="setText-center" matInput type="number" />
+            <input class="setText-center" matInput type="number" formControlName="xCoord" />
           </mat-form-field>
           <mat-form-field appearance="outline" class="coord-input-size">
             <mat-label>y</mat-label>
-            <input class="setText-center" matInput type="number" />
+            <input class="setText-center" matInput type="number" formControlName="yCoord" />
           </mat-form-field>
         </div>
         <div fxLayout="column" fxLayoutAlign="space-around center">
@@ -43,7 +43,7 @@
           </button>
         </div>
         <div class="status-margin">
-          <i [class]="statusIcon"></i>
+          <i [class]="checkStatus()"></i>
         </div>
       </div>
     </div>
