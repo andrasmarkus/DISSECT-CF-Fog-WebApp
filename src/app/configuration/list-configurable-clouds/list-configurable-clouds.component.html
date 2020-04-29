@@ -1,10 +1,20 @@
 <div fxLayout="column" fxLayoutAlign="space-around center">
   <form class="form-width">
-    <ng-container *ngFor="let i of [].constructor(numOfClouds)">
-      <app-configurable-cloud cloudIcon="fas fa-cloud fa-4x"></app-configurable-cloud>
+    <ng-container *ngFor="let i of [].constructor(numOfClouds); let counter = index">
+      <app-configurable-cloud
+        [nodeId]="'cloud' + counter"
+        [lpdsTypes]="instaces"
+        isCloud="true"
+        (setComputingNode)="addComputingNode($event)"
+      ></app-configurable-cloud>
     </ng-container>
-    <ng-container *ngFor="let i of [].constructor(numOfFogs)">
-      <app-configurable-cloud cloudIcon="fas fa-smog fa-4x"></app-configurable-cloud>
+    <ng-container *ngFor="let i of [].constructor(numOfFogs); let counter = index">
+      <app-configurable-cloud
+        [nodeId]="'fog' + counter"
+        [lpdsTypes]="instaces"
+        isCloud="false"
+        (setComputingNode)="addComputingNode($event)"
+      ></app-configurable-cloud>
     </ng-container>
   </form>
 </div>

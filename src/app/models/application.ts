@@ -1,4 +1,5 @@
 export class Application {
+  id: string;
   taksize: number;
   name: string;
   freq: number;

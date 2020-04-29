@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { ComputingNodesQuantityData } from 'src/app/models/computing-nodes-quantity-data';
 
 @Component({
   selector: 'app-cloud-number-form',
@@ -7,11 +8,10 @@ import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms'
   styleUrls: ['./cloud-number-form.component.css']
 })
 export class CloudNumberFormComponent implements OnInit {
-  /*  @Output() numOfCloudsEvent = new EventEmitter<any>();
-  @Output() numOfFogsEvent = new EventEmitter<any>(); */
+  @Output() quantityOfComputingNodes = new EventEmitter<ComputingNodesQuantityData>();
 
-  public numOfClouds: string;
-  public numOfFogs: number;
+  public numOfClouds = 0;
+  public numOfFogs = 0;
   public numOfComputingNodes: FormGroup;
 
   constructor(private formBuilder: FormBuilder) {
@@ -19,7 +19,7 @@ export class CloudNumberFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initValues();
+    //this.initValues();
   }
 
   initForm() {
@@ -29,13 +29,23 @@ export class CloudNumberFormComponent implements OnInit {
     });
   }
 
-  initValues() {
+  /* initValues() {
     this.numOfComputingNodes.get('numOfClouds').valueChanges.subscribe(val => {
       this.numOfClouds = val;
     });
     this.numOfComputingNodes.get('numOfFogs').valueChanges.subscribe(val => {
       this.numOfFogs = val;
     });
+  } */
+
+  public sendCloudAmouts() {
+    const cloudsAmount = {
+      numberOfClouds: this.numOfComputingNodes.get('numOfClouds').value,
+      numberOfFogs: this.numOfComputingNodes.get('numOfFogs').value
+        ? this.numOfComputingNodes.get('numOfFogs').value
+        : undefined
+    } as ComputingNodesQuantityData;
+    this.quantityOfComputingNodes.emit(cloudsAmount);
   }
   /*  onCloudsChange(){
     this.numOfCloudsEvent.emit(this.numOfComputingNodes.get('numOfClouds').value);

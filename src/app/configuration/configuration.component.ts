@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
 import { CloudNumberFormComponent } from './cloud-number-form/cloud-number-form.component';
+import { ComputingNodesQuantityData } from '../models/computing-nodes-quantity-data';
 
 @Component({
   selector: 'app-configuration',
@@ -20,11 +20,14 @@ export class ConfigurationComponent implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked(): void {
     this.changeDetect.detectChanges();
-    this.numOfClouds = this.numOfCloudsFromGroup.get('numOfClouds').value;
-    this.numOfFogs = this.numOfCloudsFromGroup.get('numOfFogs').value;
   }
 
   get numOfCloudsFromGroup() {
     return this.numOfCloudsForm ? this.numOfCloudsForm.numOfComputingNodes : null;
+  }
+
+  setNumOfComputingNodes(nodesQuantity: ComputingNodesQuantityData) {
+    this.numOfClouds = nodesQuantity.numberOfClouds;
+    this.numOfFogs = nodesQuantity.numberOfFogs ? nodesQuantity.numberOfFogs : 0;
   }
 }
