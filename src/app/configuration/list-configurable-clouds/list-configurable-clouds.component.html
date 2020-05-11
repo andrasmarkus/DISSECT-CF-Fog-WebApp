@@ -4,17 +4,26 @@
       <app-configurable-cloud
         [nodeId]="'cloud' + counter"
         [lpdsTypes]="instaces"
+        [readyToSave]="readyToSave"
         isCloud="true"
         (setComputingNode)="addComputingNode($event)"
       ></app-configurable-cloud>
     </ng-container>
-    <ng-container *ngFor="let i of [].constructor(numOfFogs); let counter = index">
-      <app-configurable-cloud
-        [nodeId]="'fog' + counter"
-        [lpdsTypes]="instaces"
-        isCloud="false"
-        (setComputingNode)="addComputingNode($event)"
-      ></app-configurable-cloud>
+    <ng-container *ngIf="numOfFogs > 0">
+      <ng-container *ngFor="let i of [].constructor(numOfFogs); let counter = index">
+        <app-configurable-cloud
+          [nodeId]="'fog' + counter"
+          [lpdsTypes]="instaces"
+          [readyToSave]="readyToSave"
+          isCloud="false"
+          (setComputingNode)="addComputingNode($event)"
+        ></app-configurable-cloud>
+      </ng-container>
     </ng-container>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <button [disabled]="!readyToSave" mat-raised-button color="primary" matStepperNext (click)="saveNodes()">
+        Next
+      </button>
+    </div>
   </form>
 </div>

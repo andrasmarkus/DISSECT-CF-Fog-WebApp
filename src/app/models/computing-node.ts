@@ -7,4 +7,5 @@ export interface ComputingNode {
   lpdsType: string; //should be an interface from server
   applications: Map<number, Application>;
   isCloud: boolean;
+  isConfigured: boolean;
 }

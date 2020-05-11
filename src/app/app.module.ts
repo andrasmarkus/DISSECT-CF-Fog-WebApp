@@ -13,6 +13,7 @@ import { ListConfigurableCloudsComponent } from './configuration/list-configurab
 import { ConfigurableCloudComponent } from './configuration/list-configurable-clouds/configurable-cloud/configurable-cloud.component';
 import { ApplicationsDialogComponent } from './configuration/list-configurable-clouds/configurable-cloud/applications-dialog/applications-dialog.component';
 import { ApplicationCardComponent } from './configuration/list-configurable-clouds/configurable-cloud/applications-dialog/application-card/application-card.component';
+import { StepBackDialogComponent } from './configuration/step-back-dialog/step-back-dialog.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { ApplicationCardComponent } from './configuration/list-configurable-clou
     ListConfigurableCloudsComponent,
     ConfigurableCloudComponent,
     ApplicationsDialogComponent,
-    ApplicationCardComponent
+    ApplicationCardComponent,
+    StepBackDialogComponent
   ],
   imports: [
     BrowserModule,

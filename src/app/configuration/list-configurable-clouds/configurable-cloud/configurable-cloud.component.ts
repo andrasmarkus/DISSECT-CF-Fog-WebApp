@@ -1,9 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroupDirective, ControlContainer, Validators, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ApplicationsDialogComponent } from './applications-dialog/applications-dialog.component';
 import { Application } from 'src/app/models/application';
 import { ComputingNode } from 'src/app/models/computing-node';
+import { IfStmt } from '@angular/compiler';
 
 // outsource one other repository
 const NOT_CONFIGURED_ICON = 'fas fa-times-circle fa-2x';
@@ -18,10 +19,11 @@ const UNSET_APPS_ICON = 'error';
   styleUrls: ['./configurable-cloud.component.css'],
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }]
 })
-export class ConfigurableCloudComponent implements OnInit {
+export class ConfigurableCloudComponent implements OnInit, OnChanges {
   @Input() nodeId: string;
   @Input() isCloud: string;
   @Input() lpdsTypes: string[];
+  @Input() readyToSave: boolean;
   @Output() setComputingNode = new EventEmitter<ComputingNode>();
 
   public applications: Map<number, Application> = new Map();
@@ -33,8 +35,41 @@ export class ConfigurableCloudComponent implements OnInit {
   keyCounter = 0;
   cloudIcon: string;
   isCloudBoolean: boolean;
+  allAppsConfigured: boolean;
 
   constructor(private formBuilder: FormBuilder, public dialog: MatDialog) {}
+
+  ngOnChanges(): void {
+    if (this.cloudCardForm) {
+      console.log('visszaadom');
+
+      this.cloudCardForm.valueChanges.subscribe(value => {
+        if (value.allAppsConfigured && !!value.xCoord && !!value.yCoord) {
+          const computingNode = {
+            id: this.nodeId,
+            x: +this.cloudCardForm.get('xCoord').value,
+            y: +this.cloudCardForm.get('yCoord').value,
+            lpdsType: this.selectedLPDStype,
+            applications: this.applications,
+            isCloud: this.isCloudBoolean,
+            isConfigured: true
+          } as ComputingNode;
+          this.setComputingNode.emit(computingNode);
+          this.statusIcon = CONFIGURED_ICON;
+        } else {
+          this.setComputingNode.emit({
+            id: this.nodeId,
+            x: 0,
+            y: 0,
+            lpdsType: '',
+            applications: new Map(),
+            isCloud: this.isCloudBoolean,
+            isConfigured: false
+          } as ComputingNode);
+        }
+      });
+    }
+  }
 
   ngOnInit(): void {
     this.isCloudBoolean = this.isCloud === 'true';
@@ -44,18 +79,22 @@ export class ConfigurableCloudComponent implements OnInit {
     }
     this.selectedLPDStype = this.lpdsTypes[0]; // needs better solution
     this.cloudCardForm = this.formBuilder.group({
-      numOfApplications: ['', Validators.required],
-      xCoord: [''],
-      yCoord: ['']
+      numOfApplications: [1, Validators.required],
+      xCoord: [undefined],
+      yCoord: [undefined],
+      allAppsConfigured: false
     });
+
     this.statusIcon = NOT_CONFIGURED_ICON;
     this.appsStatusIcon = UNSET_APPS_ICON;
   }
 
   onChange(event: any): void {
     this.appsStatusIcon = UNSET_APPS_ICON;
+    this.cloudCardForm.controls.allAppsConfigured.setValue(false);
     if (this.numOfApps === this.applications.size) {
       this.appsStatusIcon = SET_APPS_ICON;
+      this.cloudCardForm.controls.allAppsConfigured.setValue(true);
     }
   }
 
@@ -70,32 +109,12 @@ export class ConfigurableCloudComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: { applications: Map<number, Application>; valid: boolean }) => {
       this.applications = result.applications;
       if (!result.valid) {
+        this.cloudCardForm.controls.allAppsConfigured.setValue(false);
         this.appsStatusIcon = UNSET_APPS_ICON;
       } else {
+        this.cloudCardForm.controls.allAppsConfigured.setValue(true);
         this.appsStatusIcon = SET_APPS_ICON;
       }
     });
-  }
-
-  checkStatus(): string {
-    let iconName = NOT_CONFIGURED_ICON;
-    if (
-      this.cloudCardForm.valid &&
-      this.appsStatusIcon === SET_APPS_ICON &&
-      !!this.cloudCardForm.get('xCoord').value &&
-      !!this.cloudCardForm.get('yCoord').value
-    ) {
-      iconName = CONFIGURED_ICON;
-      const computingNode = {
-        id: this.nodeId,
-        x: +this.cloudCardForm.get('xCoord').value,
-        y: +this.cloudCardForm.get('yCoord').value,
-        lpdsType: this.selectedLPDStype,
-        applications: this.applications,
-        isCloud: this.isCloudBoolean
-      } as ComputingNode;
-      this.setComputingNode.emit(computingNode); //needs to put elsewhere
-    }
-    return iconName;
   }
 }
