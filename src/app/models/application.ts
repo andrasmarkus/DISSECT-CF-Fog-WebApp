@@ -9,3 +9,7 @@ export class Application {
   strategy: string; //shuld be select
   canJoin: boolean;
 }
+
+export class ApplicationsObject {
+  [id: string]: Application;
+}

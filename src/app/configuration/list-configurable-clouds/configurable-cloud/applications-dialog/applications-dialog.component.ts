@@ -9,7 +9,7 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Application } from 'src/app/models/application';
+import { Application, ApplicationsObject } from 'src/app/models/application';
 import { ApplicationCardComponent } from './application-card/application-card.component';
 
 @Component({
@@ -23,7 +23,7 @@ export class ApplicationsDialogComponent implements AfterViewInit {
   constructor(
     public dialogRef: MatDialogRef<ApplicationsDialogComponent>,
     private cdRef: ChangeDetectorRef,
-    @Inject(MAT_DIALOG_DATA) public data: { numOfApps: number; counter: number; applications: Map<number, Application> }
+    @Inject(MAT_DIALOG_DATA) public data: { numOfApps: number; counter: number; applications: ApplicationsObject }
   ) {}
 
   ngAfterViewInit() {
@@ -44,7 +44,7 @@ export class ApplicationsDialogComponent implements AfterViewInit {
       this.applicationCards.forEach(appCard => {
         const app = appCard.getValidApplication();
         if (app !== null) {
-          this.data.applications.set(this.data.counter++, app);
+          this.data.applications[app.id] = app;
         } else {
           // here the form would be invalid, which now is not reacheble
         }
@@ -72,5 +72,9 @@ export class ApplicationsDialogComponent implements AfterViewInit {
     };
 
     this.dialogRef.close(dialogResult);
+  }
+  getAppByIndex(id: number) {
+    const index = id + 1;
+    return this.data.applications['app' + index];
   }
 }

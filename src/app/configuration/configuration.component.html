@@ -1,16 +1,16 @@
-<mat-horizontal-stepper [linear]="isLinear" #stepper (selectionChange)="stepClick($event)">
-  <mat-step [stepControl]="numOfCloudsFromGroup" [editable]="editableQuantityForm">
-    <ng-template matStepLabel><p (click)="onQuantityFormClick(stepper)">Number of clouds</p></ng-template>
+<mat-horizontal-stepper [linear]="isLinear" #stepper>
+  <mat-step [stepControl]="numOfCloudsFromGroup">
+    <ng-template matStepLabel>Number of clouds</ng-template>
     <app-cloud-number-form (quantityOfComputingNodes)="setNumOfComputingNodes($event)"></app-cloud-number-form>
   </mat-step>
-  <mat-step [completed]="isCompleted">
+  <mat-step >
     <ng-template matStepLabel>Configure clouds</ng-template>
     <app-list-configurable-clouds
       [numOfClouds]="numOfClouds"
       [numOfFogs]="numOfFogs"
       (readyToSaveEmitter)="changeCompleted($event)"
+      (isStepBack)="stepBack($event)"
     ></app-list-configurable-clouds>
-    <ng-container *ngIf="back ? stepper.previous() : undefined"></ng-container>
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Configure IoTs</ng-template>

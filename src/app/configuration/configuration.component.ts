@@ -4,6 +4,8 @@ import { ComputingNodesQuantityData } from '../models/computing-nodes-quantity-d
 import { MatStepper } from '@angular/material/stepper';
 import { MatDialog } from '@angular/material/dialog';
 import { StepBackDialogComponent } from './step-back-dialog/step-back-dialog.component';
+import { StepBackServiceService } from '../services/step-back-service.service';
+import { ComputingNodesObject } from '../models/computing-nodes-object';
 
 @Component({
   selector: 'app-configuration',
@@ -18,18 +20,18 @@ export class ConfigurationComponent implements OnInit, AfterViewChecked {
   editableQuantityForm = false;
   selectedIndex = 0;
   back = false;
+  computingNodes: ComputingNodesObject = {};
 
   @ViewChild(CloudNumberFormComponent) numOfCloudsForm: CloudNumberFormComponent;
   @ViewChild('stepper') stepper: MatStepper;
 
-  constructor(private changeDetect: ChangeDetectorRef, public dialog: MatDialog) {}
+  constructor(
+    private changeDetect: ChangeDetectorRef,
+    public dialog: MatDialog,
+    private stepBackDialogService: StepBackServiceService
+  ) {}
 
-  ngOnInit(): void {
-    /*  this.stepper.selectionChange.subscribe(selection => {
-      console.log(selection.selectedStep);
-      console.log(selection.previouslySelectedStep);
-    }); */
-  }
+  ngOnInit(): void {}
 
   ngAfterViewChecked(): void {
     this.changeDetect.detectChanges();
@@ -44,32 +46,14 @@ export class ConfigurationComponent implements OnInit, AfterViewChecked {
     this.numOfFogs = nodesQuantity.numberOfFogs ? nodesQuantity.numberOfFogs : 0;
   }
 
-  public changeCompleted(value: boolean): void {
-    this.isCompleted = value;
+  public changeCompleted(nodes: ComputingNodesObject): void {
+    this.computingNodes = nodes;
+    console.log(this.computingNodes);
   }
 
-  stepClick(event) {
-    console.log('kiirom');
-
-    if (event.selectedIndex === 0 && event.previouslySelectedIndex === 1) {
-      console.log('hey');
+  stepBack(isBack: boolean) {
+    if (isBack) {
+      this.stepper.previous();
     }
-    console.log(event);
-  }
-  onQuantityFormClick(stepper: MatStepper) {
-    const dialogRef = this.dialog.open(StepBackDialogComponent, {
-      disableClose: true,
-      width: '30%',
-      height: '30%',
-      data: { discard: false }
-    });
-
-    dialogRef.afterClosed().subscribe((result: { discard: boolean }) => {
-      if (result.discard) {
-        console.log('mehet a back');
-        this.editableQuantityForm = true;
-      } else {
-      }
-    });
   }
 }

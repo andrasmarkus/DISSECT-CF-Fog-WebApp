@@ -55,6 +55,7 @@ export class ApplicationCardComponent implements OnInit {
       this.app = new Application();
       this.app = this.appFormGroup.value;
       this.app.canJoin = this.canJoin;
+      this.app.id = 'app' + this.index;
       return this.app;
     }
     return null;

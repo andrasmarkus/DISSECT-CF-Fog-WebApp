@@ -6,7 +6,7 @@
         [style.margin]="'1%'"
         fxFlex="0 1 auto"
         [index]="i + 1"
-        [application]="data.applications.get(i)"
+        [application]="getAppByIndex(i)"
       ></app-application-card>
     </ng-container>
   </div>
