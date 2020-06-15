@@ -14,5 +14,10 @@
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Configure IoTs</ng-template>
+    <button mat-raised-button color="primary" (click)="enableConnectionComponent()"matStepperNext>Next</button>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Configure connections</ng-template>
+    <app-connection *ngIf="showConnections"></app-connection>
   </mat-step>
 </mat-horizontal-stepper>

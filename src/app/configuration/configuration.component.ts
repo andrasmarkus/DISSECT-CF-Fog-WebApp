@@ -21,6 +21,7 @@ export class ConfigurationComponent implements OnInit, AfterViewChecked {
   selectedIndex = 0;
   back = false;
   computingNodes: ComputingNodesObject = {};
+  public showConnections = false;
 
   @ViewChild(CloudNumberFormComponent) numOfCloudsForm: CloudNumberFormComponent;
   @ViewChild('stepper') stepper: MatStepper;
@@ -55,5 +56,8 @@ export class ConfigurationComponent implements OnInit, AfterViewChecked {
     if (isBack) {
       this.stepper.previous();
     }
+  }
+  enableConnectionComponent() {
+    this.showConnections = true;
   }
 }
