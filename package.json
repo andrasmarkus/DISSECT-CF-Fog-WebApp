@@ -58,7 +58,7 @@
     "karma-coverage-istanbul-reporter": "~2.1.0",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.2",
-    "lodash": "^3.10.1",
+    "lodash": "^4.17.13",
     "npm": "^6.14.5",
     "prettier": "^1.19.1",
     "protractor": "~5.4.3",
