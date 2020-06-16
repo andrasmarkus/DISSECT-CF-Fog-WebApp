@@ -14,8 +14,11 @@ export class Node {
   styleUrls: ['./connection.component.css']
 })
 export class ConnectionComponent implements OnInit {
-  defaultWidth = 100;
-  defauldHeight = 50;
+  numOfClouds = 3;
+  numOfFogs = 4;
+  numOfIots = 8;
+  nodeWidth: number;
+  nodeHeight: number;
   /* cloudImageSrcURL =
     'https://cloud.google.com/images/social-icon-google-cloud-1200-630.png'; */
   cloudImageSrcURL =
@@ -32,13 +35,40 @@ export class ConnectionComponent implements OnInit {
   public paper: joint.dia.Paper;
   public graph: joint.dia.Graph;
 
+  public paperWidth: any;
+  public paperHeight: any;
+  public proportionOfTheTotalSize = 0.8;
+  public sapceForClouds: number;
+  public sapceForFogs: number;
+  public sapceForIots: number;
+  public numOfLayers: number;
+  public cloudsStartYpos: number;
+  public fogsStartYpos: number;
+  public iotssStartYpos: number;
+  public verticalSpaceBetweenLayers: number;
+
   ngOnInit() {
+    this.paperWidth = window.innerWidth * this.proportionOfTheTotalSize;
+    this.paperHeight = window.innerHeight * this.proportionOfTheTotalSize;
+    this.nodeWidth = this.paperWidth / (this.getTheMaxQuantityOfNodes() * 2);
+    this.nodeHeight = this.paperHeight / (this.getTheMaxQuantityOfNodes() * 2);
+
+    this.sapceForClouds = (this.paperWidth - this.numOfClouds * this.nodeWidth) / this.numOfClouds;
+    this.sapceForFogs = (this.paperWidth - this.numOfFogs * this.nodeWidth) / this.numOfFogs;
+    this.sapceForIots = (this.paperWidth - this.numOfIots * this.nodeWidth) / this.numOfIots;
+    this.numOfLayers = this.countLayers();
+    this.verticalSpaceBetweenLayers = (this.paperHeight / this.numOfLayers - this.nodeHeight) / 2;
+    this.cloudsStartYpos = this.verticalSpaceBetweenLayers;
+    this.fogsStartYpos = this.cloudsStartYpos + this.nodeHeight + this.verticalSpaceBetweenLayers * 2;
+    this.iotssStartYpos = this.fogsStartYpos + this.nodeHeight + this.verticalSpaceBetweenLayers * 2;
+    console.log(this.iotssStartYpos);
+
     this.graph = new joint.dia.Graph();
 
     this.paper = new joint.dia.Paper({
       el: jQuery('#paper'),
-      width: 1200,
-      height: 600,
+      width: this.paperWidth,
+      height: this.paperHeight,
       model: this.graph,
       gridSize: 1
     });
@@ -70,48 +100,17 @@ export class ConnectionComponent implements OnInit {
       currentElement.attr('label/text', 'Name [' + `${xPos}` + ',' + `${yPos}` + ']');
     });
 
-    const cloud = new joint.shapes.standard.Image({
-      position: { x: 600, y: 30 },
-      size: { width: 100, height: 50 }
-    });
-    cloud.attr('image/xlinkHref', this.cloudImageSrcURL);
+    const graphElements: (joint.dia.Link | joint.shapes.standard.Image | joint.dia.Cell)[] = [];
 
-    const fog = new joint.shapes.standard.Image({
-      position: { x: 450, y: 180 },
-      size: { width: 100, height: 50 }
-    });
-    fog.attr('image/xlinkHref', this.fogImageSrcURL);
+    graphElements.push(
+      ...this.createNodes(this.numOfClouds, this.sapceForClouds, this.cloudsStartYpos, this.cloudImageSrcURL)
+    );
+    graphElements.push(...this.createNodes(this.numOfFogs, this.sapceForFogs, this.fogsStartYpos, this.fogImageSrcURL));
+    graphElements.push(
+      ...this.createNodes(this.numOfIots, this.sapceForIots, this.iotssStartYpos, this.iotImageSrcURL)
+    );
 
-    const cloud2 = this.createImageNode(500, 100, this.cloudImageSrcURL);
-    const cloud3 = this.createImageNode(700, 100, this.cloudImageSrcURL);
-
-    //How to clone an element:
-    const cloud4 = cloud.clone() as joint.shapes.standard.Image;
-
-    const fog2 = this.createImageNode(550, 180, this.fogImageSrcURL);
-    const fog3 = this.createImageNode(650, 180, this.fogImageSrcURL);
-    const fog4 = this.createImageNode(750, 180, this.fogImageSrcURL);
-
-    const iot1 = this.createImageNode(440, 300, this.iotImageSrcURL, 50, 25);
-    const iot2 = this.createImageNode(510, 300, this.iotImageSrcURL, 50, 25);
-    const iot3 = this.createImageNode(540, 300, this.iotImageSrcURL, 50, 25);
-    const iot4 = this.createImageNode(610, 300, this.iotImageSrcURL, 50, 25);
-    const iot5 = this.createImageNode(640, 300, this.iotImageSrcURL, 50, 25);
-    const iot6 = this.createImageNode(710, 300, this.iotImageSrcURL, 50, 25);
-    const iot7 = this.createImageNode(740, 300, this.iotImageSrcURL, 50, 25);
-    const iot8 = this.createImageNode(810, 300, this.iotImageSrcURL, 50, 25);
-
-    const link = new joint.dia.Link({
-      source: { id: cloud.id },
-      target: { id: cloud2.id }
-    });
-
-    const link2 = this.createLink(cloud, cloud3);
-
-    const elements = [cloud, cloud2, link, cloud3, link2];
-    elements.push(fog, fog2, fog3, fog4);
-    elements.push(iot1, iot2, iot3, iot4, iot5, iot6, iot7, iot8);
-    this.graph.addCells(this.inintCells(elements));
+    this.graph.addCells(this.inintCells(graphElements));
     //console.log(this.graph.toJSON());
   }
 
@@ -136,15 +135,15 @@ export class ConnectionComponent implements OnInit {
     x: number,
     y: number,
     imageSrc: string,
-    width = this.defaultWidth,
-    height = this.defauldHeight
+    width = this.nodeWidth,
+    height = this.nodeHeight
   ): joint.shapes.standard.Image {
     const node = new joint.shapes.standard.Image({
       position: { x, y },
       size: { width, height }
     });
     node.attr('image/xlinkHref', imageSrc);
-    node.attr('label/text', 'Name [' + `${x}` + ',' + `${y}` + ']');
+    node.attr('label/text', 'Name [' + `${Math.round(x)}` + ',' + `${Math.round(y)}` + ']');
     return node;
   }
 
@@ -179,5 +178,88 @@ export class ConnectionComponent implements OnInit {
   inintCells(cells: (joint.shapes.standard.Image | joint.dia.Link | joint.dia.Cell)[]) {
     cells.forEach(cell => cell.attr('selected', 'false'));
     return cells;
+  }
+
+  countLayers(): number {
+    let numOfLayers = 0;
+    if (this.numOfClouds && this.numOfClouds > 0) {
+      numOfLayers++;
+    }
+    if (this.numOfFogs && this.numOfFogs > 0) {
+      numOfLayers++;
+    }
+    if (this.numOfIots && this.numOfIots > 0) {
+      numOfLayers++;
+    }
+    return numOfLayers;
+  }
+
+  getTheMaxQuantityOfNodes() {
+    const nums = [];
+    if (this.numOfClouds) {
+      nums.push(this.numOfClouds);
+    }
+    if (this.numOfFogs) {
+      nums.push(this.numOfFogs);
+    }
+    if (this.numOfIots) {
+      nums.push(this.numOfIots);
+    }
+    return Math.max(...nums);
+  }
+
+  createNodes(numOfNodes: number, space: number, startYpos: number, imageUrl: string): joint.shapes.standard.Image[] {
+    if (numOfNodes % 2 === 0) {
+      return this.createEvenNumberOfNodes(numOfNodes, space, startYpos, imageUrl);
+    } else {
+      return this.createOddNumberOfNodes(numOfNodes, space, startYpos, imageUrl);
+    }
+  }
+
+  createOddNumberOfNodes(
+    numOfNodes: number,
+    space: number,
+    startYpos: number,
+    imageUrl: string
+  ): joint.shapes.standard.Image[] {
+    const nodes: joint.shapes.standard.Image[] = [];
+    nodes.push(
+      this.createImageNode(this.paperWidth / 2 - this.nodeWidth / 2, this.cloudsStartYpos, this.cloudImageSrcURL)
+    );
+    const xStartPosToLeft = this.paperWidth / 2 - this.nodeWidth / 2 - this.sapceForClouds - this.nodeWidth;
+    const xStartPosToRight = this.paperWidth / 2 + this.nodeWidth / 2 + this.sapceForClouds;
+    const exitCondition = numOfNodes / 2 - 1;
+    nodes.push(
+      ...this.createPositionedNodes(exitCondition, xStartPosToLeft, xStartPosToRight, space, startYpos, imageUrl)
+    );
+    return nodes;
+  }
+
+  createEvenNumberOfNodes(
+    numOfNodes: number,
+    space: number,
+    startYpos: number,
+    imageUrl: string
+  ): joint.shapes.standard.Image[] {
+    const xStartPosToLeft = this.paperWidth / 2 - space / 2 - this.nodeWidth;
+    const xStartPosToRight = this.paperWidth / 2 + space / 2;
+    const exitCondition = numOfNodes / 2;
+    return this.createPositionedNodes(exitCondition, xStartPosToLeft, xStartPosToRight, space, startYpos, imageUrl);
+  }
+
+  createPositionedNodes(
+    exitCondition: number,
+    xStartPosToLeft: number,
+    xStartPosToRight: number,
+    space: number,
+    startYpos: number,
+    imageUrl: string
+  ): joint.shapes.standard.Image[] {
+    const nodes: joint.shapes.standard.Image[] = [];
+    for (let i = 0; i < exitCondition; i++) {
+      nodes.push(this.createImageNode(xStartPosToRight + (i * this.nodeWidth + space * i), startYpos, imageUrl));
+      nodes.push(this.createImageNode(xStartPosToLeft - (i * this.nodeWidth + space * i), startYpos, imageUrl));
+    }
+    return nodes;
   }
 }

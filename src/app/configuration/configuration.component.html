@@ -3,7 +3,7 @@
     <ng-template matStepLabel>Number of clouds</ng-template>
     <app-cloud-number-form (quantityOfComputingNodes)="setNumOfComputingNodes($event)"></app-cloud-number-form>
   </mat-step>
-  <mat-step >
+  <mat-step>
     <ng-template matStepLabel>Configure clouds</ng-template>
     <app-list-configurable-clouds
       [numOfClouds]="numOfClouds"
@@ -14,7 +14,7 @@
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Configure IoTs</ng-template>
-    <button mat-raised-button color="primary" (click)="enableConnectionComponent()"matStepperNext>Next</button>
+    <button mat-raised-button color="primary" (click)="enableConnectionComponent()" matStepperNext>Next</button>
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Configure connections</ng-template>
