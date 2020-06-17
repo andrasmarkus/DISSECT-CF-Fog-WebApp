@@ -1,50 +1,40 @@
-<mat-card>
+ <mat-card class="card">
   <form [formGroup]="cloudCardForm">
-    <div fxLayout="row" fxLayoutAlign="space-between center">
-      <div fxFlex="75" fxLayout="row" fxLayoutAlign="space-around center">
-        <div>
-          <i [class]="cloudIcon"></i>
-        </div>
+    <div class="container">
+      <div class="node-icon">
+        <i [class]="cloudIcon"></i>
+      </div>
+      <div class="configuration-tools">
         <mat-form-field>
           <mat-label>Select LPDS type</mat-label>
           <mat-select [(ngModel)]="selectedLPDStype" name="selectedLPDStype" [ngModelOptions]="{ standalone: true }">
             <mat-option *ngFor="let lpdsType of lpdsTypes" [value]="lpdsType"> {{ lpdsType }}</mat-option>
           </mat-select>
         </mat-form-field>
-        <div>
-          <mat-form-field appearance="outline" class="coord-input-size">
-            <mat-label>x</mat-label>
-            <input class="setText-center" matInput type="number" formControlName="xCoord" />
-          </mat-form-field>
-          <mat-form-field appearance="outline" class="coord-input-size">
-            <mat-label>y</mat-label>
-            <input class="setText-center" matInput type="number" formControlName="yCoord" />
-          </mat-form-field>
-        </div>
-        <div fxLayout="column" fxLayoutAlign="space-around center">
-          <label>Number of applications</label>
-          <mat-form-field appearance="outline" class="input-size-min">
-            <input
-              class="setText-center"
-              matInput
-              type="number"
-              [(ngModel)]="numOfApps"
-              (change)="onChange($event)"
-              formControlName="numOfApplications"
-            />
-            <mat-icon matSuffix>{{ appsStatusIcon }}</mat-icon>
-          </mat-form-field>
+        <div class="configure-apps">
+          <div fxLayout="column" fxLayoutAlign="space-around center">
+            <label>Number of applications</label>
+            <mat-form-field appearance="outline" class="apps-quantity-input">
+              <input
+                class="setText-center"
+                matInput
+                type="number"
+                [(ngModel)]="numOfApps"
+                (change)="onChange($event)"
+                formControlName="numOfApplications"
+              />
+              <mat-icon matSuffix>{{ appsStatusIcon }}</mat-icon>
+            </mat-form-field>
+          </div>
+          <div>
+            <button mat-icon-button (click)="openDialog()">
+              <i class="fas fa-edit fa-2x"></i>
+            </button>
+          </div>
         </div>
       </div>
-      <div fxLayout="row" fxLayoutAlign="center center">
-        <div>
-          <button mat-icon-button (click)="openDialog()">
-            <i class="fas fa-edit fa-2x"></i>
-          </button>
-        </div>
-        <div class="status-margin">
-          <i [class]="statusIcon"></i>
-        </div>
+      <div class="status-margin">
+        <i [class]="statusIcon"></i>
       </div>
     </div>
   </form>

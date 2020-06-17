@@ -47,8 +47,6 @@ export class ConfigurableCloudComponent implements OnInit {
     this.selectedLPDStype = this.lpdsTypes[0]; // needs better solution
     this.cloudCardForm = this.formBuilder.group({
       numOfApplications: [1, Validators.required],
-      xCoord: [undefined],
-      yCoord: [undefined],
       allAppsConfigured: false
     });
 
@@ -57,11 +55,11 @@ export class ConfigurableCloudComponent implements OnInit {
 
     if (this.cloudCardForm) {
       this.cloudCardForm.valueChanges.subscribe(value => {
-        if (value.allAppsConfigured && !!value.xCoord && !!value.yCoord) {
+        if (value.allAppsConfigured) {
           const computingNode = {
             id: this.nodeId,
-            x: +this.cloudCardForm.get('xCoord').value,
-            y: +this.cloudCardForm.get('yCoord').value,
+            x: 0,
+            y: 0,
             lpdsType: this.selectedLPDStype,
             applications: this.applications,
             isCloud: this.isCloudBoolean,

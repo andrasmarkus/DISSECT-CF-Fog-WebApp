@@ -1,17 +1,50 @@
 @import '../../../../assets/css/formStyle.css';
 
-.input-size-min {
+.apps-quantity-input {
   width: 100px;
-}
-
-.coord-input-size {
-  width: 50px;
-}
-
-.card-width {
-  width: 75%;
 }
 
 .status-margin {
   margin: 0 50px;
+}
+
+.container{
+  display: flex;
+  align-items: center;
+}
+
+.card{
+  margin-top: 2rem;
+}
+
+.configuration-tools{
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content:space-evenly;
+}
+
+.configure-apps{
+  display: flex;
+  align-items: center;
+}
+
+@media screen and (max-width: 900px) {
+  .configuration-tools {
+    width: 100%;
+  }
+
+  .container{
+    flex-direction: column;
+  }
+
+  .node-icon{
+    margin-bottom: 1rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .configuration-tools {
+    flex-direction: column;
+  }
 }
