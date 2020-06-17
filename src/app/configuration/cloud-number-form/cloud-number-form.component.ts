@@ -13,30 +13,24 @@ export class CloudNumberFormComponent implements OnInit {
   public numOfClouds = 0;
   public numOfFogs = 0;
   public numOfComputingNodes: FormGroup;
+  public maxNumOfNodes = 10;
 
   constructor(private formBuilder: FormBuilder) {
     this.initForm();
   }
 
-  ngOnInit(): void {
-    //this.initValues();
-  }
+  ngOnInit(): void {}
 
   initForm() {
     this.numOfComputingNodes = this.formBuilder.group({
-      numOfClouds: new FormControl('', [Validators.required]),
-      numOfFogs: new FormControl('', [])
+      numOfClouds: new FormControl('', [
+        Validators.required,
+        Validators.max(this.maxNumOfNodes),
+        Validators.pattern(/^[1-9]+[0-9]*$/)
+      ]),
+      numOfFogs: new FormControl('', [Validators.max(this.maxNumOfNodes)])
     });
   }
-
-  /* initValues() {
-    this.numOfComputingNodes.get('numOfClouds').valueChanges.subscribe(val => {
-      this.numOfClouds = val;
-    });
-    this.numOfComputingNodes.get('numOfFogs').valueChanges.subscribe(val => {
-      this.numOfFogs = val;
-    });
-  } */
 
   public sendCloudAmouts() {
     const cloudsAmount = {
@@ -47,10 +41,4 @@ export class CloudNumberFormComponent implements OnInit {
     } as ComputingNodesQuantityData;
     this.quantityOfComputingNodes.emit(cloudsAmount);
   }
-  /*  onCloudsChange(){
-    this.numOfCloudsEvent.emit(this.numOfComputingNodes.get('numOfClouds').value);
-  }
-  onFogChange(){
-    this.numOfFogsEvent.emit(this.numOfComputingNodes.get('numOfFogs').value);
-  } */
 }
