@@ -20,13 +20,14 @@
                 matInput
                 type="number"
                 [(ngModel)]="numOfApps"
-                (change)="onChange($event)"
+                (keyup)="onChange($event)"
                 formControlName="numOfApplications"
               />
-              <mat-icon matSuffix>{{ appsStatusIcon }}</mat-icon>
+              <mat-icon [matTooltip]="errorTooltip" [matTooltipDisabled]="!showErrorTooltip"
+              matTooltipPosition="below" matSuffix>{{ appsStatusIcon }}</mat-icon>
             </mat-form-field>
           </div>
-          <div>
+          <div *ngIf="cloudCardForm.valid">
             <button mat-icon-button (click)="openDialog()">
               <i class="fas fa-edit fa-2x"></i>
             </button>
