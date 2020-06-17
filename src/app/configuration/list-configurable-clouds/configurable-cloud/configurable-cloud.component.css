@@ -48,3 +48,8 @@
     flex-direction: column;
   }
 }
+@media screen and (max-width: 400px) {
+  .card{
+    margin: 2rem -2rem 0 -2rem;
+  }
+}

@@ -85,6 +85,7 @@ export class ConfigurableCloudComponent implements OnInit {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(ApplicationsDialogComponent, {
+      panelClass: 'applications-dialog-panel',
       disableClose: true,
       width: '80%',
       height: '80%',

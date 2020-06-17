@@ -4,6 +4,34 @@
   width: 40%;
 }
 
-.container-width {
-  width: 90%;
+.app-card.mat-card{
+  padding: 0.5rem 0;
+}
+
+.double-item-row{
+  flex-direction: row;
+  box-sizing: border-box;
+  display: flex;
+  place-content: center space-evenly;
+  align-items: center;
+}
+
+@media screen and (max-width: 500px) {
+  .double-item-row {
+    flex-direction: column;
+  }
+
+  .app-card.mat-card{
+    padding: 0.5rem 3rem;
+  }
+
+  .input-size-min{
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .app-card.mat-card{
+    padding: 0.5rem 1rem;
+  }
 }
