@@ -1,0 +1,8 @@
+<div class="station-container">
+  <div *ngFor="let station of stations; index as i">
+    <app-configurable-station [index]="i+1" [station]="station"></app-configurable-station>
+  </div>
+  <div class="plus-wrapper" (click)="addStation()">
+    <i class="fas fa-plus fa-5x plus-icon"></i>
+  </div>
+</div>

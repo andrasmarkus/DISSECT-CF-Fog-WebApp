@@ -1,0 +1,71 @@
+@import '../../../../assets/css/formStyle.css';
+
+.header{
+  display: flex;
+  justify-content: space-between;
+}
+
+::ng-deep .mat-card-header-text {
+  margin: 0 !important;
+}
+
+.title{
+  flex: 1;
+  text-align: center;
+}
+
+.station-card {
+  width: 340px;
+  margin: 0.5rem;
+}
+
+.station-card.mat-card{
+  padding: 16px 16px 0 16px;
+}
+
+.actions{
+  text-align: center;
+}
+
+.input-size-min {
+  width: 150px;
+  height: 50px;
+}
+
+.double-item-row{
+  flex-direction: row;
+  box-sizing: border-box;
+  display: flex;
+  place-content: center center;
+  align-items: center;
+}
+
+.centered-input{
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.space-top{
+  margin-top: 0.5rem;
+}
+
+.custom-accordion{
+  background-color: #cccccc3b;
+}
+
+::ng-deep .mat-form-field-flex > .mat-form-field-infix { padding: 0.4em 0px !important;}
+::ng-deep .mat-form-field-label-wrapper { top: -1.5em; }
+
+::ng-deep .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+
+.quantity-container{
+  display: flex;
+  justify-content: center;
+}
+.quantity-input{
+  width: 25px;
+  text-align: center;
+}

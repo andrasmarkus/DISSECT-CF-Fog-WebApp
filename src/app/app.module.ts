@@ -15,6 +15,8 @@ import { ApplicationsDialogComponent } from './configuration/list-configurable-c
 import { ApplicationCardComponent } from './configuration/list-configurable-clouds/configurable-cloud/applications-dialog/application-card/application-card.component';
 import { StepBackDialogComponent } from './configuration/step-back-dialog/step-back-dialog.component';
 import { ConnectionComponent } from './configuration/connection/connection.component';
+import { ListStationsComponent } from './configuration/list-stations/list-stations.component';
+import { ConfigurableStationComponent } from './configuration/list-stations/configurable-station/configurable-station.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,9 @@ import { ConnectionComponent } from './configuration/connection/connection.compo
     ApplicationsDialogComponent,
     ApplicationCardComponent,
     StepBackDialogComponent,
-    ConnectionComponent
+    ConnectionComponent,
+    ListStationsComponent,
+    ConfigurableStationComponent
   ],
   imports: [
     BrowserModule,

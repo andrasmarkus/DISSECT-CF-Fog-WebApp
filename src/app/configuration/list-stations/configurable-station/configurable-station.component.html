@@ -1,0 +1,94 @@
+<mat-card class="station-card">
+  <mat-card-header class="header" >
+    <div class="title">
+      <mat-card-title>Station {{index}}</mat-card-title>
+    </div>
+    <span class="fas fa-trash-alt"></span>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="stationFormGroup">
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header class="custom-accordion">
+            <mat-panel-title>
+              Further details
+            </mat-panel-title>
+            <mat-panel-description>
+              Setup the station
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+            <div fxLayout="column" fxLayoutAlign="center center">
+              <div class="double-item-row space-top">
+                <mat-form-field appearance="outline" class="input-size-min">
+                  <mat-label>Start time</mat-label>
+                  <input class="setText-center app-input" matInput type="number" formControlName="starttime" />
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="input-size-min">
+                  <mat-label>Stop time</mat-label>
+                  <input class="setText-center" matInput type="number" formControlName="stoptime" />
+                </mat-form-field>
+              </div>
+              <div class="double-item-row">
+                <mat-form-field appearance="outline" class="input-size-min">
+                  <mat-label>Frequency</mat-label>
+                  <input class="setText-center" matInput type="number" formControlName="freq" />
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="input-size-min">
+                  <mat-label>File size</mat-label>
+                  <input class="setText-center" matInput type="number" formControlName="filesize" />
+                </mat-form-field>
+              </div>
+              <div class="double-item-row">
+                <mat-form-field appearance="outline" class="input-size-min">
+                  <mat-label>Sensor</mat-label>
+                  <input class="setText-center" matInput type="number" formControlName="sensor" />
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="input-size-min">
+                  <mat-label>Max in</mat-label>
+                  <input class="setText-center" matInput type="number" formControlName="maxinbw" />
+                </mat-form-field>
+              </div>
+              <div class="double-item-row">
+                <mat-form-field appearance="outline" class="input-size-min">
+                  <mat-label>Max out</mat-label>
+                  <input class="setText-center" matInput type="number" formControlName="maxoutbw" />
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="input-size-min">
+                  <mat-label>Disk</mat-label>
+                  <input class="setText-center" matInput type="number" formControlName="diskbw" />
+                </mat-form-field>
+              </div>
+            </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <div class="double-item-row space-top">
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Number</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="number" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Radius</mat-label>
+          <input class="setText-center" matInput type="text" formControlName="radius" />
+        </mat-form-field>
+      </div>
+      <div class="centered-input">
+        <mat-form-field appearance="outline" class="input-size-min no-padding">
+          <mat-label>Strategy</mat-label>
+          <mat-select [(ngModel)]="strategy" [ngModelOptions]="{ standalone: true }">
+            <mat-option *ngFor="let strategy of strategys" [value]="strategy"> {{ strategy }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </form>
+    <mat-divider></mat-divider>
+    <div class="quantity-container">
+      <button mat-icon-button (click)="decrease()">
+        <i class="fas fa-minus"></i>
+      </button>
+      <input matInput class="quantity-input" type="number" readonly="true" [ngModel]="quantity"/>
+      <button mat-icon-button (click)="increase()">
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>
