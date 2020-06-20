@@ -16,7 +16,7 @@ export class Node {
 export class ConnectionComponent implements OnInit {
   numOfClouds = 3;
   numOfFogs = 4;
-  numOfIots = 8;
+  numOfStations = 8;
   nodeWidth: number;
   nodeHeight: number;
   /* cloudImageSrcURL =
@@ -27,8 +27,8 @@ export class ConnectionComponent implements OnInit {
     'https://cdn0.iconfinder.com/data/icons/good-weather-1/96/weather_icons-42-512.png'; */
   fogImageSrcURL = 'https://freesvg.org/img/1343932181.png';
 
-  //iotImageSrcURL = 'https://image.flaticon.com/icons/svg/63/63930.svg';
-  iotImageSrcURL = 'https://cdn.pixabay.com/photo/2016/12/19/03/14/gadget-1917227_960_720.png';
+  //stationImageSrcURL = 'https://image.flaticon.com/icons/svg/63/63930.svg';
+  stationImageSrcURL = 'https://cdn.pixabay.com/photo/2016/12/19/03/14/gadget-1917227_960_720.png';
 
   selectedNodeQueue: Node[] = [];
 
@@ -40,11 +40,11 @@ export class ConnectionComponent implements OnInit {
   public proportionOfTheTotalSize = 0.8;
   public sapceForClouds: number;
   public sapceForFogs: number;
-  public sapceForIots: number;
+  public sapceForStations: number;
   public numOfLayers: number;
   public cloudsStartYpos: number;
   public fogsStartYpos: number;
-  public iotssStartYpos: number;
+  public stationsStartYpos: number;
   public verticalSpaceBetweenLayers: number;
 
   ngOnInit() {
@@ -55,13 +55,13 @@ export class ConnectionComponent implements OnInit {
 
     this.sapceForClouds = (this.paperWidth - this.numOfClouds * this.nodeWidth) / this.numOfClouds;
     this.sapceForFogs = (this.paperWidth - this.numOfFogs * this.nodeWidth) / this.numOfFogs;
-    this.sapceForIots = (this.paperWidth - this.numOfIots * this.nodeWidth) / this.numOfIots;
+    this.sapceForStations = (this.paperWidth - this.numOfStations * this.nodeWidth) / this.numOfStations;
     this.numOfLayers = this.countLayers();
     this.verticalSpaceBetweenLayers = (this.paperHeight / this.numOfLayers - this.nodeHeight) / 2;
     this.cloudsStartYpos = this.verticalSpaceBetweenLayers;
     this.fogsStartYpos = this.cloudsStartYpos + this.nodeHeight + this.verticalSpaceBetweenLayers * 2;
-    this.iotssStartYpos = this.fogsStartYpos + this.nodeHeight + this.verticalSpaceBetweenLayers * 2;
-    console.log(this.iotssStartYpos);
+    this.stationsStartYpos = this.fogsStartYpos + this.nodeHeight + this.verticalSpaceBetweenLayers * 2;
+    console.log(this.stationsStartYpos);
 
     this.graph = new joint.dia.Graph();
 
@@ -107,7 +107,7 @@ export class ConnectionComponent implements OnInit {
     );
     graphElements.push(...this.createNodes(this.numOfFogs, this.sapceForFogs, this.fogsStartYpos, this.fogImageSrcURL));
     graphElements.push(
-      ...this.createNodes(this.numOfIots, this.sapceForIots, this.iotssStartYpos, this.iotImageSrcURL)
+      ...this.createNodes(this.numOfStations, this.sapceForStations, this.stationsStartYpos, this.stationImageSrcURL)
     );
 
     this.graph.addCells(this.inintCells(graphElements));
@@ -188,7 +188,7 @@ export class ConnectionComponent implements OnInit {
     if (this.numOfFogs && this.numOfFogs > 0) {
       numOfLayers++;
     }
-    if (this.numOfIots && this.numOfIots > 0) {
+    if (this.numOfStations && this.numOfStations > 0) {
       numOfLayers++;
     }
     return numOfLayers;
@@ -202,8 +202,8 @@ export class ConnectionComponent implements OnInit {
     if (this.numOfFogs) {
       nums.push(this.numOfFogs);
     }
-    if (this.numOfIots) {
-      nums.push(this.numOfIots);
+    if (this.numOfStations) {
+      nums.push(this.numOfStations);
     }
     return Math.max(...nums);
   }
