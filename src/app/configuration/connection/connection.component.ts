@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import * as jQuery from 'jquery';
 import * as _ from 'lodash';
 import * as $ from 'backbone';
 import * as joint from 'jointjs';
+import { ComputingNodesObject } from 'src/app/models/computing-nodes-object';
+import { StationsObject, Station } from 'src/app/models/station';
 
 export class Node {
   id: string;
@@ -14,11 +16,18 @@ export class Node {
   styleUrls: ['./connection.component.css']
 })
 export class ConnectionComponent implements OnInit {
-  numOfClouds = 3;
-  numOfFogs = 4;
-  numOfStations = 8;
-  nodeWidth: number;
-  nodeHeight: number;
+  @Input() computingNodes: ComputingNodesObject;
+  @Input() stationNodes: StationsObject;
+
+  public multipleStationNodes: StationsObject;
+  public clouds: ComputingNodesObject = {};
+  public fogs: ComputingNodesObject = {};
+  public numOfClouds = 6;
+  public numOfFogs = 10;
+  public numOfStations = 11;
+  public nodeWidth: number;
+  public nodeHeight: number;
+  public latency: number;
   /* cloudImageSrcURL =
     'https://cloud.google.com/images/social-icon-google-cloud-1200-630.png'; */
   cloudImageSrcURL =
@@ -47,21 +56,49 @@ export class ConnectionComponent implements OnInit {
   public stationsStartYpos: number;
   public verticalSpaceBetweenLayers: number;
 
+  private readonly circleRangeBackgroundColor = '#00f71b40';
+
   ngOnInit() {
+    this.numOfClouds = Object.values(this.computingNodes).filter(node => node.isCloud).length;
+    this.numOfFogs = Object.values(this.computingNodes).filter(node => !node.isCloud).length;
+    this.multipleStationNodes = this.getMultipleStations();
+    this.numOfStations = Object.keys(this.multipleStationNodes).length;
+    this.collectNodes();
+
     this.paperWidth = window.innerWidth * this.proportionOfTheTotalSize;
     this.paperHeight = window.innerHeight * this.proportionOfTheTotalSize;
-    this.nodeWidth = this.paperWidth / (this.getTheMaxQuantityOfNodes() * 2);
-    this.nodeHeight = this.paperHeight / (this.getTheMaxQuantityOfNodes() * 2);
+    const computedNodeWidth = this.paperWidth / (this.getTheMaxQuantityOfNodes() * 2);
+    const computedNodeHeight = this.paperHeight / (this.getTheMaxQuantityOfNodes() * 2);
+    this.nodeWidth = computedNodeWidth > 75 ? 75 : computedNodeWidth;
+    this.nodeHeight = computedNodeHeight > 50 ? 50 : computedNodeHeight;
 
-    this.sapceForClouds = (this.paperWidth - this.numOfClouds * this.nodeWidth) / this.numOfClouds;
-    this.sapceForFogs = (this.paperWidth - this.numOfFogs * this.nodeWidth) / this.numOfFogs;
-    this.sapceForStations = (this.paperWidth - this.numOfStations * this.nodeWidth) / this.numOfStations;
+    if (this.numOfClouds > 0) {
+      this.sapceForClouds = (this.paperWidth - this.numOfClouds * this.nodeWidth) / (this.numOfClouds + 1);
+    }
+    if (this.numOfFogs > 0) {
+      this.sapceForFogs = (this.paperWidth - this.numOfFogs * this.nodeWidth) / (this.numOfFogs + 1);
+    }
+    if (this.numOfStations > 0) {
+      this.sapceForStations = (this.paperWidth - this.numOfStations * this.nodeWidth) / (this.numOfStations + 1);
+    }
     this.numOfLayers = this.countLayers();
     this.verticalSpaceBetweenLayers = (this.paperHeight / this.numOfLayers - this.nodeHeight) / 2;
-    this.cloudsStartYpos = this.verticalSpaceBetweenLayers;
-    this.fogsStartYpos = this.cloudsStartYpos + this.nodeHeight + this.verticalSpaceBetweenLayers * 2;
-    this.stationsStartYpos = this.fogsStartYpos + this.nodeHeight + this.verticalSpaceBetweenLayers * 2;
-    console.log(this.stationsStartYpos);
+    if (this.numOfClouds > 0) {
+      this.cloudsStartYpos = this.verticalSpaceBetweenLayers;
+    }
+    if (this.numOfFogs > 0) {
+      this.fogsStartYpos =
+        this.numOfClouds > 0
+          ? this.cloudsStartYpos + this.nodeHeight + this.verticalSpaceBetweenLayers * 2
+          : this.cloudsStartYpos;
+    }
+    if (this.numOfClouds === 0) {
+      this.stationsStartYpos = this.fogsStartYpos + this.nodeHeight + this.verticalSpaceBetweenLayers * 2;
+    } else if (this.numOfFogs === 0) {
+      this.stationsStartYpos = this.cloudsStartYpos + this.nodeHeight + this.verticalSpaceBetweenLayers * 2;
+    } else {
+      this.stationsStartYpos = this.fogsStartYpos + this.nodeHeight + this.verticalSpaceBetweenLayers * 2;
+    }
 
     this.graph = new joint.dia.Graph();
 
@@ -70,15 +107,20 @@ export class ConnectionComponent implements OnInit {
       width: this.paperWidth,
       height: this.paperHeight,
       model: this.graph,
-      gridSize: 1
+      gridSize: 1,
+      interactive: cellView => {
+        return !cellView.model.isEmbedded();
+      }
     });
 
     this.paper.on('element:pointerclick', (elementView: joint.dia.ElementView) => {
       const currentElement = elementView.model;
-      if (currentElement.attributes.attrs.selected === 'true') {
-        this.deselectNode(elementView);
-      } else {
-        this.selectNode(elementView);
+      if (!currentElement.isEmbedded()) {
+        if (currentElement.attributes.attrs.selected === 'true') {
+          this.deselectNode(elementView);
+        } else {
+          this.selectNode(elementView);
+        }
       }
     });
 
@@ -94,24 +136,32 @@ export class ConnectionComponent implements OnInit {
 
     this.paper.on('element:pointermove', (elementView: joint.dia.ElementView) => {
       const currentElement = elementView.model;
-      const xPos = currentElement.attributes.position.x;
-      const yPos = currentElement.attributes.position.y;
+      if (!currentElement.isEmbedded()) {
+        const xPos = currentElement.attributes.position.x;
+        const yPos = currentElement.attributes.position.y;
 
-      currentElement.attr('label/text', 'Name [' + `${xPos}` + ',' + `${yPos}` + ']');
+        currentElement.attr('label/text', 'Name\n[' + `${xPos}` + ',' + `${yPos}` + ']');
+      }
     });
 
     const graphElements: (joint.dia.Link | joint.shapes.standard.Image | joint.dia.Cell)[] = [];
 
     graphElements.push(
-      ...this.createNodes(this.numOfClouds, this.sapceForClouds, this.cloudsStartYpos, this.cloudImageSrcURL)
+      ...this.createNodesInQueue(this.clouds, this.sapceForClouds, this.cloudsStartYpos, this.cloudImageSrcURL)
     );
-    graphElements.push(...this.createNodes(this.numOfFogs, this.sapceForFogs, this.fogsStartYpos, this.fogImageSrcURL));
     graphElements.push(
-      ...this.createNodes(this.numOfStations, this.sapceForStations, this.stationsStartYpos, this.stationImageSrcURL)
+      ...this.createNodesInQueue(this.fogs, this.sapceForFogs, this.fogsStartYpos, this.fogImageSrcURL)
+    );
+    graphElements.push(
+      ...this.createNodesWithRangeInQueue(
+        this.multipleStationNodes,
+        this.sapceForStations,
+        this.stationsStartYpos,
+        this.stationImageSrcURL
+      )
     );
 
     this.graph.addCells(this.inintCells(graphElements));
-    //console.log(this.graph.toJSON());
   }
 
   createLink(element1: joint.shapes.standard.Image, element2: joint.shapes.standard.Image): joint.dia.Link {
@@ -127,8 +177,18 @@ export class ConnectionComponent implements OnInit {
         source: { id: this.selectedNodeQueue[0].id },
         target: { id: this.selectedNodeQueue[1].id }
       });
+      link.labels([
+        {
+          attrs: {
+            text: {
+              text: '' + this.latency
+            }
+          }
+        }
+      ]);
       this.graph.addCell(link);
     }
+    console.log(this.graph.toJSON());
   }
 
   createImageNode(
@@ -143,7 +203,10 @@ export class ConnectionComponent implements OnInit {
       size: { width, height }
     });
     node.attr('image/xlinkHref', imageSrc);
-    node.attr('label/text', 'Name [' + `${Math.round(x)}` + ',' + `${Math.round(y)}` + ']');
+    node.attr('label/text', 'Name\n[' + `${Math.round(x)}` + ',' + `${Math.round(y)}` + ']');
+    node.attr('label/fontSize', '11');
+    node.attributes.attrs.label.refY = '100%';
+    node.attributes.attrs.label.refY2 = '1';
     return node;
   }
 
@@ -208,58 +271,91 @@ export class ConnectionComponent implements OnInit {
     return Math.max(...nums);
   }
 
-  createNodes(numOfNodes: number, space: number, startYpos: number, imageUrl: string): joint.shapes.standard.Image[] {
-    if (numOfNodes % 2 === 0) {
-      return this.createEvenNumberOfNodes(numOfNodes, space, startYpos, imageUrl);
-    } else {
-      return this.createOddNumberOfNodes(numOfNodes, space, startYpos, imageUrl);
+  getMultipleStations(): StationsObject {
+    const resultObject = {};
+    for (const [stationId, station] of Object.entries(this.stationNodes)) {
+      if (station.quantity > 1) {
+        for (let i = 1; i <= station.quantity; i++) {
+          const subStationKey = stationId + '.' + i;
+          resultObject[subStationKey] = station;
+        }
+      } else {
+        resultObject[stationId] = station;
+      }
+    }
+    return resultObject;
+  }
+
+  private collectNodes() {
+    for (const [id, node] of Object.entries(this.computingNodes)) {
+      if (node.isCloud) {
+        this.clouds[id] = node;
+      } else {
+        this.fogs[id] = node;
+      }
     }
   }
 
-  createOddNumberOfNodes(
-    numOfNodes: number,
+  private getCircleRangeForNode(
+    node: joint.shapes.standard.Image,
+    nodeStartX: number,
+    nodeStartY: number,
+    radius: number
+  ): joint.shapes.standard.Circle {
+    const nodeXCenter = nodeStartX + this.nodeWidth / 2;
+    const nodeYCenter = nodeStartY + this.nodeHeight / 2;
+    const circleXCenter = nodeXCenter - radius;
+    const circleYCenter = nodeYCenter - radius;
+    const circle = new joint.shapes.standard.Circle();
+    circle.resize(radius * 2, radius * 2);
+    circle.position(circleXCenter, circleYCenter);
+    circle.attr('root/title', 'joint.shapes.standard.Circle');
+    circle.attr('body/fill', this.circleRangeBackgroundColor);
+    circle.attr('body/strokeWidth', '0');
+    node.embed(circle);
+    return circle;
+  }
+
+  createNodesWithRangeInQueue(
+    items: StationsObject,
     space: number,
     startYpos: number,
     imageUrl: string
-  ): joint.shapes.standard.Image[] {
-    const nodes: joint.shapes.standard.Image[] = [];
-    nodes.push(
-      this.createImageNode(this.paperWidth / 2 - this.nodeWidth / 2, this.cloudsStartYpos, this.cloudImageSrcURL)
-    );
-    const xStartPosToLeft = this.paperWidth / 2 - this.nodeWidth / 2 - this.sapceForClouds - this.nodeWidth;
-    const xStartPosToRight = this.paperWidth / 2 + this.nodeWidth / 2 + this.sapceForClouds;
-    const exitCondition = numOfNodes / 2 - 1;
-    nodes.push(
-      ...this.createPositionedNodes(exitCondition, xStartPosToLeft, xStartPosToRight, space, startYpos, imageUrl)
-    );
+  ): (joint.shapes.standard.Image | joint.shapes.standard.Circle)[] {
+    const nodes: (joint.shapes.standard.Image | joint.shapes.standard.Circle)[] = [];
+    const itemsLength = Object.keys(items).length;
+    let counter = 0;
+    for (const [stationId, station] of Object.entries(items)) {
+      const xPos = space + (counter * this.nodeWidth + space * counter);
+      const node = this.createImageNode(xPos, startYpos, imageUrl);
+      if (station.radius > 0) {
+        const nodeRange = this.getCircleRangeForNode(node, xPos, startYpos, station.radius);
+        nodes.push(...[nodeRange, node]);
+      } else {
+        nodes.push(node);
+      }
+      counter++;
+    }
     return nodes;
   }
 
-  createEvenNumberOfNodes(
-    numOfNodes: number,
-    space: number,
-    startYpos: number,
-    imageUrl: string
-  ): joint.shapes.standard.Image[] {
-    const xStartPosToLeft = this.paperWidth / 2 - space / 2 - this.nodeWidth;
-    const xStartPosToRight = this.paperWidth / 2 + space / 2;
-    const exitCondition = numOfNodes / 2;
-    return this.createPositionedNodes(exitCondition, xStartPosToLeft, xStartPosToRight, space, startYpos, imageUrl);
-  }
-
-  createPositionedNodes(
-    exitCondition: number,
-    xStartPosToLeft: number,
-    xStartPosToRight: number,
+  createNodesInQueue(
+    items: ComputingNodesObject,
     space: number,
     startYpos: number,
     imageUrl: string
   ): joint.shapes.standard.Image[] {
     const nodes: joint.shapes.standard.Image[] = [];
-    for (let i = 0; i < exitCondition; i++) {
-      nodes.push(this.createImageNode(xStartPosToRight + (i * this.nodeWidth + space * i), startYpos, imageUrl));
-      nodes.push(this.createImageNode(xStartPosToLeft - (i * this.nodeWidth + space * i), startYpos, imageUrl));
+    const itemsLength = Object.keys(items).length;
+    let counter = 0;
+    if (itemsLength > 0) {
+      for (const [nodeId, node] of Object.entries(items)) {
+        const xPos = space + (counter * this.nodeWidth + space * counter);
+        nodes.push(this.createImageNode(xPos, startYpos, imageUrl));
+        counter++;
+      }
     }
+
     return nodes;
   }
 }

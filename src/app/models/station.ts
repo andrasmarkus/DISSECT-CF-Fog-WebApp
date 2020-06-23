@@ -15,6 +15,7 @@ export class Station {
   xCoord?: number;
   yCoord?: number;
   quantity: number;
+  valid = false;
 }
 
 export class StationsObject {

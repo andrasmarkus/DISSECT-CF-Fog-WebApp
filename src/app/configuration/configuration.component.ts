@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { StepBackDialogComponent } from './step-back-dialog/step-back-dialog.component';
 import { StepBackServiceService } from '../services/step-back-service.service';
 import { ComputingNodesObject } from '../models/computing-nodes-object';
+import { StationsObject } from '../models/station';
 
 @Component({
   selector: 'app-configuration',
@@ -21,6 +22,7 @@ export class ConfigurationComponent implements OnInit, AfterViewChecked {
   selectedIndex = 0;
   back = false;
   computingNodes: ComputingNodesObject = {};
+  stationNodes: StationsObject = {};
   public showConnections = false;
 
   @ViewChild(CloudNumberFormComponent) numOfCloudsForm: CloudNumberFormComponent;
@@ -59,5 +61,11 @@ export class ConfigurationComponent implements OnInit, AfterViewChecked {
   }
   enableConnectionComponent() {
     this.showConnections = true;
+  }
+
+  public saveStationNodes(stationNodes: StationsObject) {
+    this.enableConnectionComponent();
+    this.stationNodes = stationNodes;
+    console.log(this.stationNodes);
   }
 }

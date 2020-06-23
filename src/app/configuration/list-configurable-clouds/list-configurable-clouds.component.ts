@@ -32,7 +32,9 @@ export class ListConfigurableCloudsComponent implements OnInit {
   }
 
   public saveNodes(): void {
-    this.readyToSaveEmitter.emit(this.computingNodes);
+    if (this.readyToSave) {
+      this.readyToSaveEmitter.emit(this.computingNodes);
+    }
   }
 
   stepBack() {

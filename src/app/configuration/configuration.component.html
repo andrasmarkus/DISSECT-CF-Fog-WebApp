@@ -14,11 +14,10 @@
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Configure stations</ng-template>
-    <app-list-stations></app-list-stations>
-    <button mat-raised-button color="primary" (click)="enableConnectionComponent()" matStepperNext>Next</button>
+    <app-list-stations (stationsEmitter)="saveStationNodes($event)"></app-list-stations>
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Configure connections</ng-template>
-    <app-connection *ngIf="showConnections"></app-connection>
+    <app-connection [computingNodes]="computingNodes" [stationNodes]="stationNodes" *ngIf="showConnections"></app-connection>
   </mat-step>
 </mat-horizontal-stepper>

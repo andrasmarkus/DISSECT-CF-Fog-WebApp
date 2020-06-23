@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Station } from 'src/app/models/station';
 
@@ -11,12 +11,23 @@ export class ConfigurableStationComponent implements OnInit {
   @Input() public station: Station;
   @Input() index: number;
   @Input() public strategys: string[] = ['random', 'distance'];
+  @Output() stationEmitter = new EventEmitter<Station>();
   public strategy = this.strategys[0];
   public stationFormGroup: FormGroup;
   public quantity = 1;
 
   constructor(private formBuilder: FormBuilder) {
     this.createForm();
+    this.station = new Station();
+
+    this.stationFormGroup.valueChanges.subscribe(station => {
+      if (this.stationFormGroup.valid && this.quantity >= 1) {
+        this.stationEmitter.emit(this.getValidStation());
+      } else {
+        this.station.valid = false;
+        this.stationEmitter.emit(this.station);
+      }
+    });
   }
 
   createForm() {
@@ -39,25 +50,23 @@ export class ConfigurableStationComponent implements OnInit {
   public decrease() {
     if (this.quantity > 1) {
       this.quantity--;
+      this.station.quantity = this.quantity;
     }
   }
 
   public increase() {
     this.quantity++;
+    this.station.quantity = this.quantity;
   }
 
-  public getValidApplication() {
-    if (this.stationFormGroup.valid) {
-      this.station = new Station();
-      this.station = this.stationFormGroup.value;
-      this.station.id = 'station' + this.index;
-      return this.station;
-    }
-    return null;
+  public getValidStation() {
+    this.station = new Station();
+    this.station = this.stationFormGroup.value;
+    this.station.id = 'station' + this.index;
+    this.station.valid = true;
+    this.station.quantity = this.quantity;
+    return this.station;
   }
 
-  public checkValidation(): boolean {
-    return this.stationFormGroup.valid;
-  }
   ngOnInit(): void {}
 }
