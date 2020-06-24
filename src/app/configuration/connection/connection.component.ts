@@ -3,11 +3,14 @@ import * as jQuery from 'jquery';
 import * as _ from 'lodash';
 import * as $ from 'backbone';
 import * as joint from 'jointjs';
-import { ComputingNodesObject } from 'src/app/models/computing-nodes-object';
+import { ComputingNodesObject, ConfiguredComputingNodesObject } from 'src/app/models/computing-nodes-object';
 import { StationsObject, Station } from 'src/app/models/station';
+import { ConfigurationObject, Neighbour } from 'src/app/models/configuration';
+import { omit } from 'lodash';
 
 export class Node {
   id: string;
+  nodeId: string;
 }
 
 @Component({
@@ -40,6 +43,7 @@ export class ConnectionComponent implements OnInit {
   stationImageSrcURL = 'https://cdn.pixabay.com/photo/2016/12/19/03/14/gadget-1917227_960_720.png';
 
   selectedNodeQueue: Node[] = [];
+  public configuration: ConfigurationObject = { nodes: {}, stations: {} };
 
   public paper: joint.dia.Paper;
   public graph: joint.dia.Graph;
@@ -100,6 +104,7 @@ export class ConnectionComponent implements OnInit {
       this.stationsStartYpos = this.fogsStartYpos + this.nodeHeight + this.verticalSpaceBetweenLayers * 2;
     }
 
+    this.createInitCongifuration();
     this.graph = new joint.dia.Graph();
 
     this.paper = new joint.dia.Paper({
@@ -141,6 +146,22 @@ export class ConnectionComponent implements OnInit {
         const yPos = currentElement.attributes.position.y;
 
         currentElement.attr('label/text', 'Name\n[' + `${xPos}` + ',' + `${yPos}` + ']');
+      }
+    });
+
+    this.graph.on('remove', (cell, collection, opt) => {
+      if (cell.isLink()) {
+        console.log(cell);
+        const sourceCell = this.graph.getCells().find(c => c.id === cell.attributes.source.id);
+        const targetCell = this.graph.getCells().find(c => c.id === cell.attributes.target.id);
+        const sourceNodeId = sourceCell.attributes.attrs.nodeId;
+        const targetNodeId = targetCell.attributes.attrs.nodeId;
+        if (this.configuration.nodes[sourceNodeId] && this.configuration.nodes[targetNodeId]) {
+          const sourceNeighbours = this.configuration.nodes[sourceNodeId].neighbours;
+          const targetNeighbours = this.configuration.nodes[targetNodeId].neighbours;
+          this.configuration.nodes[sourceNodeId].neighbours = omit(sourceNeighbours, targetNodeId);
+          this.configuration.nodes[targetNodeId].neighbours = omit(targetNeighbours, sourceNodeId);
+        }
       }
     });
 
@@ -186,12 +207,14 @@ export class ConnectionComponent implements OnInit {
           }
         }
       ]);
+      this.createNeighbours();
       this.graph.addCell(link);
     }
     console.log(this.graph.toJSON());
   }
 
   createImageNode(
+    nodeId: string,
     x: number,
     y: number,
     imageSrc: string,
@@ -207,6 +230,7 @@ export class ConnectionComponent implements OnInit {
     node.attr('label/fontSize', '11');
     node.attributes.attrs.label.refY = '100%';
     node.attributes.attrs.label.refY2 = '1';
+    node.attr('nodeId', nodeId);
     return node;
   }
 
@@ -225,7 +249,10 @@ export class ConnectionComponent implements OnInit {
         }
       });
     }
-    this.selectedNodeQueue.push({ id: elementView.model.id as string });
+    this.selectedNodeQueue.push({
+      id: elementView.model.id as string,
+      nodeId: elementView.model.attributes.attrs.nodeId as string
+    });
     elementView.highlight();
     elementView.model.attr('selected', 'true');
   }
@@ -327,7 +354,7 @@ export class ConnectionComponent implements OnInit {
     let counter = 0;
     for (const [stationId, station] of Object.entries(items)) {
       const xPos = space + (counter * this.nodeWidth + space * counter);
-      const node = this.createImageNode(xPos, startYpos, imageUrl);
+      const node = this.createImageNode(stationId, xPos, startYpos, imageUrl);
       if (station.radius > 0) {
         const nodeRange = this.getCircleRangeForNode(node, xPos, startYpos, station.radius);
         nodes.push(...[nodeRange, node]);
@@ -351,11 +378,41 @@ export class ConnectionComponent implements OnInit {
     if (itemsLength > 0) {
       for (const [nodeId, node] of Object.entries(items)) {
         const xPos = space + (counter * this.nodeWidth + space * counter);
-        nodes.push(this.createImageNode(xPos, startYpos, imageUrl));
+        nodes.push(this.createImageNode(nodeId, xPos, startYpos, imageUrl));
         counter++;
       }
     }
 
     return nodes;
+  }
+
+  createInitCongifuration() {
+    for (const [id, node] of Object.entries(this.computingNodes)) {
+      this.configuration.nodes[id] = { ...node, neighbours: {} };
+    }
+    this.configuration.stations = this.multipleStationNodes;
+    console.log(this.configuration);
+  }
+
+  createNeighbours() {
+    const firstSelectedNodeId = this.selectedNodeQueue[0].nodeId;
+    const secondSelectedNodeId = this.selectedNodeQueue[1].nodeId;
+    if (this.configuration.nodes[firstSelectedNodeId] && this.configuration.nodes[secondSelectedNodeId]) {
+      const firstToSecond = {
+        name: secondSelectedNodeId,
+        latency: this.latency
+      } as Neighbour;
+
+      const secondToFirst = {
+        name: firstSelectedNodeId,
+        latency: this.latency
+      } as Neighbour;
+      this.configuration.nodes[firstSelectedNodeId].neighbours[secondSelectedNodeId] = firstToSecond;
+      this.configuration.nodes[secondSelectedNodeId].neighbours[firstSelectedNodeId] = secondToFirst;
+    }
+  }
+
+  save() {
+    console.log(this.configuration);
   }
 }

@@ -2,8 +2,9 @@
     <div class="clouds"></div>
     <div id="paper" class="joint-paper"></div>
 </div>
-<button (click)="createLinkBetweenSelectedNodes()">Add connection</button>
+<button mat-raised-button color="primary" (click)="createLinkBetweenSelectedNodes()">Add connection</button>
 <mat-form-field appearance="outline" class="input-size-min">
     <mat-label>Latency</mat-label>
     <input class="setText-center" matInput type="number" [(ngModel)]="latency" />
 </mat-form-field>
+<button mat-raised-button (click)="save()">Add connection</button>
