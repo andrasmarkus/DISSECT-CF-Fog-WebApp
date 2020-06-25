@@ -11,8 +11,8 @@
   </div>
 </div>
 <div fxLayout="row" fxLayoutAlign="center center">
-  <button mat-button matDialogClose (click)="closeWithData()">No Thanks</button>
-  <button mat-button [disabled]="!checkDialogIsValid()" (click)="submitApplicationCards()">
+  <button mat-raised-button matDialogClose (click)="closeWithData()">Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="!checkDialogIsValid()" (click)="submitApplicationCards()">
     Ok
   </button>
 </div>

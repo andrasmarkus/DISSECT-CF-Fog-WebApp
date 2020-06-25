@@ -19,9 +19,13 @@ import { Application } from 'src/app/models/application';
 export class ApplicationCardComponent implements OnInit {
   @Input() index: number;
   @Input() application: Application;
+  @Input() instances = ['a1.large', 'a1.xlarge', 'a2.xlarge'];
+  @Input() public strategys: string[] = ['random', 'distance'];
   private app: Application;
   public appFormGroup: FormGroup;
   public canJoin: boolean;
+  public instance: string;
+  public strategy: string;
 
   constructor(private formBuilder: FormBuilder, private cdr: ChangeDetectorRef) {
     this.createForm();
@@ -34,12 +38,9 @@ export class ApplicationCardComponent implements OnInit {
   createForm() {
     this.appFormGroup = this.formBuilder.group({
       taksize: new FormControl('', [Validators.required]),
-      name: new FormControl('', [Validators.required]),
       freq: new FormControl('', [Validators.required]),
-      instance: new FormControl('', [Validators.required]), // shuld be select
       numOfInstruction: new FormControl('', [Validators.required]),
-      threshold: new FormControl('', [Validators.required]),
-      strategy: new FormControl('', [Validators.required]) // shuld be select
+      threshold: new FormControl('', [Validators.required])
     });
   }
 
@@ -48,6 +49,8 @@ export class ApplicationCardComponent implements OnInit {
       this.appFormGroup.patchValue(this.application);
     }
     this.canJoin = this.application ? this.application.canJoin : false;
+    this.instance = this.application ? this.application.instance : this.instances[0];
+    this.strategy = this.application ? this.application.strategy : this.strategys[0];
   }
 
   public getValidApplication() {
@@ -55,6 +58,8 @@ export class ApplicationCardComponent implements OnInit {
       this.app = new Application();
       this.app = this.appFormGroup.value;
       this.app.canJoin = this.canJoin;
+      this.app.strategy = this.strategy;
+      this.app.instance = this.instance;
       this.app.id = 'app' + this.index;
       return this.app;
     }

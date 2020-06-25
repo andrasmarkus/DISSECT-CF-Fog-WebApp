@@ -12,8 +12,20 @@
   flex-direction: row;
   box-sizing: border-box;
   display: flex;
-  place-content: center space-evenly;
+  place-content: center center;
   align-items: center;
+}
+
+.custom-expansion-panel-header{
+  background-color: #cccccc3b;
+}
+
+.custom-expansion-panel{
+  margin: 0 1rem;
+}
+
+.space-top{
+  margin-top: 1rem;
 }
 
 @media screen and (max-width: 500px) {

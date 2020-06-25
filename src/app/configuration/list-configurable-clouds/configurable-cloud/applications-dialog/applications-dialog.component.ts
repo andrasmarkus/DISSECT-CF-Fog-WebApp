@@ -33,7 +33,7 @@ export class ApplicationsDialogComponent implements AfterViewInit {
   onNoClick(): void {
     const dialogResult = {
       applications: this.data.applications,
-      valid: this.checkDialogIsValid()
+      valid: false
     };
 
     this.dialogRef.close(dialogResult); // if the user click the back button, there are won't be configured applications
@@ -57,7 +57,7 @@ export class ApplicationsDialogComponent implements AfterViewInit {
     let validAll = true;
     if (this.applicationCards) {
       this.applicationCards.forEach(appCard => {
-        if (appCard.checkValidation() === false) {
+        if (!appCard.checkValidation()) {
           validAll = false;
         }
       });
