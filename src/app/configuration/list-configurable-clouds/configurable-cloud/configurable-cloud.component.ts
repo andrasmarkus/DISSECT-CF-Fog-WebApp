@@ -95,7 +95,7 @@ export class ConfigurableCloudComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: { applications: ApplicationsObject; valid: boolean }) => {
       this.applications = result.applications;
 
-      if (!result.valid || !this.cloudCardForm.valid) {
+      if (!result.valid || !this.cloudCardForm.valid || Object.keys(this.applications).length !== this.numOfApps) {
         this.cloudCardForm.controls.allAppsConfigured.setValue(false);
         this.appsStatusIcon = UNSET_APPS_ICON;
         this.showErrorTooltip = true;
