@@ -3,7 +3,9 @@
     <div class="title">
       <mat-card-title>Station {{index}}</mat-card-title>
     </div>
-    <span class="fas fa-trash-alt"></span>
+    <button mat-icon-button (click)="removeEmitter.emit(index)">
+      <i class="fas fa-trash-alt"></i>
+    </button>
   </mat-card-header>
   <mat-card-content>
     <form [formGroup]="stationFormGroup">

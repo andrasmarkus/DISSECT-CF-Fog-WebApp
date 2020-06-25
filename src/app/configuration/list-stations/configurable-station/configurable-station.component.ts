@@ -12,6 +12,7 @@ export class ConfigurableStationComponent implements OnInit {
   @Input() index: number;
   @Input() public strategys: string[] = ['random', 'distance'];
   @Output() stationEmitter = new EventEmitter<Station>();
+  @Output() removeEmitter = new EventEmitter<number>();
   public strategy = this.strategys[0];
   public stationFormGroup: FormGroup;
   public quantity = 1;
