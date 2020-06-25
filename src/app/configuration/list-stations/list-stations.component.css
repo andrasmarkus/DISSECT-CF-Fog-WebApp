@@ -28,3 +28,8 @@
   opacity: 0.2;
 }
 
+.main-actions{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}

@@ -41,7 +41,6 @@ export class ListConfigurableCloudsComponent implements OnInit {
     const dialogRef = this.stepBackDialogService.openDialog();
     dialogRef.afterClosed().subscribe((result: { discard: boolean }) => {
       if (result.discard) {
-        this.computingNodes = {};
         this.isStepBack.emit(true);
       }
     });

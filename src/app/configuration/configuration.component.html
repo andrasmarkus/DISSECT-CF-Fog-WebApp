@@ -14,7 +14,7 @@
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Configure stations</ng-template>
-    <app-list-stations (stationsEmitter)="saveStationNodes($event)"></app-list-stations>
+    <app-list-stations (stationsEmitter)="saveStationNodes($event)"  (isStepBack)="stepBack($event)"></app-list-stations>
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Configure connections</ng-template>
