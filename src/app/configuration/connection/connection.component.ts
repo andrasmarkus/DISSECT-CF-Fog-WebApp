@@ -144,8 +144,8 @@ export class ConnectionComponent implements OnInit {
       if (!currentElement.isEmbedded()) {
         const xPos = currentElement.attributes.position.x;
         const yPos = currentElement.attributes.position.y;
-
-        currentElement.attr('label/text', 'Name\n[' + `${xPos}` + ',' + `${yPos}` + ']');
+        const name = currentElement.attributes.attrs.nodeId;
+        currentElement.attr('label/text', name + '\n[' + `${xPos}` + ',' + `${yPos}` + ']');
       }
     });
 
@@ -226,7 +226,7 @@ export class ConnectionComponent implements OnInit {
       size: { width, height }
     });
     node.attr('image/xlinkHref', imageSrc);
-    node.attr('label/text', 'Name\n[' + `${Math.round(x)}` + ',' + `${Math.round(y)}` + ']');
+    node.attr('label/text', nodeId + '\n[' + `${Math.round(x)}` + ',' + `${Math.round(y)}` + ']');
     node.attr('label/fontSize', '11');
     node.attributes.attrs.label.refY = '100%';
     node.attributes.attrs.label.refY2 = '1';
@@ -413,6 +413,20 @@ export class ConnectionComponent implements OnInit {
   }
 
   save() {
+    this.graph.getCells().forEach(cell => {
+      if (!cell.isLink() && cell.attributes.attrs.nodeId) {
+        const nodeId = cell.attributes.attrs.nodeId;
+        const x = cell.attributes.position.x;
+        const y = cell.attributes.position.y;
+        if (this.configuration.nodes[nodeId]) {
+          this.configuration.nodes[nodeId].x = x;
+          this.configuration.nodes[nodeId].y = y;
+        } else if (this.configuration.stations[nodeId]) {
+          this.configuration.stations[nodeId].yCoord = x;
+          this.configuration.stations[nodeId].xCoord = y;
+        }
+      }
+    });
     console.log(this.configuration);
   }
 }

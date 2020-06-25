@@ -11,3 +11,32 @@
   top: 10%;
   bottom: 10%;
 }
+
+.actions{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 0 30%;
+}
+
+.main-actions{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.add-button{
+  margin-right: 2rem;
+}
+
+.latency-input{
+  flex: 1;
+}
+
+.input-size{
+  width: 150px;
+}
+
+.actions .mat-form-field .mat-form-field-wrapper{
+  padding: 0 !important;
+}
