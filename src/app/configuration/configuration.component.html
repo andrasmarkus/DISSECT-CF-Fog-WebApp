@@ -14,10 +14,16 @@
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Configure stations</ng-template>
-    <app-list-stations (stationsEmitter)="saveStationNodes($event)"  (isStepBack)="stepBack($event)"></app-list-stations>
+    <app-list-stations [stationNodes]="stationNodes"
+      (stationsEmitter)="saveStationNodes($event)"></app-list-stations>
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Configure connections</ng-template>
-    <app-connection [clouds]="computingNodes.clouds" [fogs]="computingNodes.fogs" [stationNodes]="stationNodes" *ngIf="showConnections"></app-connection>
+    <app-connection *ngIf="showConnections"
+      [generateGraphSubject]="generateGraph"
+      [clouds]="computingNodes.clouds"
+      [fogs]="computingNodes.fogs"
+      [stationNodes]="stationNodes"
+      (isStepBack)="stepBack($event)" ></app-connection>
   </mat-step>
 </mat-horizontal-stepper>

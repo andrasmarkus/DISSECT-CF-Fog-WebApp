@@ -9,16 +9,16 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class StepBackDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<StepBackDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { discard: boolean }
+    @Inject(MAT_DIALOG_DATA) public data: { okAction: boolean }
   ) {}
 
   ngOnInit(): void {}
   closeDialog() {
-    this.data.discard = false;
+    this.data.okAction = false;
     this.dialogRef.close(this.data);
   }
   dicardChanges() {
-    this.data.discard = true;
+    this.data.okAction = true;
     this.dialogRef.close(this.data);
   }
 }

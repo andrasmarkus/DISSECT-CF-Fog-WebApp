@@ -8,6 +8,7 @@ import { StepBackServiceService } from '../services/step-back-service.service';
 import { ComputingNodesObject } from '../models/computing-nodes-object';
 import { StationsObject } from '../models/station';
 import { FormGroup } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-configuration',
@@ -25,6 +26,7 @@ export class ConfigurationComponent implements AfterViewChecked {
   public computingNodes: ComputingNodesObject = { clouds: {}, fogs: {} };
   public stationNodes: StationsObject = {};
   public showConnections = false;
+  public generateGraph: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   @ViewChild(CloudNumberFormComponent) public numOfCloudsForm: CloudNumberFormComponent;
   @ViewChild('stepper') public stepper: MatStepper;
@@ -61,5 +63,6 @@ export class ConfigurationComponent implements AfterViewChecked {
   public saveStationNodes(stationNodes: StationsObject): void {
     this.enableConnectionComponent();
     this.stationNodes = stationNodes;
+    this.generateGraph.next(true);
   }
 }

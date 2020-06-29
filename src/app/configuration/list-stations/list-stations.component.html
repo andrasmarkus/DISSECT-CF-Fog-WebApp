@@ -8,6 +8,6 @@
   </div>
 </div>
 <div class="main-actions">
-  <button mat-raised-button (click)="stepBack()" >Back</button>
+  <button mat-raised-button matStepperPrevious >Back</button>
   <button mat-raised-button [disabled]="!readyToSave" color="primary" (click)="sendStationNodes()" matStepperNext>Next</button>
 </div>

@@ -1,4 +1,14 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  DoCheck,
+  OnDestroy,
+  Output,
+  EventEmitter
+} from '@angular/core';
 import * as jQuery from 'jquery';
 import * as _ from 'lodash';
 import * as $ from 'backbone';
@@ -12,6 +22,8 @@ import {
 import { StationsObject, Station } from 'src/app/models/station';
 import { ConfigurationObject, Neighbour } from 'src/app/models/configuration';
 import { omit } from 'lodash';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { StepBackServiceService } from 'src/app/services/step-back-service.service';
 
 export class Node {
   id: string;
@@ -23,10 +35,13 @@ export class Node {
   templateUrl: './connection.component.html',
   styleUrls: ['./connection.component.css']
 })
-export class ConnectionComponent implements OnInit {
+export class ConnectionComponent implements OnInit, OnDestroy {
   @Input() public clouds: CloudNodesObject = {};
   @Input() public fogs: FogNodesObject = {};
-  @Input() stationNodes: StationsObject;
+  @Input() public stationNodes: StationsObject;
+  @Input() public haveToGenerate: boolean;
+  @Input() public generateGraphSubject: BehaviorSubject<boolean>;
+  @Output() isStepBack = new EventEmitter<boolean>();
 
   public multipleStationNodes: StationsObject;
   public numOfClouds = 6;
@@ -65,31 +80,138 @@ export class ConnectionComponent implements OnInit {
   public verticalSpaceBetweenLayers: number;
 
   private readonly circleRangeBackgroundColor = '#00f71b40';
+  private subjectSubscription: Subscription;
 
-  ngOnInit() {
-    this.numOfClouds = Object.keys(this.clouds).length;
-    this.numOfFogs = Object.keys(this.fogs).length;
-    this.multipleStationNodes = this.getMultipleStations();
-    this.numOfStations = Object.keys(this.multipleStationNodes).length;
+  constructor(private stepBackDialogService: StepBackServiceService) {}
 
-    this.paperWidth = window.innerWidth * this.proportionOfTheTotalSize;
-    this.paperHeight = window.innerHeight * this.proportionOfTheTotalSize;
-    const computedNodeWidth = this.paperWidth / (this.getTheMaxQuantityOfNodes() * 2);
-    const computedNodeHeight = this.paperHeight / (this.getTheMaxQuantityOfNodes() * 2);
-    this.nodeWidth = computedNodeWidth > 75 ? 75 : computedNodeWidth;
-    this.nodeHeight = computedNodeHeight > 50 ? 50 : computedNodeHeight;
+  ngOnInit(): void {
+    this.subjectSubscription = this.generateGraphSubject.subscribe(value => {
+      if (value) {
+        this.createGraph();
+      }
+    });
+  }
 
-    if (this.numOfClouds > 0) {
-      this.sapceForClouds = (this.paperWidth - this.numOfClouds * this.nodeWidth) / (this.numOfClouds + 1);
-    }
-    if (this.numOfFogs > 0) {
-      this.sapceForFogs = (this.paperWidth - this.numOfFogs * this.nodeWidth) / (this.numOfFogs + 1);
-    }
-    if (this.numOfStations > 0) {
-      this.sapceForStations = (this.paperWidth - this.numOfStations * this.nodeWidth) / (this.numOfStations + 1);
-    }
+  ngOnDestroy(): void {
+    this.subjectSubscription.unsubscribe();
+  }
+
+  stepBack() {
+    const dialogRef = this.stepBackDialogService.openDialog();
+    dialogRef.afterClosed().subscribe((result: { okAction: boolean }) => {
+      if (result.okAction) {
+        this.isStepBack.emit(true);
+      }
+    });
+  }
+
+  private createGraph() {
+    this.setNodesQuantities();
+    this.setSizes();
+    this.countsSpaces();
     this.numOfLayers = this.countLayers();
+
     this.verticalSpaceBetweenLayers = (this.paperHeight / this.numOfLayers - this.nodeHeight) / 2;
+    this.countsStartPositions();
+    this.createInitCongifuration();
+    this.graph = new joint.dia.Graph();
+    this.setConnectionPaper();
+
+    this.setListenerForPointerClickOnElement();
+    this.setListenerForPointerClickOnBlank();
+    this.setListenerForPointerMoveOnElement();
+    this.setListenerForGraphRemove();
+    this.createCellsForTheGraph();
+  }
+
+  private createCellsForTheGraph(): void {
+    const graphElements: (joint.dia.Link | joint.shapes.standard.Image | joint.dia.Cell)[] = [];
+    graphElements.push(
+      ...this.createNodesInQueue(this.clouds, this.sapceForClouds, this.cloudsStartYpos, this.cloudImageSrcURL)
+    );
+    graphElements.push(
+      ...this.createNodesInQueue(this.fogs, this.sapceForFogs, this.fogsStartYpos, this.fogImageSrcURL)
+    );
+    graphElements.push(
+      ...this.createNodesWithRangeInQueue(
+        this.multipleStationNodes,
+        this.sapceForStations,
+        this.stationsStartYpos,
+        this.stationImageSrcURL
+      )
+    );
+    this.graph.addCells(this.inintCells(graphElements));
+  }
+
+  private setListenerForGraphRemove(): void {
+    this.graph.on('remove', cell => {
+      if (cell.isLink()) {
+        console.log(cell);
+        const sourceCell = this.graph.getCells().find(c => c.id === cell.attributes.source.id);
+        const targetCell = this.graph.getCells().find(c => c.id === cell.attributes.target.id);
+        const sourceNodeId = sourceCell.attributes.attrs.nodeId;
+        const targetNodeId = targetCell.attributes.attrs.nodeId;
+        if (this.configuration.nodes[sourceNodeId] && this.configuration.nodes[targetNodeId]) {
+          const sourceNeighbours = this.configuration.nodes[sourceNodeId].neighbours;
+          const targetNeighbours = this.configuration.nodes[targetNodeId].neighbours;
+          this.configuration.nodes[sourceNodeId].neighbours = omit(sourceNeighbours, targetNodeId);
+          this.configuration.nodes[targetNodeId].neighbours = omit(targetNeighbours, sourceNodeId);
+        }
+      }
+    });
+  }
+
+  private setListenerForPointerMoveOnElement(): void {
+    this.paper.on('element:pointermove', (elementView: joint.dia.ElementView) => {
+      const currentElement = elementView.model;
+      if (!currentElement.isEmbedded()) {
+        const xPos = currentElement.attributes.position.x;
+        const yPos = currentElement.attributes.position.y;
+        const name = currentElement.attributes.attrs.nodeId;
+        currentElement.attr('label/text', name + '\n[' + `${xPos}` + ',' + `${yPos}` + ']');
+      }
+    });
+  }
+
+  private setListenerForPointerClickOnBlank(): void {
+    this.paper.on('blank:pointerclick', () => {
+      const cells = this.graph.getCells();
+      cells.forEach(cell => {
+        const elView = this.paper.findViewByModel(cell);
+        if (this.selectedNodeQueue.some(node => node.id === cell.id)) {
+          elView.unhighlight();
+        }
+      });
+    });
+  }
+
+  private setListenerForPointerClickOnElement(): void {
+    this.paper.on('element:pointerclick', (elementView: joint.dia.ElementView) => {
+      const currentElement = elementView.model;
+      if (!currentElement.isEmbedded()) {
+        if (currentElement.attributes.attrs.selected === 'true') {
+          this.deselectNode(elementView);
+        } else {
+          this.selectNode(elementView);
+        }
+      }
+    });
+  }
+
+  private setConnectionPaper(): void {
+    this.paper = new joint.dia.Paper({
+      el: jQuery('#paper'),
+      width: this.paperWidth,
+      height: this.paperHeight,
+      model: this.graph,
+      gridSize: 1,
+      interactive: cellView => {
+        return !cellView.model.isEmbedded();
+      }
+    });
+  }
+
+  private countsStartPositions(): void {
     if (this.numOfClouds > 0) {
       this.cloudsStartYpos = this.verticalSpaceBetweenLayers;
     }
@@ -106,96 +228,44 @@ export class ConnectionComponent implements OnInit {
     } else {
       this.stationsStartYpos = this.fogsStartYpos + this.nodeHeight + this.verticalSpaceBetweenLayers * 2;
     }
-
-    this.createInitCongifuration();
-    this.graph = new joint.dia.Graph();
-
-    this.paper = new joint.dia.Paper({
-      el: jQuery('#paper'),
-      width: this.paperWidth,
-      height: this.paperHeight,
-      model: this.graph,
-      gridSize: 1,
-      interactive: cellView => {
-        return !cellView.model.isEmbedded();
-      }
-    });
-
-    this.paper.on('element:pointerclick', (elementView: joint.dia.ElementView) => {
-      const currentElement = elementView.model;
-      if (!currentElement.isEmbedded()) {
-        if (currentElement.attributes.attrs.selected === 'true') {
-          this.deselectNode(elementView);
-        } else {
-          this.selectNode(elementView);
-        }
-      }
-    });
-
-    this.paper.on('blank:pointerclick', () => {
-      const cells = this.graph.getCells();
-      cells.forEach(cell => {
-        const elView = this.paper.findViewByModel(cell);
-        if (this.selectedNodeQueue.some(node => node.id === cell.id)) {
-          elView.unhighlight();
-        }
-      });
-    });
-
-    this.paper.on('element:pointermove', (elementView: joint.dia.ElementView) => {
-      const currentElement = elementView.model;
-      if (!currentElement.isEmbedded()) {
-        const xPos = currentElement.attributes.position.x;
-        const yPos = currentElement.attributes.position.y;
-        const name = currentElement.attributes.attrs.nodeId;
-        currentElement.attr('label/text', name + '\n[' + `${xPos}` + ',' + `${yPos}` + ']');
-      }
-    });
-
-    this.graph.on('remove', (cell, collection, opt) => {
-      if (cell.isLink()) {
-        console.log(cell);
-        const sourceCell = this.graph.getCells().find(c => c.id === cell.attributes.source.id);
-        const targetCell = this.graph.getCells().find(c => c.id === cell.attributes.target.id);
-        const sourceNodeId = sourceCell.attributes.attrs.nodeId;
-        const targetNodeId = targetCell.attributes.attrs.nodeId;
-        if (this.configuration.nodes[sourceNodeId] && this.configuration.nodes[targetNodeId]) {
-          const sourceNeighbours = this.configuration.nodes[sourceNodeId].neighbours;
-          const targetNeighbours = this.configuration.nodes[targetNodeId].neighbours;
-          this.configuration.nodes[sourceNodeId].neighbours = omit(sourceNeighbours, targetNodeId);
-          this.configuration.nodes[targetNodeId].neighbours = omit(targetNeighbours, sourceNodeId);
-        }
-      }
-    });
-
-    const graphElements: (joint.dia.Link | joint.shapes.standard.Image | joint.dia.Cell)[] = [];
-
-    graphElements.push(
-      ...this.createNodesInQueue(this.clouds, this.sapceForClouds, this.cloudsStartYpos, this.cloudImageSrcURL)
-    );
-    graphElements.push(
-      ...this.createNodesInQueue(this.fogs, this.sapceForFogs, this.fogsStartYpos, this.fogImageSrcURL)
-    );
-    graphElements.push(
-      ...this.createNodesWithRangeInQueue(
-        this.multipleStationNodes,
-        this.sapceForStations,
-        this.stationsStartYpos,
-        this.stationImageSrcURL
-      )
-    );
-
-    this.graph.addCells(this.inintCells(graphElements));
   }
 
-  createLink(element1: joint.shapes.standard.Image, element2: joint.shapes.standard.Image): joint.dia.Link {
+  private countsSpaces(): void {
+    if (this.numOfClouds > 0) {
+      this.sapceForClouds = (this.paperWidth - this.numOfClouds * this.nodeWidth) / (this.numOfClouds + 1);
+    }
+    if (this.numOfFogs > 0) {
+      this.sapceForFogs = (this.paperWidth - this.numOfFogs * this.nodeWidth) / (this.numOfFogs + 1);
+    }
+    if (this.numOfStations > 0) {
+      this.sapceForStations = (this.paperWidth - this.numOfStations * this.nodeWidth) / (this.numOfStations + 1);
+    }
+  }
+
+  private setSizes(): void {
+    this.paperWidth = window.innerWidth * this.proportionOfTheTotalSize;
+    this.paperHeight = window.innerHeight * this.proportionOfTheTotalSize;
+    const computedNodeWidth = this.paperWidth / (this.getTheMaxQuantityOfNodes() * 2);
+    const computedNodeHeight = this.paperHeight / (this.getTheMaxQuantityOfNodes() * 2);
+    this.nodeWidth = computedNodeWidth > 75 ? 75 : computedNodeWidth;
+    this.nodeHeight = computedNodeHeight > 50 ? 50 : computedNodeHeight;
+  }
+
+  private setNodesQuantities(): void {
+    this.numOfClouds = Object.keys(this.clouds).length;
+    this.numOfFogs = Object.keys(this.fogs).length;
+    this.multipleStationNodes = this.getMultipleStations();
+    this.numOfStations = Object.keys(this.multipleStationNodes).length;
+  }
+
+  private createLink(element1: joint.shapes.standard.Image, element2: joint.shapes.standard.Image): joint.dia.Link {
     return new joint.dia.Link({
       source: { id: element1.id },
       target: { id: element2.id }
     });
   }
 
-  createLinkBetweenSelectedNodes() {
+  public createLinkBetweenSelectedNodes(): void {
     if (this.isQueueFull) {
       const link = new joint.dia.Link({
         source: { id: this.selectedNodeQueue[0].id },
@@ -216,7 +286,7 @@ export class ConnectionComponent implements OnInit {
     console.log(this.graph.toJSON());
   }
 
-  createImageNode(
+  private createImageNode(
     nodeId: string,
     x: number,
     y: number,
@@ -237,11 +307,11 @@ export class ConnectionComponent implements OnInit {
     return node;
   }
 
-  isQueueFull() {
+  private isQueueFull(): boolean {
     return this.selectedNodeQueue.length === 2;
   }
 
-  selectNode(elementView: joint.dia.ElementView) {
+  private selectNode(elementView: joint.dia.ElementView): void {
     if (this.isQueueFull()) {
       const shiftedNode = this.selectedNodeQueue.shift();
       const cells = this.graph.getCells();
@@ -260,7 +330,7 @@ export class ConnectionComponent implements OnInit {
     elementView.model.attr('selected', 'true');
   }
 
-  deselectNode(elementView: joint.dia.ElementView) {
+  private deselectNode(elementView: joint.dia.ElementView): void {
     elementView.unhighlight();
     elementView.model.attr('selected', 'false');
     if (this.selectedNodeQueue.some(node => node.id === elementView.model.id)) {
@@ -268,12 +338,14 @@ export class ConnectionComponent implements OnInit {
     }
   }
 
-  inintCells(cells: (joint.shapes.standard.Image | joint.dia.Link | joint.dia.Cell)[]) {
+  private inintCells(
+    cells: (joint.shapes.standard.Image | joint.dia.Link | joint.dia.Cell)[]
+  ): (joint.shapes.standard.Image | joint.dia.Link | joint.dia.Cell)[] {
     cells.forEach(cell => cell.attr('selected', 'false'));
     return cells;
   }
 
-  countLayers(): number {
+  private countLayers(): number {
     let numOfLayers = 0;
     if (this.numOfClouds && this.numOfClouds > 0) {
       numOfLayers++;
@@ -287,7 +359,7 @@ export class ConnectionComponent implements OnInit {
     return numOfLayers;
   }
 
-  getTheMaxQuantityOfNodes() {
+  private getTheMaxQuantityOfNodes(): number {
     const nums = [];
     if (this.numOfClouds) {
       nums.push(this.numOfClouds);
@@ -301,7 +373,7 @@ export class ConnectionComponent implements OnInit {
     return Math.max(...nums);
   }
 
-  getMultipleStations(): StationsObject {
+  private getMultipleStations(): StationsObject {
     const resultObject = {};
     for (const [stationId, station] of Object.entries(this.stationNodes)) {
       if (station.quantity > 1) {
@@ -336,7 +408,7 @@ export class ConnectionComponent implements OnInit {
     return circle;
   }
 
-  createNodesWithRangeInQueue(
+  private createNodesWithRangeInQueue(
     items: StationsObject,
     space: number,
     startYpos: number,
@@ -359,7 +431,7 @@ export class ConnectionComponent implements OnInit {
     return nodes;
   }
 
-  createNodesInQueue(
+  private createNodesInQueue(
     items: CloudNodesObject | FogNodesObject,
     space: number,
     startYpos: number,
@@ -379,7 +451,7 @@ export class ConnectionComponent implements OnInit {
     return nodes;
   }
 
-  createInitCongifuration() {
+  private createInitCongifuration(): void {
     for (const [id, node] of Object.entries(this.clouds)) {
       this.configuration.nodes[id] = { ...node, neighbours: {} };
     }
@@ -387,10 +459,10 @@ export class ConnectionComponent implements OnInit {
       this.configuration.nodes[id] = { ...node, neighbours: {} };
     }
     this.configuration.stations = this.multipleStationNodes;
-    console.log(this.configuration);
+    //console.log(this.configuration);
   }
 
-  createNeighbours() {
+  private createNeighbours(): void {
     const firstSelectedNodeId = this.selectedNodeQueue[0].nodeId;
     const secondSelectedNodeId = this.selectedNodeQueue[1].nodeId;
     if (this.configuration.nodes[firstSelectedNodeId] && this.configuration.nodes[secondSelectedNodeId]) {
@@ -408,7 +480,7 @@ export class ConnectionComponent implements OnInit {
     }
   }
 
-  save() {
+  public save(): void {
     this.graph.getCells().forEach(cell => {
       if (!cell.isLink() && cell.attributes.attrs.nodeId) {
         const nodeId = cell.attributes.attrs.nodeId;
