@@ -1,23 +1,33 @@
 <div fxLayout="column" fxLayoutAlign="space-around center">
   <form class="form-width">
-    <ng-container *ngFor="let i of [].constructor(numOfClouds); let counter = index">
+    <h2>Number of clouds: {{numOfClouds}}
+       <span *ngIf="quantityCounterService.getUndividedClouds() && quantityCounterService.getUndividedClouds() > 0">
+          - Number of clouds to distribute: {{quantityCounterService.getUndividedClouds()}}
+       </span>
+    </h2>
+    <ng-container *ngFor="let cloud of clouds; index as i">
       <app-configurable-cloud
-        [nodeId]="'cloud' + counter"
+        [node]="cloud"
         [lpdsTypes]="instaces"
-        isCloud="true"
         (setComputingNode)="addComputingNode($event)"
       ></app-configurable-cloud>
     </ng-container>
+    <div [ngClass]="{'plus-wrapper-disabled': quantityCounterService.getUndividedClouds() ===0}" class="plus-wrapper" (click)="addCloud()">
+      <i class="fas fa-plus fa-3x plus-icon"></i>
+    </div>
+    <mat-divider></mat-divider>
     <ng-container *ngIf="numOfFogs > 0">
-      <ng-container *ngFor="let i of [].constructor(numOfFogs); let counter = index">
+      <ng-container *ngFor="let fog of fogs; index as i">
         <app-configurable-cloud
-          [nodeId]="'fog' + counter"
+          [node]="fog"
           [lpdsTypes]="instaces"
-          isCloud="false"
           (setComputingNode)="addComputingNode($event)"
         ></app-configurable-cloud>
       </ng-container>
     </ng-container>
+    <div *ngIf="numOfFogs > 0" (click)="addFog()" class="plus-wrapper">
+      <i class="fas fa-plus fa-3x plus-icon"></i>
+    </div>
     <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2%" class="action-toolbar">
       <button mat-raised-button matStepperPrevious>Back</button>
       <button [disabled]="!readyToSave" mat-raised-button color="primary" matStepperNext (click)="saveNodes()">

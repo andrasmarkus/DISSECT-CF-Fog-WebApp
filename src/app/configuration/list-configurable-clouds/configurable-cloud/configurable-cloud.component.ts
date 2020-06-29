@@ -5,6 +5,7 @@ import { ApplicationsDialogComponent } from './applications-dialog/applications-
 import { Application, ApplicationsObject } from 'src/app/models/application';
 import { ComputingNode } from 'src/app/models/computing-node';
 import { IfStmt } from '@angular/compiler';
+import { QuantityCounterService } from 'src/app/services/quantity-counter/quantity-counter.service';
 
 // outsource one other repository
 const NOT_CONFIGURED_ICON = 'fas fa-times-circle fa-2x';
@@ -23,9 +24,8 @@ const UNSET_APPS_TOOLTIP = 'Applications are not configured!';
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }]
 })
 export class ConfigurableCloudComponent implements OnInit {
-  @Input() nodeId: string;
-  @Input() isCloud: string;
   @Input() lpdsTypes: string[];
+  @Input() node: ComputingNode;
   @Output() setComputingNode = new EventEmitter<ComputingNode>();
 
   public applications: ApplicationsObject = {};
@@ -43,14 +43,18 @@ export class ConfigurableCloudComponent implements OnInit {
   public showErrorTooltip = true;
   public readonly MAX_TOOLTIP = 'The maximum value is ' + this.maxApplicationsQuantity + '!';
 
-  constructor(private formBuilder: FormBuilder, public dialog: MatDialog) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    public dialog: MatDialog,
+    public quantityCounterService: QuantityCounterService
+  ) {}
 
   ngOnInit(): void {
     this.statusIcon = NOT_CONFIGURED_ICON;
     this.appsStatusIcon = UNSET_APPS_ICON;
     this.errorTooltip = INVALID_TOOLTIP;
 
-    this.isCloudBoolean = this.isCloud === 'true';
+    this.isCloudBoolean = this.node.isCloud === true;
     this.cloudIcon = 'fas fa-smog fa-4x';
     if (this.isCloudBoolean) {
       this.cloudIcon = 'fas fa-cloud fa-4x';
@@ -114,7 +118,8 @@ export class ConfigurableCloudComponent implements OnInit {
         '',
         [Validators.required, Validators.max(this.maxApplicationsQuantity), Validators.pattern(/^[1-9]+[0-9]*$/)]
       ],
-      allAppsConfigured: false
+      allAppsConfigured: false,
+      quantity: [this.node.quantity, [Validators.min(1)]]
     });
   }
 
@@ -140,13 +145,41 @@ export class ConfigurableCloudComponent implements OnInit {
     applications: ApplicationsObject = {}
   ): ComputingNode {
     return {
-      id: this.nodeId,
+      id: this.node.id,
       x: 0,
       y: 0,
       lpdsType,
       applications,
       isCloud: this.isCloudBoolean,
-      isConfigured
+      isConfigured,
+      quantity: this.node.quantity
     } as ComputingNode;
+  }
+
+  decrease() {
+    if (this.node.isCloud) {
+      if (this.quantityCounterService.decreseClouds(this.node.quantity)) {
+        this.node.quantity--;
+        this.cloudCardForm.get('quantity').setValue(this.node.quantity);
+      }
+    } else {
+      if (this.quantityCounterService.decreseFogs(this.node.quantity)) {
+        this.node.quantity--;
+        this.cloudCardForm.get('quantity').setValue(this.node.quantity);
+      }
+    }
+  }
+  increase() {
+    if (this.node.isCloud) {
+      if (this.quantityCounterService.increaseClouds()) {
+        this.node.quantity++;
+        this.cloudCardForm.get('quantity').setValue(this.node.quantity);
+      }
+    } else {
+      if (this.quantityCounterService.increaseFogs()) {
+        this.node.quantity++;
+        this.cloudCardForm.get('quantity').setValue(this.node.quantity);
+      }
+    }
   }
 }

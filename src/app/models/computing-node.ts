@@ -1,6 +1,6 @@
 import { Application, ApplicationsObject } from './application';
 
-export interface ComputingNode {
+export class ComputingNode {
   id: string;
   x: number;
   y: number;
@@ -8,4 +8,5 @@ export interface ComputingNode {
   applications: ApplicationsObject;
   isCloud: boolean;
   isConfigured: boolean;
+  quantity?: number;
 }
