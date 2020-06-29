@@ -1,8 +1,17 @@
 import { ComputingNode } from './computing-node';
 import { ConfiguredComputingNode } from './configuration';
 
-export interface ComputingNodesObject {
+export interface CloudNodesObject {
   [nodeId: string]: ComputingNode;
+}
+
+export interface FogNodesObject {
+  [nodeId: string]: ComputingNode;
+}
+
+export interface ComputingNodesObject {
+  clouds: CloudNodesObject;
+  fogs: FogNodesObject;
 }
 
 export interface ConfiguredComputingNodesObject {

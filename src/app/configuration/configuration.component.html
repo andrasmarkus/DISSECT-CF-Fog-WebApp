@@ -10,7 +10,6 @@
       [numOfFogs]="numOfFogs"
       [computingNodes]="computingNodes"
       (readyToSaveEmitter)="saveComputingNodes($event)"
-      (isStepBack)="stepBack($event)"
     ></app-list-configurable-clouds>
   </mat-step>
   <mat-step>
@@ -19,6 +18,6 @@
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Configure connections</ng-template>
-    <app-connection [computingNodes]="computingNodes" [stationNodes]="stationNodes" *ngIf="showConnections"></app-connection>
+    <app-connection [clouds]="computingNodes.clouds" [fogs]="computingNodes.fogs" [stationNodes]="stationNodes" *ngIf="showConnections"></app-connection>
   </mat-step>
 </mat-horizontal-stepper>

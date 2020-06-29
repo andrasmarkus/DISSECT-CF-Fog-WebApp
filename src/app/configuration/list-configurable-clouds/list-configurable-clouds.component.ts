@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ComputingNode } from 'src/app/models/computing-node';
-import { ComputingNodesObject } from 'src/app/models/computing-nodes-object';
+import { ComputingNodesObject, CloudNodesObject, FogNodesObject } from 'src/app/models/computing-nodes-object';
 import * as _ from 'lodash';
 import { StepBackServiceService } from 'src/app/services/step-back-service.service';
 
@@ -10,25 +10,52 @@ import { StepBackServiceService } from 'src/app/services/step-back-service.servi
   templateUrl: './list-configurable-clouds.component.html',
   styleUrls: ['./list-configurable-clouds.component.css']
 })
-export class ListConfigurableCloudsComponent implements OnInit {
-  @Input() numOfClouds: number;
-  @Input() numOfFogs: number;
-  @Output() readyToSaveEmitter = new EventEmitter<ComputingNodesObject>();
-  @Output() isStepBack = new EventEmitter<boolean>();
-  computingNodes: ComputingNodesObject = {};
-  readyToSave = false;
+export class ListConfigurableCloudsComponent implements OnChanges {
+  @Input() public readonly numOfClouds: number;
+  @Input() public readonly numOfFogs: number;
+  @Input() public computingNodes: ComputingNodesObject = { clouds: {}, fogs: {} };
+  @Output() public readyToSaveEmitter = new EventEmitter<ComputingNodesObject>();
 
-  public instaces: string[] = ['LPDS_Fog_T1', 'LPDS_Fog_T2', 'LPDS_original']; // come from server
-  constructor(private stepBackDialogService: StepBackServiceService) {}
+  public readonly instaces: string[] = ['LPDS_Fog_T1', 'LPDS_Fog_T2', 'LPDS_original']; // come from server
+  public readyToSave = false;
 
-  ngOnInit(): void {}
+  constructor() {}
 
-  public addComputingNode(computingNode: ComputingNode) {
-    this.computingNodes[computingNode.id] = computingNode;
+  ngOnChanges(changes: SimpleChanges): void {
+    this.updateNodesByInputFormChanges(changes);
+    this.checkIsReadyToSave();
+  }
 
-    this.readyToSave =
-      !Object.values(this.computingNodes).some(node => node.isConfigured === false) &&
-      Object.keys(this.computingNodes).length === this.numOfClouds + this.numOfFogs;
+  private updateNodesByInputFormChanges(changes: SimpleChanges): void {
+    if (changes.numOfClouds) {
+      if (changes.numOfClouds.previousValue > changes.numOfClouds.currentValue) {
+        this.computingNodes.clouds = this.updateNodesObject(
+          this.computingNodes.clouds,
+          changes.numOfClouds.currentValue
+        );
+      }
+    }
+    if (changes.numOfFogs) {
+      if (
+        changes.numOfFogs.previousValue > changes.numOfFogs.currentValue &&
+        changes.numOfFogs.currentValue > 0 &&
+        changes.numOfFogs.currentValue !== undefined
+      ) {
+        this.computingNodes.fogs = this.updateNodesObject(this.computingNodes.fogs, changes.numOfFogs.currentValue);
+      } else if (changes.numOfFogs.currentValue === 0 || changes.numOfFogs.currentValue === undefined) {
+        this.computingNodes.fogs = {};
+      }
+    }
+  }
+
+  public addComputingNode(computingNode: ComputingNode): void {
+    if (computingNode.isCloud) {
+      this.computingNodes.clouds[computingNode.id] = computingNode;
+    } else {
+      this.computingNodes.fogs[computingNode.id] = computingNode;
+    }
+
+    this.checkIsReadyToSave();
   }
 
   public saveNodes(): void {
@@ -37,12 +64,27 @@ export class ListConfigurableCloudsComponent implements OnInit {
     }
   }
 
-  stepBack() {
-    const dialogRef = this.stepBackDialogService.openDialog();
-    dialogRef.afterClosed().subscribe((result: { discard: boolean }) => {
-      if (result.discard) {
-        this.isStepBack.emit(true);
+  private checkIsReadyToSave(): void {
+    this.readyToSave =
+      !Object.values(this.computingNodes.clouds).some(node => node.isConfigured === false) &&
+      !Object.values(this.computingNodes.fogs).some(node => node.isConfigured === false) &&
+      Object.keys(this.computingNodes.clouds).length === this.numOfClouds &&
+      Object.keys(this.computingNodes.fogs).length === this.numOfFogs;
+  }
+
+  private updateNodesObject(
+    nodes: CloudNodesObject | FogNodesObject,
+    currentValue: number
+  ): CloudNodesObject | FogNodesObject {
+    const restOfTheNodes = {};
+    let index = 0;
+    for (const [id, node] of Object.entries(nodes)) {
+      restOfTheNodes[id] = node;
+      index++;
+      if (index === currentValue) {
+        break;
       }
-    });
+    }
+    return restOfTheNodes;
   }
 }

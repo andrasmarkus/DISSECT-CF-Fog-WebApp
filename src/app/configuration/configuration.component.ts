@@ -22,18 +22,14 @@ export class ConfigurationComponent implements AfterViewChecked {
   public editableQuantityForm = false;
   public selectedIndex = 0;
   public back = false;
-  public computingNodes: ComputingNodesObject = {};
+  public computingNodes: ComputingNodesObject = { clouds: {}, fogs: {} };
   public stationNodes: StationsObject = {};
   public showConnections = false;
 
   @ViewChild(CloudNumberFormComponent) public numOfCloudsForm: CloudNumberFormComponent;
   @ViewChild('stepper') public stepper: MatStepper;
 
-  constructor(
-    private changeDetect: ChangeDetectorRef,
-    public dialog: MatDialog,
-    private stepBackDialogService: StepBackServiceService
-  ) {}
+  constructor(private changeDetect: ChangeDetectorRef, public dialog: MatDialog) {}
 
   ngAfterViewChecked(): void {
     this.changeDetect.detectChanges();

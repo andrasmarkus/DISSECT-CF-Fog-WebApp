@@ -3,7 +3,12 @@ import * as jQuery from 'jquery';
 import * as _ from 'lodash';
 import * as $ from 'backbone';
 import * as joint from 'jointjs';
-import { ComputingNodesObject, ConfiguredComputingNodesObject } from 'src/app/models/computing-nodes-object';
+import {
+  ComputingNodesObject,
+  ConfiguredComputingNodesObject,
+  FogNodesObject,
+  CloudNodesObject
+} from 'src/app/models/computing-nodes-object';
 import { StationsObject, Station } from 'src/app/models/station';
 import { ConfigurationObject, Neighbour } from 'src/app/models/configuration';
 import { omit } from 'lodash';
@@ -19,12 +24,11 @@ export class Node {
   styleUrls: ['./connection.component.css']
 })
 export class ConnectionComponent implements OnInit {
-  @Input() computingNodes: ComputingNodesObject;
+  @Input() public clouds: CloudNodesObject = {};
+  @Input() public fogs: FogNodesObject = {};
   @Input() stationNodes: StationsObject;
 
   public multipleStationNodes: StationsObject;
-  public clouds: ComputingNodesObject = {};
-  public fogs: ComputingNodesObject = {};
   public numOfClouds = 6;
   public numOfFogs = 10;
   public numOfStations = 11;
@@ -63,11 +67,10 @@ export class ConnectionComponent implements OnInit {
   private readonly circleRangeBackgroundColor = '#00f71b40';
 
   ngOnInit() {
-    this.numOfClouds = Object.values(this.computingNodes).filter(node => node.isCloud).length;
-    this.numOfFogs = Object.values(this.computingNodes).filter(node => !node.isCloud).length;
+    this.numOfClouds = Object.keys(this.clouds).length;
+    this.numOfFogs = Object.keys(this.fogs).length;
     this.multipleStationNodes = this.getMultipleStations();
     this.numOfStations = Object.keys(this.multipleStationNodes).length;
-    this.collectNodes();
 
     this.paperWidth = window.innerWidth * this.proportionOfTheTotalSize;
     this.paperHeight = window.innerHeight * this.proportionOfTheTotalSize;
@@ -313,16 +316,6 @@ export class ConnectionComponent implements OnInit {
     return resultObject;
   }
 
-  private collectNodes() {
-    for (const [id, node] of Object.entries(this.computingNodes)) {
-      if (node.isCloud) {
-        this.clouds[id] = node;
-      } else {
-        this.fogs[id] = node;
-      }
-    }
-  }
-
   private getCircleRangeForNode(
     node: joint.shapes.standard.Image,
     nodeStartX: number,
@@ -367,7 +360,7 @@ export class ConnectionComponent implements OnInit {
   }
 
   createNodesInQueue(
-    items: ComputingNodesObject,
+    items: CloudNodesObject | FogNodesObject,
     space: number,
     startYpos: number,
     imageUrl: string
@@ -387,7 +380,10 @@ export class ConnectionComponent implements OnInit {
   }
 
   createInitCongifuration() {
-    for (const [id, node] of Object.entries(this.computingNodes)) {
+    for (const [id, node] of Object.entries(this.clouds)) {
+      this.configuration.nodes[id] = { ...node, neighbours: {} };
+    }
+    for (const [id, node] of Object.entries(this.fogs)) {
       this.configuration.nodes[id] = { ...node, neighbours: {} };
     }
     this.configuration.stations = this.multipleStationNodes;
