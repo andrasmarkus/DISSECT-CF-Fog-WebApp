@@ -7,26 +7,27 @@ import { StepBackDialogComponent } from './step-back-dialog/step-back-dialog.com
 import { StepBackServiceService } from '../services/step-back-service.service';
 import { ComputingNodesObject } from '../models/computing-nodes-object';
 import { StationsObject } from '../models/station';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-configuration',
   templateUrl: './configuration.component.html',
   styleUrls: ['./configuration.component.css']
 })
-export class ConfigurationComponent implements OnInit, AfterViewChecked {
+export class ConfigurationComponent implements AfterViewChecked {
+  public readonly isLinear = true;
   public numOfClouds: number;
   public numOfFogs: number;
-  isLinear = true;
-  isCompleted = false;
-  editableQuantityForm = false;
-  selectedIndex = 0;
-  back = false;
-  computingNodes: ComputingNodesObject = {};
-  stationNodes: StationsObject = {};
+  public isCompleted = false;
+  public editableQuantityForm = false;
+  public selectedIndex = 0;
+  public back = false;
+  public computingNodes: ComputingNodesObject = {};
+  public stationNodes: StationsObject = {};
   public showConnections = false;
 
-  @ViewChild(CloudNumberFormComponent) numOfCloudsForm: CloudNumberFormComponent;
-  @ViewChild('stepper') stepper: MatStepper;
+  @ViewChild(CloudNumberFormComponent) public numOfCloudsForm: CloudNumberFormComponent;
+  @ViewChild('stepper') public stepper: MatStepper;
 
   constructor(
     private changeDetect: ChangeDetectorRef,
@@ -34,38 +35,35 @@ export class ConfigurationComponent implements OnInit, AfterViewChecked {
     private stepBackDialogService: StepBackServiceService
   ) {}
 
-  ngOnInit(): void {}
-
   ngAfterViewChecked(): void {
     this.changeDetect.detectChanges();
   }
 
-  get numOfCloudsFromGroup() {
+  public get numOfCloudsFromGroup(): FormGroup | null {
     return this.numOfCloudsForm ? this.numOfCloudsForm.numOfComputingNodes : null;
   }
 
-  setNumOfComputingNodes(nodesQuantity: ComputingNodesQuantityData) {
+  public setNumOfComputingNodes(nodesQuantity: ComputingNodesQuantityData): void {
     this.numOfClouds = nodesQuantity.numberOfClouds;
     this.numOfFogs = nodesQuantity.numberOfFogs ? nodesQuantity.numberOfFogs : 0;
   }
 
-  public changeCompleted(nodes: ComputingNodesObject): void {
+  public saveComputingNodes(nodes: ComputingNodesObject): void {
     this.computingNodes = nodes;
-    console.log(this.computingNodes);
   }
 
-  stepBack(isBack: boolean) {
+  public stepBack(isBack: boolean): void {
     if (isBack) {
       this.stepper.previous();
     }
   }
-  enableConnectionComponent() {
+
+  private enableConnectionComponent(): void {
     this.showConnections = true;
   }
 
-  public saveStationNodes(stationNodes: StationsObject) {
+  public saveStationNodes(stationNodes: StationsObject): void {
     this.enableConnectionComponent();
     this.stationNodes = stationNodes;
-    console.log(this.stationNodes);
   }
 }
