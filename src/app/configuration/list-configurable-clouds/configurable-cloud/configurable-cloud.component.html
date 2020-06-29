@@ -1,8 +1,11 @@
  <mat-card class="card">
   <form [formGroup]="cloudCardForm">
     <div class="container">
-      <div class="node-icon">
+      <div class="node-icon node-header">
         <i [class]="cloudIcon"></i>
+        <div class="top-status">
+          <i [class]="statusIcon"></i>
+        </div>
       </div>
       <div class="configuration-tools">
         <mat-form-field>
@@ -33,8 +36,17 @@
             </button>
           </div>
         </div>
+        <div class="quantity-container">
+          <button mat-icon-button (click)="decrease()">
+            <i class="fas fa-minus"></i>
+          </button>
+          <input matInput class="quantity-input" type="number" readonly="true" [value]="quantity"/>
+          <button mat-icon-button (click)="increase()">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
       </div>
-      <div class="status-margin">
+      <div class="status-margin bottom-status">
         <i [class]="statusIcon"></i>
       </div>
     </div>
