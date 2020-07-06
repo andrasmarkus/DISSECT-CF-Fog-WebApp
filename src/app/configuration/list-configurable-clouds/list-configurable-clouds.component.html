@@ -1,10 +1,11 @@
 <div fxLayout="column" fxLayoutAlign="space-around center">
   <form class="form-width">
-    <h2>Number of clouds: {{numOfClouds}}
-       <span *ngIf="quantityCounterService.getUndividedClouds() && quantityCounterService.getUndividedClouds() > 0">
-          - Number of clouds to distribute: {{quantityCounterService.getUndividedClouds()}}
-       </span>
-    </h2>
+    <div class="node-warn-header">
+      <h2>Number of clouds: {{numOfClouds}}</h2>
+      <span class="warn-chip" *ngIf="quantityCounterService.getUndividedClouds() && quantityCounterService.getUndividedClouds() > 0">
+        Number of clouds to distribute: {{quantityCounterService.getUndividedClouds()}}
+      </span>
+    </div>
     <ng-container *ngFor="let cloud of clouds; index as i">
       <app-configurable-cloud
         [node]="cloud"
@@ -19,11 +20,12 @@
       </div>
     </div>
     <mat-divider *ngIf="quantityCounterService.numOfFogs > 0" class="nodeType-divider"></mat-divider>
-    <h2 *ngIf="quantityCounterService.numOfFogs > 0">Number of fogs: {{numOfFogs}}
-      <span *ngIf="quantityCounterService.getUndividedFogs() && quantityCounterService.getUndividedFogs() > 0">
-         - Number of fogs to distribute: {{quantityCounterService.getUndividedFogs()}}
+    <div class="node-warn-header">
+      <h2 *ngIf="quantityCounterService.numOfFogs > 0">Number of fogs: {{numOfFogs}}</h2>
+      <span class="warn-chip"*ngIf="quantityCounterService.getUndividedFogs() && quantityCounterService.getUndividedFogs() > 0">
+        Number of fogs to distribute: {{quantityCounterService.getUndividedFogs()}}
       </span>
-   </h2>
+    </div>
     <ng-container *ngFor="let fog of fogs; index as i">
       <app-configurable-cloud
         [node]="fog"

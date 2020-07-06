@@ -45,3 +45,17 @@
 .nodeType-divider{
   margin: 2.5rem 0;
 }
+
+.node-warn-header{
+  display: flex;
+  align-items: flex-start;
+}
+
+.warn-chip{
+  background: #ffc3c3;
+  margin-left: 1rem !important;
+  display: block;
+  line-height: 2rem;
+  border-radius: 1rem;
+  padding: 0.1rem 1rem;
+}
