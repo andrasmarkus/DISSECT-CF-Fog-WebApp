@@ -47,7 +47,8 @@ export class ConfigurationComponent implements AfterViewChecked {
   }
 
   public saveComputingNodes(nodes: ComputingNodesObject): void {
-    this.computingNodes = nodes;
+    this.computingNodes = { ...nodes };
+    this.generateGraph.next(true);
   }
 
   public stepBack(isBack: boolean): void {

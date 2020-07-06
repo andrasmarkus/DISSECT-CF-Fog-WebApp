@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="configuration-tools">
-        <mat-form-field>
+        <mat-form-field class="resource-selector">
           <mat-label>Select LPDS type</mat-label>
           <mat-select [(ngModel)]="selectedLPDStype" name="selectedLPDStype" [ngModelOptions]="{ standalone: true }">
             <mat-option *ngFor="let lpdsType of lpdsTypes" [value]="lpdsType"> {{ lpdsType }}</mat-option>
@@ -37,6 +37,7 @@
           </div>
         </div>
         <div class="quantity-container">
+          <mat-divider vertical="true"></mat-divider>
           <button mat-icon-button (click)="decrease()">
             <i class="fas fa-minus"></i>
           </button>
@@ -44,9 +45,14 @@
           <button mat-icon-button (click)="increase()">
             <i class="fas fa-plus"></i>
           </button>
+          <mat-divider vertical="true"></mat-divider>
+          <button mat-icon-button (click)="removeEmitter.emit(node.id)">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+          <mat-divider vertical="true"></mat-divider>
         </div>
       </div>
-      <div class="status-margin bottom-status">
+      <div class="bottom-status">
         <i [class]="statusIcon"></i>
       </div>
     </div>

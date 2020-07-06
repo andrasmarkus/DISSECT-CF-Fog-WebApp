@@ -26,9 +26,10 @@
 
 .configure-apps{
   display: flex;
+  justify-content: center;
   align-items: center;
+  flex: 0.3;
 }
-
 
 .quantity-container{
   display: flex;
@@ -45,6 +46,13 @@
 
 .bottom-status{
   display: inherit;
+  width: 70px;
+  display: flex;
+  justify-content: center;
+}
+
+.resource-selector{
+  width: 150px;
 }
 
 @media screen and (max-width: 700px) {

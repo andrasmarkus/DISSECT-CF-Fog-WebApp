@@ -24,23 +24,25 @@ const UNSET_APPS_TOOLTIP = 'Applications are not configured!';
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }]
 })
 export class ConfigurableCloudComponent implements OnInit {
-  @Input() lpdsTypes: string[];
-  @Input() node: ComputingNode;
-  @Output() setComputingNode = new EventEmitter<ComputingNode>();
+  @Input() public lpdsTypes: string[];
+  @Input() public node: ComputingNode;
+  @Output() public readonly setComputingNode = new EventEmitter<ComputingNode>();
+  @Output() public readonly removeEmitter = new EventEmitter<string>();
 
-  public applications: ApplicationsObject = {};
   public statusIcon: string;
   public appsStatusIcon: string;
-  cloudCardForm: FormGroup;
-  selectedLPDStype: string;
-  numOfApps = 0;
-  keyCounter = 0;
-  cloudIcon: string;
-  isCloudBoolean: boolean;
-  allAppsConfigured: boolean;
-  public maxApplicationsQuantity = 10;
+  public cloudCardForm: FormGroup;
+  public selectedLPDStype: string;
+  public numOfApps = 0;
+  public cloudIcon: string;
   public errorTooltip: string;
   public showErrorTooltip = true;
+
+  private applications: ApplicationsObject = {};
+  private keyCounter = 0;
+  private isCloudBoolean: boolean;
+  private readonly maxApplicationsQuantity = 10;
+
   public readonly MAX_TOOLTIP = 'The maximum value is ' + this.maxApplicationsQuantity + '!';
 
   constructor(

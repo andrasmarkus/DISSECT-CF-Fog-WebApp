@@ -6,6 +6,11 @@
   margin-top: 1rem;
 }
 
+.plus-container{
+  justify-content: center;
+  display: flex;
+}
+
 .plus-wrapper{
   align-self:flex-start;
   border-radius: 4px;
@@ -18,6 +23,7 @@
   background-color: #cccccc3b;
   margin: 0.5rem 0;
   padding: 0.3rem;
+  width: 10rem;
 }
 
 .plus-wrapper:hover{
@@ -34,4 +40,8 @@
 
 .plus-icon{
   opacity: 0.2;
+}
+
+.nodeType-divider{
+  margin: 2.5rem 0;
 }

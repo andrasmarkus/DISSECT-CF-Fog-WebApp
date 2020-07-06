@@ -44,12 +44,6 @@ export class ListConfigurableCloudsComponent implements OnChanges {
     firstFog.quantity = 1;
     this.fogs.push(firstFog);
     this.computingNodes.fogs[firstFog.id] = firstFog;
-    this.quantityCounterService.setQuantities(
-      this.numOfClouds,
-      this.numOfFogs,
-      this.getNumberOfConfigurabledNodes(this.computingNodes.clouds),
-      this.getNumberOfConfigurabledNodes(this.computingNodes.fogs)
-    );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -90,8 +84,8 @@ export class ListConfigurableCloudsComponent implements OnChanges {
   }
 
   private updateNodesByInputFormChanges(changes: SimpleChanges): void {
-    if (changes.numOfClouds) {
-      if (changes.numOfClouds.previousValue > changes.numOfClouds.currentValue) {
+    if (changes.numOfClouds && !changes.numOfClouds.firstChange) {
+      if (changes.numOfClouds.previousValue && changes.numOfClouds.previousValue > changes.numOfClouds.currentValue) {
         this.computingNodes.clouds = this.updateNodesObject(
           this.computingNodes.clouds,
           changes.numOfClouds.currentValue
@@ -99,14 +93,26 @@ export class ListConfigurableCloudsComponent implements OnChanges {
         this.filterOutCloudsFromArray();
       }
     }
-    if (changes.numOfFogs) {
+    if (changes.numOfFogs && !changes.numOfFogs.firstChange) {
       if (
+        changes.numOfFogs.previousValue &&
         changes.numOfFogs.previousValue > changes.numOfFogs.currentValue &&
         changes.numOfFogs.currentValue > 0 &&
         changes.numOfFogs.currentValue !== undefined
       ) {
         this.computingNodes.fogs = this.updateNodesObject(this.computingNodes.fogs, changes.numOfFogs.currentValue);
         this.filterOutFogsFromArray();
+      } else if (
+        changes.numOfFogs.previousValue === 0 &&
+        changes.numOfFogs.currentValue > changes.numOfFogs.previousValue
+      ) {
+        const firstFogId = 'fog' + this.fogIndex;
+        const firstFog = new ComputingNode();
+        firstFog.id = firstFogId;
+        firstFog.isCloud = false;
+        firstFog.quantity = 1;
+        this.fogs.push(firstFog);
+        this.computingNodes.fogs[firstFog.id] = firstFog;
       } else if (changes.numOfFogs.currentValue === 0 || changes.numOfFogs.currentValue === undefined) {
         this.computingNodes.fogs = {};
         this.filterOutFogsFromArray();
@@ -169,15 +175,35 @@ export class ListConfigurableCloudsComponent implements OnChanges {
   }
 
   private filterOutFogsFromArray(): void {
-    this.fogs = this.fogs.filter(fog => this.computingNodes.clouds[fog.id] !== undefined);
+    this.fogs = this.fogs.filter(fog => this.computingNodes.fogs[fog.id] !== undefined);
     this.fogs = this.fogs.map(fog => (fog = this.computingNodes.fogs[fog.id]));
   }
 
-  getNumberOfConfigurabledNodes(nodes: CloudNodesObject | FogNodesObject): number {
+  private getNumberOfConfigurabledNodes(nodes: CloudNodesObject | FogNodesObject): number {
     let sum = 0;
     for (const [id, node] of Object.entries(nodes)) {
       sum += node.quantity;
     }
     return sum;
+  }
+
+  public removeTypeOfNodes(id: string): void {
+    if (id.startsWith('cloud')) {
+      delete this.computingNodes.clouds[id];
+      const arrayIndex = this.clouds.findIndex(value => value.id === id);
+      this.clouds.splice(arrayIndex, 1);
+    } else {
+      delete this.computingNodes.fogs[id];
+      const arrayIndex = this.fogs.findIndex(value => value.id === id);
+      this.fogs.splice(arrayIndex, 1);
+    }
+
+    this.quantityCounterService.setQuantities(
+      this.numOfClouds,
+      this.numOfFogs,
+      this.getNumberOfConfigurabledNodes(this.computingNodes.clouds),
+      this.getNumberOfConfigurabledNodes(this.computingNodes.fogs)
+    );
+    this.checkIsReadyToSave();
   }
 }

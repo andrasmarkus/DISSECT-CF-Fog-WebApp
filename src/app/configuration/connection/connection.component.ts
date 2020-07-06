@@ -1,25 +1,9 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  DoCheck,
-  OnDestroy,
-  Output,
-  EventEmitter
-} from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
 import * as jQuery from 'jquery';
 import * as _ from 'lodash';
-import * as $ from 'backbone';
 import * as joint from 'jointjs';
-import {
-  ComputingNodesObject,
-  ConfiguredComputingNodesObject,
-  FogNodesObject,
-  CloudNodesObject
-} from 'src/app/models/computing-nodes-object';
-import { StationsObject, Station } from 'src/app/models/station';
+import { FogNodesObject, CloudNodesObject, ComputingNodesObject } from 'src/app/models/computing-nodes-object';
+import { StationsObject } from 'src/app/models/station';
 import { ConfigurationObject, Neighbour } from 'src/app/models/configuration';
 import { omit } from 'lodash';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -36,12 +20,14 @@ export class Node {
   styleUrls: ['./connection.component.css']
 })
 export class ConnectionComponent implements OnInit, OnDestroy {
-  @Input() public clouds: CloudNodesObject = {};
-  @Input() public fogs: FogNodesObject = {};
+  @Input() public computingNodes: ComputingNodesObject = { clouds: {}, fogs: {} };
   @Input() public stationNodes: StationsObject;
   @Input() public haveToGenerate: boolean;
   @Input() public generateGraphSubject: BehaviorSubject<boolean>;
   @Output() isStepBack = new EventEmitter<boolean>();
+
+  public clouds: CloudNodesObject = {};
+  public fogs: FogNodesObject = {};
 
   public multipleStationNodes: StationsObject;
   public numOfClouds = 6;
@@ -252,17 +238,12 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   }
 
   private setNodesQuantities(): void {
+    this.clouds = this.getMultipleNodes(this.computingNodes.clouds) as CloudNodesObject;
+    this.fogs = this.getMultipleNodes(this.computingNodes.fogs) as FogNodesObject;
+    this.multipleStationNodes = this.getMultipleNodes(this.stationNodes) as StationsObject;
     this.numOfClouds = Object.keys(this.clouds).length;
     this.numOfFogs = Object.keys(this.fogs).length;
-    this.multipleStationNodes = this.getMultipleStations();
     this.numOfStations = Object.keys(this.multipleStationNodes).length;
-  }
-
-  private createLink(element1: joint.shapes.standard.Image, element2: joint.shapes.standard.Image): joint.dia.Link {
-    return new joint.dia.Link({
-      source: { id: element1.id },
-      target: { id: element2.id }
-    });
   }
 
   public createLinkBetweenSelectedNodes(): void {
@@ -373,16 +354,19 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     return Math.max(...nums);
   }
 
-  private getMultipleStations(): StationsObject {
+  private getMultipleNodes(
+    nodes: StationsObject | FogNodesObject | CloudNodesObject
+  ): StationsObject | FogNodesObject | CloudNodesObject {
     const resultObject = {};
-    for (const [stationId, station] of Object.entries(this.stationNodes)) {
-      if (station.quantity > 1) {
-        for (let i = 1; i <= station.quantity; i++) {
-          const subStationKey = stationId + '.' + i;
-          resultObject[subStationKey] = station;
+    for (const [id, node] of Object.entries(nodes)) {
+      if (node.quantity > 1) {
+        for (let i = 1; i <= node.quantity; i++) {
+          const subNodeKey = id + '.' + i;
+          resultObject[subNodeKey] = { ...node };
+          resultObject[subNodeKey].quantity = 1;
         }
       } else {
-        resultObject[stationId] = station;
+        resultObject[id] = node;
       }
     }
     return resultObject;
@@ -452,6 +436,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   }
 
   private createInitCongifuration(): void {
+    this.configuration.nodes = {};
     for (const [id, node] of Object.entries(this.clouds)) {
       this.configuration.nodes[id] = { ...node, neighbours: {} };
     }

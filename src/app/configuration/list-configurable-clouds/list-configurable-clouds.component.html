@@ -10,23 +10,33 @@
         [node]="cloud"
         [lpdsTypes]="instaces"
         (setComputingNode)="addComputingNode($event)"
+        (removeEmitter)="removeTypeOfNodes($event)"
       ></app-configurable-cloud>
     </ng-container>
-    <div [ngClass]="{'plus-wrapper-disabled': quantityCounterService.getUndividedClouds() ===0}" class="plus-wrapper" (click)="addCloud()">
-      <i class="fas fa-plus fa-3x plus-icon"></i>
+    <div class="plus-container">
+      <div [ngClass]="{'plus-wrapper-disabled': quantityCounterService.getUndividedClouds() ===0}" class="plus-wrapper" (click)="addCloud()">
+        <i class="fas fa-plus fa-3x plus-icon"></i>
+      </div>
     </div>
-    <mat-divider></mat-divider>
-    <ng-container *ngIf="numOfFogs > 0">
-      <ng-container *ngFor="let fog of fogs; index as i">
-        <app-configurable-cloud
-          [node]="fog"
-          [lpdsTypes]="instaces"
-          (setComputingNode)="addComputingNode($event)"
-        ></app-configurable-cloud>
-      </ng-container>
-    </ng-container>
-    <div *ngIf="numOfFogs > 0" (click)="addFog()" class="plus-wrapper">
-      <i class="fas fa-plus fa-3x plus-icon"></i>
+    <mat-divider *ngIf="quantityCounterService.numOfFogs > 0" class="nodeType-divider"></mat-divider>
+    <h2 *ngIf="quantityCounterService.numOfFogs > 0">Number of fogs: {{numOfFogs}}
+      <span *ngIf="quantityCounterService.getUndividedFogs() && quantityCounterService.getUndividedFogs() > 0">
+         - Number of fogs to distribute: {{quantityCounterService.getUndividedFogs()}}
+      </span>
+   </h2>
+    <ng-container *ngFor="let fog of fogs; index as i">
+      <app-configurable-cloud
+        [node]="fog"
+        [lpdsTypes]="instaces"
+        (setComputingNode)="addComputingNode($event)"
+        (removeEmitter)="removeTypeOfNodes($event)"
+      ></app-configurable-cloud>
+  </ng-container>
+    <div class="plus-container">
+      <div *ngIf="quantityCounterService.numOfFogs > 0"
+        [ngClass]="{'plus-wrapper-disabled': quantityCounterService.getUndividedFogs() ===0}" (click)="addFog()" class="plus-wrapper">
+        <i class="fas fa-plus fa-3x plus-icon"></i>
+      </div>
     </div>
     <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2%" class="action-toolbar">
       <button mat-raised-button matStepperPrevious>Back</button>

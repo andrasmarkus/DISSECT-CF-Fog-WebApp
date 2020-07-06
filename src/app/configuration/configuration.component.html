@@ -21,8 +21,7 @@
     <ng-template matStepLabel>Configure connections</ng-template>
     <app-connection *ngIf="showConnections"
       [generateGraphSubject]="generateGraph"
-      [clouds]="computingNodes.clouds"
-      [fogs]="computingNodes.fogs"
+      [computingNodes]="computingNodes"
       [stationNodes]="stationNodes"
       (isStepBack)="stepBack($event)" ></app-connection>
   </mat-step>
