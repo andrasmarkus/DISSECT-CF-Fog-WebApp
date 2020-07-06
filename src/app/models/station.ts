@@ -10,7 +10,6 @@ export class Station {
   diskbw: number;
 
   strategy: string; //should be select
-  number: number;
   radius: number;
   xCoord?: number;
   yCoord?: number;

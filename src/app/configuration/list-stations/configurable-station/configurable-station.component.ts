@@ -43,7 +43,6 @@ export class ConfigurableStationComponent implements OnInit {
       diskbw: new FormControl('', [Validators.required]),
 
       strategy: new FormControl(this.strategy, [Validators.required]),
-      number: new FormControl('', [Validators.required]),
       radius: new FormControl('', [Validators.required])
     });
   }
