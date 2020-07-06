@@ -1,6 +1,11 @@
 <mat-card fxLayout="column" fxLayoutAlign="center center" class="app-card">
-  <mat-card-header>
-    <mat-card-title>Application {{ index }}</mat-card-title>
+  <mat-card-header class="header">
+    <div class="title">
+      <span class="title-text">Application {{index}}</span>
+    </div>
+    <button mat-icon-button (click)="removeEmitter.emit(application.id)">
+      <i class="fas fa-trash-alt"></i>
+    </button>
   </mat-card-header>
   <form [formGroup]="appFormGroup">
     <mat-accordion>
@@ -52,5 +57,15 @@
       </mat-select>
     </mat-form-field>
   </div>
+  <mat-divider></mat-divider>
+    <div class="quantity-container">
+      <button mat-icon-button (click)="decrease()">
+        <i class="fas fa-minus"></i>
+      </button>
+      <input matInput class="quantity-input" type="number" readonly="true" [value]="application.quantity"/>
+      <button mat-icon-button (click)="increase()">
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
   </form>
 </mat-card>

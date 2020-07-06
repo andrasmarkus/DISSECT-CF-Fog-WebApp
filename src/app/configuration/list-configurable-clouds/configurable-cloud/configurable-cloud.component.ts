@@ -39,7 +39,6 @@ export class ConfigurableCloudComponent implements OnInit {
   public showErrorTooltip = true;
 
   private applications: ApplicationsObject = {};
-  private keyCounter = 0;
   private isCloudBoolean: boolean;
   private readonly maxApplicationsQuantity = 10;
 
@@ -61,7 +60,6 @@ export class ConfigurableCloudComponent implements OnInit {
     if (this.isCloudBoolean) {
       this.cloudIcon = 'fas fa-cloud fa-4x';
     }
-
     this.initForm();
     this.sendConfiguredNodeToParent();
   }
@@ -88,20 +86,41 @@ export class ConfigurableCloudComponent implements OnInit {
       }
     }
   }
+  private getNumberOfConfigurabledApps(apps: ApplicationsObject): number {
+    let sum = 0;
+    for (const [id, app] of Object.entries(apps)) {
+      sum += app.quantity;
+    }
+    return sum;
+  }
 
   openDialog(): void {
+    /* if (Object.values(this.applications).length === 0) {
+      const firstAppId = 'app' + 1;
+      const firsApp = new Application();
+      firsApp.id = firstAppId;
+      firsApp.quantity = 1;
+      this.applications[firsApp.id] = firsApp;
+    }
+    this.quantityCounterService.setAppsQuantities(this.numOfApps, this.getNumberOfConfigurabledApps(this.applications)); */
+
     const dialogRef = this.dialog.open(ApplicationsDialogComponent, {
       panelClass: 'applications-dialog-panel',
       disableClose: true,
       width: '80%',
       height: '80%',
-      data: { numOfApps: this.numOfApps, counter: this.keyCounter, applications: this.applications }
+      data: { numOfApps: this.numOfApps, applications: this.applications }
     });
 
     dialogRef.afterClosed().subscribe((result: { applications: ApplicationsObject; valid: boolean }) => {
       this.applications = result.applications;
+      console.log(this.applications);
 
-      if (!result.valid || !this.cloudCardForm.valid || Object.keys(this.applications).length !== this.numOfApps) {
+      if (
+        !result.valid ||
+        !this.cloudCardForm.valid ||
+        this.getNumberOfConfigurabledApps(this.applications) !== this.numOfApps
+      ) {
         this.cloudCardForm.controls.allAppsConfigured.setValue(false);
         this.appsStatusIcon = UNSET_APPS_ICON;
         this.showErrorTooltip = true;
@@ -127,6 +146,13 @@ export class ConfigurableCloudComponent implements OnInit {
 
   private sendConfiguredNodeToParent(): void {
     if (this.cloudCardForm) {
+      this.cloudCardForm.controls['numOfApplications'].valueChanges.subscribe((newValue: number) => {
+        const oldValue = this.cloudCardForm.value['numOfApplications'];
+        if (oldValue > newValue) {
+          this.applications = this.updateAppsObject(this.applications, newValue);
+        }
+      });
+
       this.cloudCardForm.valueChanges.subscribe(value => {
         if (value.allAppsConfigured) {
           const computingNode = this.createComputingNode(true, this.selectedLPDStype, this.applications);
@@ -139,6 +165,27 @@ export class ConfigurableCloudComponent implements OnInit {
         }
       });
     }
+  }
+
+  private updateAppsObject(apps: ApplicationsObject, currentValue: number): ApplicationsObject {
+    const restOfTheNodes = {};
+    let index = 0;
+    for (const [id, app] of Object.entries(apps)) {
+      if (index === currentValue) {
+        break;
+      }
+      if (index + app.quantity <= currentValue) {
+        restOfTheNodes[id] = app;
+        index += app.quantity;
+      } else {
+        const quantity = currentValue - index;
+        index += quantity;
+        app.quantity = quantity;
+        restOfTheNodes[id] = app;
+        break;
+      }
+    }
+    return restOfTheNodes;
   }
 
   private createComputingNode(

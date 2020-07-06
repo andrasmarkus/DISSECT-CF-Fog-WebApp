@@ -1,3 +1,47 @@
 .title{
   margin: 1rem 0;
 }
+
+.app-card{
+  margin: 1rem;
+}
+
+.plus-wrapper{
+  width: 482px;
+  height: 212px;
+  align-self:flex-start;
+  border-radius: 4px;
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #cccccc3b;
+  margin: 1rem;
+}
+
+.plus-wrapper:hover{
+  background-color: #33c5423b;
+}
+
+.plus-wrapper-disabled{
+  background-color: white;
+}
+
+.plus-wrapper-disabled:hover{
+  background-color: white;
+}
+
+
+.plus-icon{
+  opacity: 0.2;
+}
+
+.okButton{
+  margin-left: 0.5rem;
+}
+
+.cancelButton{
+  margin-right: 0.5rem;
+}

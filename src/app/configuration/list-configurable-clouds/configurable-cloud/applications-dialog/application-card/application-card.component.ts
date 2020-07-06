@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Application } from 'src/app/models/application';
+import { QuantityCounterService } from 'src/app/services/quantity-counter/quantity-counter.service';
 
 @Component({
   selector: 'app-application-card',
@@ -21,17 +22,20 @@ export class ApplicationCardComponent implements OnInit {
   @Input() application: Application;
   @Input() instances = ['a1.large', 'a1.xlarge', 'a2.xlarge'];
   @Input() public strategys: string[] = ['random', 'distance'];
-  private app: Application;
+  @Output() removeEmitter = new EventEmitter<string>();
   public appFormGroup: FormGroup;
   public canJoin: boolean;
   public instance: string;
   public strategy: string;
 
-  constructor(private formBuilder: FormBuilder, private cdr: ChangeDetectorRef) {
-    this.createForm();
-  }
+  constructor(
+    private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef,
+    public quantityCounterService: QuantityCounterService
+  ) {}
 
   ngOnInit(): void {
+    this.createForm();
     this.initForm();
   }
 
@@ -40,7 +44,8 @@ export class ApplicationCardComponent implements OnInit {
       taksize: new FormControl('', [Validators.required]),
       freq: new FormControl('', [Validators.required]),
       numOfInstruction: new FormControl('', [Validators.required]),
-      threshold: new FormControl('', [Validators.required])
+      threshold: new FormControl('', [Validators.required]),
+      quantity: [this.application.quantity, [Validators.min(1)]]
     });
   }
 
@@ -55,18 +60,30 @@ export class ApplicationCardComponent implements OnInit {
 
   public getValidApplication() {
     if (this.appFormGroup.valid) {
-      this.app = new Application();
-      this.app = this.appFormGroup.value;
-      this.app.canJoin = this.canJoin;
-      this.app.strategy = this.strategy;
-      this.app.instance = this.instance;
-      this.app.id = 'app' + this.index;
-      return this.app;
+      this.application = this.appFormGroup.value;
+      this.application.canJoin = this.canJoin;
+      this.application.strategy = this.strategy;
+      this.application.instance = this.instance;
+      this.application.id = 'app' + this.index;
+      return this.application;
     }
     return null;
   }
 
   public checkValidation(): boolean {
     return this.appFormGroup.valid;
+  }
+
+  decrease() {
+    if (this.quantityCounterService.decreseApps(this.application.quantity)) {
+      this.application.quantity--;
+      this.appFormGroup.get('quantity').setValue(this.application.quantity);
+    }
+  }
+  increase() {
+    if (this.quantityCounterService.increaseApps()) {
+      this.application.quantity++;
+      this.appFormGroup.get('quantity').setValue(this.application.quantity);
+    }
   }
 }

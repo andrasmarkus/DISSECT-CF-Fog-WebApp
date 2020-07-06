@@ -7,6 +7,7 @@ export class Application {
   threshold: number;
   strategy: string; //shuld be select
   canJoin: boolean;
+  quantity: number;
 }
 
 export class ApplicationsObject {

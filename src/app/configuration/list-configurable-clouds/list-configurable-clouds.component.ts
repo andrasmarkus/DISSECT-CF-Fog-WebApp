@@ -49,7 +49,7 @@ export class ListConfigurableCloudsComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.updateNodesByInputFormChanges(changes);
     this.checkIsReadyToSave();
-    this.quantityCounterService.setQuantities(
+    this.quantityCounterService.setNodeQuantities(
       this.numOfClouds,
       this.numOfFogs,
       this.getNumberOfConfigurabledNodes(this.computingNodes.clouds),
@@ -198,7 +198,7 @@ export class ListConfigurableCloudsComponent implements OnChanges {
       this.fogs.splice(arrayIndex, 1);
     }
 
-    this.quantityCounterService.setQuantities(
+    this.quantityCounterService.setNodeQuantities(
       this.numOfClouds,
       this.numOfFogs,
       this.getNumberOfConfigurabledNodes(this.computingNodes.clouds),

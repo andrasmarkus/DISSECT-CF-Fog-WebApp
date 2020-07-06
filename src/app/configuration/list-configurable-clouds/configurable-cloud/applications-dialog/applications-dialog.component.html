@@ -1,18 +1,26 @@
 <h1 mat-dialog-title class="setText-center title">Number of applications {{ data.numOfApps }}</h1>
+<h2  class="setText-center" *ngIf="quantityCounterService.getUndividedApps() && quantityCounterService.getUndividedApps() > 0">
+  Number of apps to distribute: {{quantityCounterService.getUndividedApps()}}
+</h2>
 <div mat-dialog-content>
   <div [style.margin]="'2%'" fxLayout="row wrap" fxLayoutAlign="center center">
-    <ng-container *ngFor="let index of [].constructor(data.numOfApps); let i = index">
+    <ng-container *ngFor="let app of data.applications | keyvalue; let i = index">
       <app-application-card
-        [style.margin]="'1%'"
-        [index]="i + 1"
-        [application]="getAppByIndex(i)"
+       class="app-card"
+        [application]="app.value"
+        [index]="i+1"
+        (removeEmitter)="removeTypeOfApp($event)"
       ></app-application-card>
     </ng-container>
+    <div [ngClass]="{'plus-wrapper-disabled': quantityCounterService.getUndividedApps() ===0}"
+      class="plus-wrapper" (click)="addApp()">
+      <i class="fas fa-plus fa-5x plus-icon"></i>
+    </div>
   </div>
 </div>
 <div fxLayout="row" fxLayoutAlign="center center">
-  <button mat-raised-button matDialogClose (click)="closeWithData()">Cancel</button>
-  <button mat-raised-button color="primary" [disabled]="!checkDialogIsValid()" (click)="submitApplicationCards()">
+  <button mat-raised-button matDialogClose class="cancelButton" (click)="closeWithData()">Cancel</button>
+  <button mat-raised-button color="primary" class="okButton" [disabled]="!checkDialogIsValid()" (click)="submitApplicationCards()">
     Ok
   </button>
 </div>
