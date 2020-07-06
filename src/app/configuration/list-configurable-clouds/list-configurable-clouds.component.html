@@ -9,7 +9,7 @@
     <ng-container *ngFor="let cloud of clouds; index as i">
       <app-configurable-cloud
         [node]="cloud"
-        [lpdsTypes]="instaces"
+        [resources]="resources"
         (setComputingNode)="addComputingNode($event)"
         (removeEmitter)="removeTypeOfNodes($event)"
       ></app-configurable-cloud>
@@ -29,7 +29,7 @@
     <ng-container *ngFor="let fog of fogs; index as i">
       <app-configurable-cloud
         [node]="fog"
-        [lpdsTypes]="instaces"
+        [resources]="resources"
         (setComputingNode)="addComputingNode($event)"
         (removeEmitter)="removeTypeOfNodes($event)"
       ></app-configurable-cloud>

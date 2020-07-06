@@ -24,7 +24,7 @@ const UNSET_APPS_TOOLTIP = 'Applications are not configured!';
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }]
 })
 export class ConfigurableCloudComponent implements OnInit {
-  @Input() public lpdsTypes: string[];
+  @Input() public resources: string[];
   @Input() public node: ComputingNode;
   @Output() public readonly setComputingNode = new EventEmitter<ComputingNode>();
   @Output() public readonly removeEmitter = new EventEmitter<string>();
@@ -32,7 +32,7 @@ export class ConfigurableCloudComponent implements OnInit {
   public statusIcon: string;
   public appsStatusIcon: string;
   public cloudCardForm: FormGroup;
-  public selectedLPDStype: string;
+  public selectedResource: string;
   public numOfApps = 0;
   public cloudIcon: string;
   public errorTooltip: string;
@@ -133,7 +133,7 @@ export class ConfigurableCloudComponent implements OnInit {
   }
 
   private initForm(): void {
-    this.selectedLPDStype = this.lpdsTypes[0]; // needs better solution
+    this.selectedResource = this.resources[0]; // needs better solution
     this.cloudCardForm = this.formBuilder.group({
       numOfApplications: [
         '',
@@ -155,7 +155,7 @@ export class ConfigurableCloudComponent implements OnInit {
 
       this.cloudCardForm.valueChanges.subscribe(value => {
         if (value.allAppsConfigured) {
-          const computingNode = this.createComputingNode(true, this.selectedLPDStype, this.applications);
+          const computingNode = this.createComputingNode(true, this.selectedResource, this.applications);
           this.setComputingNode.emit(computingNode);
           this.statusIcon = CONFIGURED_ICON;
         } else {
@@ -190,14 +190,14 @@ export class ConfigurableCloudComponent implements OnInit {
 
   private createComputingNode(
     isConfigured: boolean,
-    lpdsType: string = '',
+    resource: string = '',
     applications: ApplicationsObject = {}
   ): ComputingNode {
     return {
       id: this.node.id,
       x: 0,
       y: 0,
-      lpdsType,
+      resource,
       applications,
       isCloud: this.isCloudBoolean,
       isConfigured,

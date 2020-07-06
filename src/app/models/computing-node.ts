@@ -4,7 +4,7 @@ export class ComputingNode {
   id: string;
   x: number;
   y: number;
-  lpdsType: string; //should be an interface from server
+  resource: string; //should be an interface from server
   applications: ApplicationsObject;
   isCloud: boolean;
   isConfigured: boolean;

@@ -9,9 +9,9 @@
       </div>
       <div class="configuration-tools">
         <mat-form-field class="resource-selector">
-          <mat-label>Select LPDS type</mat-label>
-          <mat-select [(ngModel)]="selectedLPDStype" name="selectedLPDStype" [ngModelOptions]="{ standalone: true }">
-            <mat-option *ngFor="let lpdsType of lpdsTypes" [value]="lpdsType"> {{ lpdsType }}</mat-option>
+          <mat-label>Select resource type</mat-label>
+          <mat-select [(ngModel)]="selectedResource" name="selectedResource" [ngModelOptions]="{ standalone: true }">
+            <mat-option *ngFor="let resource of resources" [value]="resource"> {{ resource }}</mat-option>
           </mat-select>
         </mat-form-field>
         <div class="configure-apps">

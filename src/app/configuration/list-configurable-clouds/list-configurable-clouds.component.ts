@@ -19,7 +19,7 @@ export class ListConfigurableCloudsComponent implements OnChanges {
   @Input() public computingNodes: ComputingNodesObject = { clouds: {}, fogs: {} };
   @Output() public readyToSaveEmitter = new EventEmitter<ComputingNodesObject>();
 
-  public readonly instaces: string[] = ['LPDS_Fog_T1', 'LPDS_Fog_T2', 'LPDS_original']; // come from server
+  public readonly resources: string[] = ['LPDS_Fog_T1', 'LPDS_Fog_T2', 'LPDS_original']; // come from server
   public readyToSave = false;
   public dividedClouds = 1;
   public dividedFogs = 1;
