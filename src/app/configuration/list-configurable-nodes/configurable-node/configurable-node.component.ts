@@ -18,12 +18,12 @@ const INVALID_TOOLTIP = 'Invalid quantity!';
 const UNSET_APPS_TOOLTIP = 'Applications are not configured!';
 
 @Component({
-  selector: 'app-configurable-cloud',
-  templateUrl: './configurable-cloud.component.html',
-  styleUrls: ['./configurable-cloud.component.css'],
+  selector: 'app-configurable-node',
+  templateUrl: './configurable-node.component.html',
+  styleUrls: ['./configurable-node.component.css'],
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }]
 })
-export class ConfigurableCloudComponent implements OnInit {
+export class ConfigurableNodeComponent implements OnInit {
   @Input() public resources: string[];
   @Input() public node: ComputingNode;
   @Output() public readonly setComputingNode = new EventEmitter<ComputingNode>();

@@ -7,12 +7,12 @@
       </span>
     </div>
     <ng-container *ngFor="let cloud of clouds; index as i">
-      <app-configurable-cloud
+      <app-configurable-node
         [node]="cloud"
         [resources]="resources"
         (setComputingNode)="addComputingNode($event)"
         (removeEmitter)="removeTypeOfNodes($event)"
-      ></app-configurable-cloud>
+      ></app-configurable-node>
     </ng-container>
     <div class="plus-container">
       <div [ngClass]="{'plus-wrapper-disabled': quantityCounterService.getUndividedClouds() ===0}" class="plus-wrapper" (click)="addCloud()">
@@ -27,12 +27,12 @@
       </span>
     </div>
     <ng-container *ngFor="let fog of fogs; index as i">
-      <app-configurable-cloud
+      <app-configurable-node
         [node]="fog"
         [resources]="resources"
         (setComputingNode)="addComputingNode($event)"
         (removeEmitter)="removeTypeOfNodes($event)"
-      ></app-configurable-cloud>
+      ></app-configurable-node>
   </ng-container>
     <div class="plus-container">
       <div *ngIf="quantityCounterService.numOfFogs > 0"

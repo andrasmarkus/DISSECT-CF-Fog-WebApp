@@ -7,7 +7,7 @@ import { StationsObject } from 'src/app/models/station';
 import { ConfigurationObject, Neighbour } from 'src/app/models/configuration';
 import { omit } from 'lodash';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { StepBackServiceService } from 'src/app/services/step-back-service.service';
+import { StepBackServiceService } from 'src/app/services/step-back/step-back-service.service';
 
 export class Node {
   id: string;

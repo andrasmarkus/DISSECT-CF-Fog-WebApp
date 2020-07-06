@@ -3,17 +3,17 @@ import { FormGroup } from '@angular/forms';
 import { ComputingNode } from 'src/app/models/computing-node';
 import { ComputingNodesObject, CloudNodesObject, FogNodesObject } from 'src/app/models/computing-nodes-object';
 import * as _ from 'lodash';
-import { StepBackServiceService } from 'src/app/services/step-back-service.service';
+import { StepBackServiceService } from 'src/app/services/step-back/step-back-service.service';
 import { QuantityCounterService } from 'src/app/services/quantity-counter/quantity-counter.service';
 import { StationsObject } from 'src/app/models/station';
 import { map } from 'lodash';
 
 @Component({
-  selector: 'app-list-configurable-clouds',
-  templateUrl: './list-configurable-clouds.component.html',
-  styleUrls: ['./list-configurable-clouds.component.css']
+  selector: 'app-list-configurable-nodes',
+  templateUrl: './list-configurable-nodes.component.html',
+  styleUrls: ['./list-configurable-nodes.component.css']
 })
-export class ListConfigurableCloudsComponent implements OnChanges {
+export class ListConfigurableNodesComponent implements OnChanges {
   @Input() public readonly numOfClouds: number;
   @Input() public readonly numOfFogs: number;
   @Input() public computingNodes: ComputingNodesObject = { clouds: {}, fogs: {} };

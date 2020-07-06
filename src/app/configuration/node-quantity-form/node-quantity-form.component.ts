@@ -3,11 +3,11 @@ import { FormGroup, FormControl, Validators, FormBuilder, NgForm } from '@angula
 import { ComputingNodesQuantityData } from 'src/app/models/computing-nodes-quantity-data';
 
 @Component({
-  selector: 'app-cloud-number-form',
-  templateUrl: './cloud-number-form.component.html',
-  styleUrls: ['./cloud-number-form.component.css']
+  selector: 'app-node-quantity-form',
+  templateUrl: './node-quantity-form.component.html',
+  styleUrls: ['./node-quantity-form.component.css']
 })
-export class CloudNumberFormComponent implements OnInit {
+export class NodeQuantityFormComponent implements OnInit {
   @Output() quantityOfComputingNodes = new EventEmitter<ComputingNodesQuantityData>();
 
   public numOfClouds = 0;

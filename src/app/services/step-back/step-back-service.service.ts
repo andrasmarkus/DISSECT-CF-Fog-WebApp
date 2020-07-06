@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { StepBackDialogComponent } from '../configuration/step-back-dialog/step-back-dialog.component';
+import { StepBackDialogComponent } from '../../configuration/step-back-dialog/step-back-dialog.component';
 
 @Injectable({
   providedIn: 'root'

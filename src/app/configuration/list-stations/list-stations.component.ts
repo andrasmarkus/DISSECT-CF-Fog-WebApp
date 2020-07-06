@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { StationsObject, Station } from 'src/app/models/station';
-import { StepBackServiceService } from 'src/app/services/step-back-service.service';
+import { StepBackServiceService } from 'src/app/services/step-back/step-back-service.service';
 
 @Component({
   selector: 'app-list-stations',

@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CloudNumberFormComponent } from './cloud-number-form.component';
+import { NodeQuantityFormComponent } from './node-quantity-form.component';
 
-describe('CloudNumberFormComponent', () => {
-  let component: CloudNumberFormComponent;
-  let fixture: ComponentFixture<CloudNumberFormComponent>;
+describe('NodeQuantityFormComponent', () => {
+  let component: NodeQuantityFormComponent;
+  let fixture: ComponentFixture<NodeQuantityFormComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [CloudNumberFormComponent]
+      declarations: [NodeQuantityFormComponent]
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CloudNumberFormComponent);
+    fixture = TestBed.createComponent(NodeQuantityFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

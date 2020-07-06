@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
-import { CloudNumberFormComponent } from './cloud-number-form/cloud-number-form.component';
+import { NodeQuantityFormComponent } from './node-quantity-form/node-quantity-form.component';
 import { ComputingNodesQuantityData } from '../models/computing-nodes-quantity-data';
 import { MatStepper } from '@angular/material/stepper';
 import { MatDialog } from '@angular/material/dialog';
 import { StepBackDialogComponent } from './step-back-dialog/step-back-dialog.component';
-import { StepBackServiceService } from '../services/step-back-service.service';
+import { StepBackServiceService } from '../services/step-back/step-back-service.service';
 import { ComputingNodesObject } from '../models/computing-nodes-object';
 import { StationsObject } from '../models/station';
 import { FormGroup } from '@angular/forms';
@@ -28,7 +28,7 @@ export class ConfigurationComponent implements AfterViewChecked {
   public showConnections = false;
   public generateGraph: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  @ViewChild(CloudNumberFormComponent) public numOfCloudsForm: CloudNumberFormComponent;
+  @ViewChild(NodeQuantityFormComponent) public numOfCloudsForm: NodeQuantityFormComponent;
   @ViewChild('stepper') public stepper: MatStepper;
 
   constructor(private changeDetect: ChangeDetectorRef, public dialog: MatDialog) {}
