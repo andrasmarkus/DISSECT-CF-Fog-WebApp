@@ -37,6 +37,8 @@ export class ApplicationCardComponent implements OnInit {
   ngOnInit(): void {
     this.createForm();
     this.initForm();
+    this.instance = this.instances[0];
+    this.strategy = this.strategys[0];
   }
 
   createForm() {
@@ -59,15 +61,12 @@ export class ApplicationCardComponent implements OnInit {
   }
 
   public getValidApplication() {
-    if (this.appFormGroup.valid) {
-      this.application = this.appFormGroup.value;
-      this.application.canJoin = this.canJoin;
-      this.application.strategy = this.strategy;
-      this.application.instance = this.instance;
-      this.application.id = 'app' + this.index;
-      return this.application;
-    }
-    return null;
+    this.application = this.appFormGroup.value;
+    this.application.canJoin = this.canJoin;
+    this.application.strategy = this.strategy;
+    this.application.instance = this.instance;
+    this.application.id = 'app' + this.index;
+    return this.application;
   }
 
   public checkValidation(): boolean {

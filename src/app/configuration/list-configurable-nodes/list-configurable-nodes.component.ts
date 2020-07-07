@@ -131,6 +131,8 @@ export class ListConfigurableNodesComponent implements OnChanges {
   }
 
   public saveNodes(): void {
+    this.filterOutCloudsFromArray();
+    this.filterOutFogsFromArray();
     if (this.readyToSave) {
       this.readyToSaveEmitter.emit(this.computingNodes);
     }

@@ -45,7 +45,7 @@ export class ListStationsComponent {
   }
 
   public removeStation(index: number): void {
-    delete this.stationNodes['station' + index];
+    delete this.stationNodes[index];
     const arrayIndex = index - 1;
     this.stations.splice(arrayIndex, 1);
     this.readyToSave =

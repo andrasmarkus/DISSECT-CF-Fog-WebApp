@@ -108,6 +108,7 @@ export class ApplicationsDialogComponent implements OnInit, AfterViewInit {
 
   public addApp(): void {
     if (this.quantityCounterService.increaseApps()) {
+      this.saveApplicationsState();
       this.appIndex += 1;
       const appId = 'app' + this.appIndex;
       const app = new Application();
@@ -117,7 +118,18 @@ export class ApplicationsDialogComponent implements OnInit, AfterViewInit {
     }
   }
 
+  private saveApplicationsState(): void {
+    if (this.applicationCards) {
+      this.data.applications = {};
+      this.applicationCards.forEach(appCard => {
+        const application = appCard.getValidApplication();
+        this.data.applications[application.id] = application;
+      });
+    }
+  }
+
   public removeTypeOfApp(id: string): void {
+    this.saveApplicationsState();
     delete this.data.applications[id];
     this.quantityCounterService.setAppsQuantities(
       this.data.numOfApps,

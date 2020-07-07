@@ -23,7 +23,7 @@
                 matInput
                 type="number"
                 [(ngModel)]="numOfApps"
-                (keyup)="onChange($event)"
+                (keyup)="onChange()"
                 formControlName="numOfApplications"
               />
               <mat-icon [matTooltip]="errorTooltip" [matTooltipDisabled]="!showErrorTooltip"

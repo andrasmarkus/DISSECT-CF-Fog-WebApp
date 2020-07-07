@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroupDirective, ControlContainer, Validators, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ApplicationsDialogComponent } from './applications-dialog/applications-dialog.component';
@@ -51,6 +51,7 @@ export class ConfigurableNodeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.selectedResource = this.resources[0];
     this.statusIcon = NOT_CONFIGURED_ICON;
     this.appsStatusIcon = UNSET_APPS_ICON;
     this.errorTooltip = INVALID_TOOLTIP;
@@ -64,10 +65,10 @@ export class ConfigurableNodeComponent implements OnInit {
     this.sendConfiguredNodeToParent();
   }
 
-  onChange(event: any): void {
+  onChange(): void {
     if (
-      (this.numOfApps === Object.keys(this.applications).length ||
-        this.numOfApps < Object.keys(this.applications).length) &&
+      (this.numOfApps === this.getNumberOfConfigurabledApps(this.applications) ||
+        this.numOfApps < this.getNumberOfConfigurabledApps(this.applications)) &&
       this.cloudCardForm.valid
     ) {
       this.appsStatusIcon = SET_APPS_ICON;
@@ -95,15 +96,6 @@ export class ConfigurableNodeComponent implements OnInit {
   }
 
   openDialog(): void {
-    /* if (Object.values(this.applications).length === 0) {
-      const firstAppId = 'app' + 1;
-      const firsApp = new Application();
-      firsApp.id = firstAppId;
-      firsApp.quantity = 1;
-      this.applications[firsApp.id] = firsApp;
-    }
-    this.quantityCounterService.setAppsQuantities(this.numOfApps, this.getNumberOfConfigurabledApps(this.applications)); */
-
     const dialogRef = this.dialog.open(ApplicationsDialogComponent, {
       panelClass: 'applications-dialog-panel',
       disableClose: true,
@@ -133,7 +125,6 @@ export class ConfigurableNodeComponent implements OnInit {
   }
 
   private initForm(): void {
-    this.selectedResource = this.resources[0]; // needs better solution
     this.cloudCardForm = this.formBuilder.group({
       numOfApplications: [
         '',
@@ -145,26 +136,22 @@ export class ConfigurableNodeComponent implements OnInit {
   }
 
   private sendConfiguredNodeToParent(): void {
-    if (this.cloudCardForm) {
-      this.cloudCardForm.controls['numOfApplications'].valueChanges.subscribe((newValue: number) => {
-        const oldValue = this.cloudCardForm.value['numOfApplications'];
-        if (oldValue > newValue) {
-          this.applications = this.updateAppsObject(this.applications, newValue);
-        }
-      });
+    this.cloudCardForm.controls['numOfApplications'].valueChanges.subscribe((newValue: number) => {
+      const oldValue = this.cloudCardForm.value['numOfApplications'];
+      if (oldValue > newValue && newValue !== 0) {
+        this.applications = this.updateAppsObject(this.applications, newValue);
+      }
+    });
 
-      this.cloudCardForm.valueChanges.subscribe(value => {
-        if (value.allAppsConfigured) {
-          const computingNode = this.createComputingNode(true, this.selectedResource, this.applications);
-          this.setComputingNode.emit(computingNode);
-          this.statusIcon = CONFIGURED_ICON;
-        } else {
-          const computingNode = this.createComputingNode(false);
-          this.setComputingNode.emit(computingNode);
-          this.statusIcon = NOT_CONFIGURED_ICON;
-        }
-      });
-    }
+    this.cloudCardForm.valueChanges.subscribe(value => {
+      if (value.allAppsConfigured) {
+        this.setComputingNode.emit(this.node);
+        this.statusIcon = CONFIGURED_ICON;
+      } else {
+        this.setComputingNode.emit(this.node);
+        this.statusIcon = NOT_CONFIGURED_ICON;
+      }
+    });
   }
 
   private updateAppsObject(apps: ApplicationsObject, currentValue: number): ApplicationsObject {
@@ -186,23 +173,6 @@ export class ConfigurableNodeComponent implements OnInit {
       }
     }
     return restOfTheNodes;
-  }
-
-  private createComputingNode(
-    isConfigured: boolean,
-    resource: string = '',
-    applications: ApplicationsObject = {}
-  ): ComputingNode {
-    return {
-      id: this.node.id,
-      x: 0,
-      y: 0,
-      resource,
-      applications,
-      isCloud: this.isCloudBoolean,
-      isConfigured,
-      quantity: this.node.quantity
-    } as ComputingNode;
   }
 
   decrease() {

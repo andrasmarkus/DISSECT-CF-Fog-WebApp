@@ -1,6 +1,6 @@
 <div class="station-container">
-  <div *ngFor="let station of stations; index as i">
-    <app-configurable-station (stationEmitter)="getStationFromEmitter($event)" (removeEmitter)="removeStation($event)" [index]="i+1" 
+  <div *ngFor="let station of stations">
+    <app-configurable-station (stationEmitter)="getStationFromEmitter($event)" (removeEmitter)="removeStation($event)" [index]="station.id" 
     [station]="station"></app-configurable-station>
   </div>
   <div class="plus-wrapper" (click)="addStation()">

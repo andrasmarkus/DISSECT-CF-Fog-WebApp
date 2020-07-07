@@ -9,10 +9,10 @@ import { Station } from 'src/app/models/station';
 })
 export class ConfigurableStationComponent implements OnInit {
   @Input() public station: Station;
-  @Input() index: number;
+  @Input() index: string;
   @Input() public strategys: string[] = ['random', 'distance'];
   @Output() stationEmitter = new EventEmitter<Station>();
-  @Output() removeEmitter = new EventEmitter<number>();
+  @Output() removeEmitter = new EventEmitter<string>();
   public strategy = this.strategys[0];
   public stationFormGroup: FormGroup;
   public quantity = 1;
@@ -62,7 +62,7 @@ export class ConfigurableStationComponent implements OnInit {
   public getValidStation() {
     this.station = new Station();
     this.station = this.stationFormGroup.value;
-    this.station.id = 'station' + this.index;
+    this.station.id = this.index;
     this.station.valid = true;
     this.station.quantity = this.quantity;
     return this.station;
