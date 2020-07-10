@@ -1,4 +1,12 @@
-import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  AfterViewChecked,
+  ChangeDetectorRef,
+  OnDestroy,
+  AfterViewInit
+} from '@angular/core';
 import { NodeQuantityFormComponent } from './node-quantity-form/node-quantity-form.component';
 import { ComputingNodesQuantityData } from '../models/computing-nodes-quantity-data';
 import { MatStepper } from '@angular/material/stepper';
@@ -10,16 +18,17 @@ import { StationsObject } from '../models/station';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { RestartConfigurationService } from '../services/restart-configuration.service';
+import { StepperService } from '../services/stepper/stepper.service';
+import { ConfigurationService } from '../services/configuration/configuration.service';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-configuration',
   templateUrl: './configuration.component.html',
   styleUrls: ['./configuration.component.css']
 })
-export class ConfigurationComponent implements AfterViewChecked, OnDestroy {
+export class ConfigurationComponent implements AfterViewInit, AfterViewChecked, OnDestroy {
   public readonly isLinear = true;
-  public numOfClouds: number;
-  public numOfFogs: number;
   public back = false;
   public computingNodes: ComputingNodesObject = { clouds: {}, fogs: {} };
   public stationNodes: StationsObject = {};
@@ -28,22 +37,27 @@ export class ConfigurationComponent implements AfterViewChecked, OnDestroy {
 
   private restartSubscription: Subscription;
 
-  @ViewChild(NodeQuantityFormComponent) public numOfCloudsForm: NodeQuantityFormComponent;
   @ViewChild('stepper') public stepper: MatStepper;
 
   constructor(
     private changeDetect: ChangeDetectorRef,
     public dialog: MatDialog,
-    private restartConfService: RestartConfigurationService
+    private restartConfService: RestartConfigurationService,
+    public stepperService: StepperService,
+    public configurationService: ConfigurationService
   ) {
     this.restartSubscription = this.restartConfService.restartConfiguration$.subscribe(restart => {
       if (restart) {
-        this.numOfClouds = 0;
-        this.numOfFogs = 0;
         this.computingNodes = { clouds: {}, fogs: {} };
         this.stationNodes = {};
       }
     });
+  }
+
+  public ngAfterViewInit(): void {
+    if (this.stepper) {
+      this.stepperService.setStepper(this.stepper);
+    }
   }
 
   public ngOnDestroy(): void {
@@ -54,15 +68,6 @@ export class ConfigurationComponent implements AfterViewChecked, OnDestroy {
     this.changeDetect.detectChanges();
   }
 
-  public get numOfCloudsFromGroup(): FormGroup | null {
-    return this.numOfCloudsForm ? this.numOfCloudsForm.numOfComputingNodes : null;
-  }
-
-  public setNumOfComputingNodes(nodesQuantity: ComputingNodesQuantityData): void {
-    this.numOfClouds = nodesQuantity.numberOfClouds;
-    this.numOfFogs = nodesQuantity.numberOfFogs ? nodesQuantity.numberOfFogs : 0;
-  }
-
   public saveComputingNodes(nodes: ComputingNodesObject): void {
     this.computingNodes = { ...nodes };
     this.generateGraph.next(true);
@@ -70,7 +75,7 @@ export class ConfigurationComponent implements AfterViewChecked, OnDestroy {
 
   public stepBack(isBack: boolean): void {
     if (isBack) {
-      this.stepper.previous();
+      this.stepperService.stepBack();
     }
   }
 

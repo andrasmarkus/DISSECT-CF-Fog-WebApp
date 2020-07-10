@@ -8,7 +8,7 @@
           Cloud is <strong>required</strong>
         </mat-error>
         <mat-error *ngIf="numOfComputingNodes.get('numOfClouds').hasError('max')">
-          Max quantity is <strong>{{maxNumOfNodes}}</strong>
+          Max quantity is <strong>{{configurationService.maxNumOfNodes}}</strong>
         </mat-error>
         <mat-error *ngIf="numOfComputingNodes.get('numOfClouds').hasError('pattern')">
           The quantity can't be <strong>0</strong>
@@ -20,7 +20,7 @@
         <mat-label>Number of fogs</mat-label>
         <input class="setText-center" matInput type="number" formControlName="numOfFogs" />
         <mat-error *ngIf="numOfComputingNodes.get('numOfFogs').hasError('max')">
-          Max quantity is <strong>{{maxNumOfNodes}}</strong>
+          Max quantity is <strong>{{configurationService.maxNumOfNodes}}</strong>
         </mat-error>
       </mat-form-field>
     </div>
@@ -29,8 +29,7 @@
         <button type="button" mat-raised-button color="warn" (click)="resetConfiguration()">Reset</button>
       </div>
       <div class="setText-center margin-around">
-        <button mat-raised-button color="primary"
-          matStepperNext (click)="sendCloudAmouts()">Next</button>
+        <button mat-raised-button color="primary" (click)="sendNodesQuantity()">Next</button>
       </div>
     </div>
   </form>

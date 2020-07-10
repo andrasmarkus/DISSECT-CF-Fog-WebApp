@@ -36,7 +36,6 @@ export class ListConfigurableNodesComponent implements OnChanges, OnDestroy {
     public quantityCounterService: QuantityCounterService,
     private restartConfService: RestartConfigurationService
   ) {
-    this.initNodes();
     this.restartSubscription = this.restartConfService.restartConfiguration$.subscribe(restart => {
       if (restart) {
         this.cloudIndex = 1;
@@ -53,15 +52,24 @@ export class ListConfigurableNodesComponent implements OnChanges, OnDestroy {
     this.restartSubscription.unsubscribe();
   }
 
-  private initNodes() {
-    const firstCloudId = 'cloud' + this.cloudIndex;
-    const firstCloud = new ComputingNode();
-    firstCloud.id = firstCloudId;
-    firstCloud.isCloud = true;
-    firstCloud.quantity = 1;
-    this.clouds.push(firstCloud);
-    this.computingNodes.clouds[firstCloud.id] = firstCloud;
+  public ngOnChanges(changes: SimpleChanges): void {
+    if (changes.numOfClouds && this.clouds.length === 0 && changes.numOfClouds.currentValue > 0) {
+      this.createFirstCloud();
+    }
+    if (changes.numOfFogs && this.fogs.length === 0 && changes.numOfFogs.currentValue > 0) {
+      this.createFirsFog();
+    }
+    this.updateNodesByInputFormChanges(changes);
+    this.checkIsReadyToSave();
+    this.quantityCounterService.setNodeQuantities(
+      this.numOfClouds,
+      this.numOfFogs,
+      this.getNumberOfConfigurabledNodes(this.computingNodes.clouds),
+      this.getNumberOfConfigurabledNodes(this.computingNodes.fogs)
+    );
+  }
 
+  private createFirsFog() {
     const firstFogId = 'fog' + this.fogIndex;
     const firstFog = new ComputingNode();
     firstFog.id = firstFogId;
@@ -71,15 +79,14 @@ export class ListConfigurableNodesComponent implements OnChanges, OnDestroy {
     this.computingNodes.fogs[firstFog.id] = firstFog;
   }
 
-  public ngOnChanges(changes: SimpleChanges): void {
-    this.updateNodesByInputFormChanges(changes);
-    this.checkIsReadyToSave();
-    this.quantityCounterService.setNodeQuantities(
-      this.numOfClouds,
-      this.numOfFogs,
-      this.getNumberOfConfigurabledNodes(this.computingNodes.clouds),
-      this.getNumberOfConfigurabledNodes(this.computingNodes.fogs)
-    );
+  private createFirstCloud() {
+    const firstCloudId = 'cloud' + this.cloudIndex;
+    const firstCloud = new ComputingNode();
+    firstCloud.id = firstCloudId;
+    firstCloud.isCloud = true;
+    firstCloud.quantity = 1;
+    this.clouds.push(firstCloud);
+    this.computingNodes.clouds[firstCloud.id] = firstCloud;
   }
 
   public addCloud() {
@@ -125,13 +132,7 @@ export class ListConfigurableNodesComponent implements OnChanges, OnDestroy {
         changes.numOfClouds.previousValue === 0 &&
         changes.numOfClouds.currentValue > changes.numOfClouds.previousValue
       ) {
-        const firstCloudId = 'cloud' + this.cloudIndex;
-        const firstCloud = new ComputingNode();
-        firstCloud.id = firstCloudId;
-        firstCloud.isCloud = true;
-        firstCloud.quantity = 1;
-        this.clouds.push(firstCloud);
-        this.computingNodes.clouds[firstCloud.id] = firstCloud;
+        this.createFirstCloud();
       } else if (changes.numOfClouds.currentValue === 0 || changes.numOfClouds.currentValue === undefined) {
         this.computingNodes.clouds = {};
         this.filterOutCloudsFromArray();
@@ -150,13 +151,7 @@ export class ListConfigurableNodesComponent implements OnChanges, OnDestroy {
         changes.numOfFogs.previousValue === 0 &&
         changes.numOfFogs.currentValue > changes.numOfFogs.previousValue
       ) {
-        const firstFogId = 'fog' + this.fogIndex;
-        const firstFog = new ComputingNode();
-        firstFog.id = firstFogId;
-        firstFog.isCloud = false;
-        firstFog.quantity = 1;
-        this.fogs.push(firstFog);
-        this.computingNodes.fogs[firstFog.id] = firstFog;
+        this.createFirsFog();
       } else if (changes.numOfFogs.currentValue === 0 || changes.numOfFogs.currentValue === undefined) {
         this.computingNodes.fogs = {};
         this.filterOutFogsFromArray();

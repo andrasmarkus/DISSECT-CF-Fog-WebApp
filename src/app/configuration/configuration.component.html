@@ -1,13 +1,14 @@
 <mat-horizontal-stepper [linear]="isLinear" #stepper>
-  <mat-step [stepControl]="numOfCloudsFromGroup">
+  <mat-step>
     <ng-template matStepLabel>Number of clouds</ng-template>
-    <app-node-quantity-form (quantityOfComputingNodes)="setNumOfComputingNodes($event)"></app-node-quantity-form>
+    <app-node-quantity-form></app-node-quantity-form>
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Configure nodes</ng-template>
+    <ng-container ></ng-container>
     <app-list-configurable-nodes
-      [numOfClouds]="numOfClouds"
-      [numOfFogs]="numOfFogs"
+      [numOfClouds]="(configurationService.nodesQuantity$ | async)?. numberOfClouds"
+      [numOfFogs]="(configurationService.nodesQuantity$ | async)?. numberOfFogs"
       [computingNodes]="computingNodes"
       (readyToSaveEmitter)="saveComputingNodes($event)"
     ></app-list-configurable-nodes>
