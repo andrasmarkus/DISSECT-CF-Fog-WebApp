@@ -24,8 +24,14 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <div class="setText-center margin-around">
-      <button mat-raised-button color="primary" matStepperNext (click)="sendCloudAmouts()">Next</button>
+    <div class="actions">
+      <div class="setText-center margin-around">
+        <button type="button" mat-raised-button color="warn" (click)="resetConfiguration()">Reset</button>
+      </div>
+      <div class="setText-center margin-around">
+        <button mat-raised-button color="primary"
+          matStepperNext (click)="sendCloudAmouts()">Next</button>
+      </div>
     </div>
   </form>
 </div>

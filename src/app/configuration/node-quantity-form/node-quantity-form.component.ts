@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder, NgForm } from '@angular/forms';
 import { ComputingNodesQuantityData } from 'src/app/models/computing-nodes-quantity-data';
+import { RestartConfigurationService } from 'src/app/services/restart-configuration.service';
 
 @Component({
   selector: 'app-node-quantity-form',
@@ -15,7 +16,7 @@ export class NodeQuantityFormComponent implements OnInit {
   public numOfComputingNodes: FormGroup;
   public maxNumOfNodes = 10;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, public restartConfService: RestartConfigurationService) {
     this.initForm();
   }
 
@@ -40,5 +41,10 @@ export class NodeQuantityFormComponent implements OnInit {
         : undefined
     } as ComputingNodesQuantityData;
     this.quantityOfComputingNodes.emit(cloudsAmount);
+  }
+
+  public resetConfiguration() {
+    this.numOfComputingNodes.reset();
+    this.restartConfService.restartConfiguration$.next(true);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { NodeQuantityFormComponent } from './node-quantity-form/node-quantity-form.component';
 import { ComputingNodesQuantityData } from '../models/computing-nodes-quantity-data';
 import { MatStepper } from '@angular/material/stepper';
@@ -8,30 +8,47 @@ import { StepBackServiceService } from '../services/step-back/step-back-service.
 import { ComputingNodesObject } from '../models/computing-nodes-object';
 import { StationsObject } from '../models/station';
 import { FormGroup } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { RestartConfigurationService } from '../services/restart-configuration.service';
 
 @Component({
   selector: 'app-configuration',
   templateUrl: './configuration.component.html',
   styleUrls: ['./configuration.component.css']
 })
-export class ConfigurationComponent implements AfterViewChecked {
+export class ConfigurationComponent implements AfterViewChecked, OnDestroy {
   public readonly isLinear = true;
   public numOfClouds: number;
   public numOfFogs: number;
-  public isCompleted = false;
-  public editableQuantityForm = false;
-  public selectedIndex = 0;
   public back = false;
   public computingNodes: ComputingNodesObject = { clouds: {}, fogs: {} };
   public stationNodes: StationsObject = {};
   public showConnections = false;
   public generateGraph: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
+  private restartSubscription: Subscription;
+
   @ViewChild(NodeQuantityFormComponent) public numOfCloudsForm: NodeQuantityFormComponent;
   @ViewChild('stepper') public stepper: MatStepper;
 
-  constructor(private changeDetect: ChangeDetectorRef, public dialog: MatDialog) {}
+  constructor(
+    private changeDetect: ChangeDetectorRef,
+    public dialog: MatDialog,
+    private restartConfService: RestartConfigurationService
+  ) {
+    this.restartSubscription = this.restartConfService.restartConfiguration$.subscribe(restart => {
+      if (restart) {
+        this.numOfClouds = 0;
+        this.numOfFogs = 0;
+        this.computingNodes = { clouds: {}, fogs: {} };
+        this.stationNodes = {};
+      }
+    });
+  }
+
+  public ngOnDestroy(): void {
+    this.restartSubscription.unsubscribe();
+  }
 
   ngAfterViewChecked(): void {
     this.changeDetect.detectChanges();

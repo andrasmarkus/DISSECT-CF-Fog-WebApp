@@ -1,13 +1,15 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
 import { StationsObject, Station } from 'src/app/models/station';
 import { StepBackServiceService } from 'src/app/services/step-back/step-back-service.service';
+import { Subscription } from 'rxjs';
+import { RestartConfigurationService } from 'src/app/services/restart-configuration.service';
 
 @Component({
   selector: 'app-list-stations',
   templateUrl: './list-stations.component.html',
   styleUrls: ['./list-stations.component.css']
 })
-export class ListStationsComponent {
+export class ListStationsComponent implements OnDestroy {
   @Input() public stationNodes: StationsObject = {};
   @Output() public stationsEmitter = new EventEmitter<StationsObject>();
 
@@ -15,12 +17,32 @@ export class ListStationsComponent {
   public stationIndex = 1;
   public readyToSave = false;
 
-  constructor() {
+  private restartSubscription: Subscription;
+
+  constructor(private restartConfService: RestartConfigurationService) {
+    this.initStations();
+
+    this.restartSubscription = this.restartConfService.restartConfiguration$.subscribe(restart => {
+      if (restart) {
+        this.stationIndex = 1;
+        this.readyToSave = false;
+        this.stationNodes = {};
+        this.stations = [];
+        this.initStations();
+      }
+    });
+  }
+
+  private initStations() {
     const firstStationId = 'station' + this.stationIndex;
     const firstStation = new Station();
     firstStation.id = firstStationId;
     this.stations.push(firstStation);
     this.stationNodes[firstStation.id] = firstStation;
+  }
+
+  public ngOnDestroy(): void {
+    this.restartSubscription.unsubscribe();
   }
 
   public addStation(): void {

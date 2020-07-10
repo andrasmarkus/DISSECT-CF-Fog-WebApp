@@ -72,10 +72,12 @@ export class ConfigurableNodeComponent implements OnInit {
       this.cloudCardForm.valid
     ) {
       this.appsStatusIcon = SET_APPS_ICON;
+      this.node.isConfigured = true;
       this.cloudCardForm.controls.allAppsConfigured.setValue(true);
       this.showErrorTooltip = false;
     } else {
       this.appsStatusIcon = UNSET_APPS_ICON;
+      this.node.isConfigured = false;
       this.cloudCardForm.controls.allAppsConfigured.setValue(false);
       this.showErrorTooltip = true;
       if (this.numOfApps > this.maxApplicationsQuantity) {
@@ -145,9 +147,11 @@ export class ConfigurableNodeComponent implements OnInit {
 
     this.cloudCardForm.valueChanges.subscribe(value => {
       if (value.allAppsConfigured) {
+        this.node.isConfigured = true;
         this.setComputingNode.emit(this.node);
         this.statusIcon = CONFIGURED_ICON;
       } else {
+        this.node.isConfigured = false;
         this.setComputingNode.emit(this.node);
         this.statusIcon = NOT_CONFIGURED_ICON;
       }
