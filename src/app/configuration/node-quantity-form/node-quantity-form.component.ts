@@ -49,6 +49,7 @@ export class NodeQuantityFormComponent {
   public resetConfiguration() {
     this.numOfComputingNodes.reset();
     this.configurationService.setNodesQuantity(undefined);
+    this.configurationService.computingNodes = { clouds: {}, fogs: {} };
     this.restartConfService.restartConfiguration$.next(true);
   }
 }

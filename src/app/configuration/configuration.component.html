@@ -9,8 +9,6 @@
     <app-list-configurable-nodes
       [numOfClouds]="(configurationService.nodesQuantity$ | async)?. numberOfClouds"
       [numOfFogs]="(configurationService.nodesQuantity$ | async)?. numberOfFogs"
-      [computingNodes]="computingNodes"
-      (readyToSaveEmitter)="saveComputingNodes($event)"
     ></app-list-configurable-nodes>
   </mat-step>
   <mat-step>
@@ -22,7 +20,7 @@
     <ng-template matStepLabel>Configure connections</ng-template>
     <app-connection *ngIf="showConnections"
       [generateGraphSubject]="generateGraph"
-      [computingNodes]="computingNodes"
+      [computingNodes]="configurationService.computingNodes"
       [stationNodes]="stationNodes"
       (isStepBack)="stepBack($event)" ></app-connection>
   </mat-step>

@@ -138,6 +138,7 @@ export class ConfigurableNodeComponent implements OnInit {
   }
 
   private sendConfiguredNodeToParent(): void {
+    //if the entered number less than it was, then it is correct
     this.cloudCardForm.controls['numOfApplications'].valueChanges.subscribe((newValue: number) => {
       const oldValue = this.cloudCardForm.value['numOfApplications'];
       if (oldValue > newValue && newValue !== 0) {
@@ -145,17 +146,25 @@ export class ConfigurableNodeComponent implements OnInit {
       }
     });
 
+    //send node to the parent at form value changes
     this.cloudCardForm.valueChanges.subscribe(value => {
       if (value.allAppsConfigured) {
         this.node.isConfigured = true;
+        this.setNodeProperties();
         this.setComputingNode.emit(this.node);
         this.statusIcon = CONFIGURED_ICON;
       } else {
         this.node.isConfigured = false;
+        this.setNodeProperties();
         this.setComputingNode.emit(this.node);
         this.statusIcon = NOT_CONFIGURED_ICON;
       }
     });
+  }
+
+  private setNodeProperties(): void {
+    this.node.resource = this.selectedResource;
+    this.node.applications = this.applications;
   }
 
   private updateAppsObject(apps: ApplicationsObject, currentValue: number): ApplicationsObject {
