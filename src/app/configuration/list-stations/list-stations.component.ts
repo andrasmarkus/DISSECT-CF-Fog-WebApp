@@ -3,6 +3,8 @@ import { StationsObject, Station } from 'src/app/models/station';
 import { StepBackServiceService } from 'src/app/services/step-back/step-back-service.service';
 import { Subscription } from 'rxjs';
 import { RestartConfigurationService } from 'src/app/services/restart-configuration.service';
+import { ConfigurationService } from 'src/app/services/configuration/configuration.service';
+import { StepperService } from 'src/app/services/stepper/stepper.service';
 
 @Component({
   selector: 'app-list-stations',
@@ -10,35 +12,31 @@ import { RestartConfigurationService } from 'src/app/services/restart-configurat
   styleUrls: ['./list-stations.component.css']
 })
 export class ListStationsComponent implements OnDestroy {
-  @Input() public stationNodes: StationsObject = {};
-  @Output() public stationsEmitter = new EventEmitter<StationsObject>();
+  @Output() public next = new EventEmitter();
 
-  public stations: Station[] = [];
-  public stationIndex = 1;
-  public readyToSave = false;
+  public stationIndex = 0;
+  public isValidConfiguration = false;
 
   private restartSubscription: Subscription;
 
-  constructor(private restartConfService: RestartConfigurationService) {
+  constructor(
+    public configurationService: ConfigurationService,
+    private restartConfService: RestartConfigurationService,
+    public stepperService: StepperService
+  ) {
     this.initStations();
 
     this.restartSubscription = this.restartConfService.restartConfiguration$.subscribe(restart => {
       if (restart) {
-        this.stationIndex = 1;
-        this.readyToSave = false;
-        this.stationNodes = {};
-        this.stations = [];
+        this.stationIndex = 0;
+        this.isValidConfiguration = false;
         this.initStations();
       }
     });
   }
 
   private initStations() {
-    const firstStationId = 'station' + this.stationIndex;
-    const firstStation = new Station();
-    firstStation.id = firstStationId;
-    this.stations.push(firstStation);
-    this.stationNodes[firstStation.id] = firstStation;
+    this.createStation();
   }
 
   public ngOnDestroy(): void {
@@ -46,33 +44,39 @@ export class ListStationsComponent implements OnDestroy {
   }
 
   public addStation(): void {
+    this.createStation();
+    this.checkIsValidConfiguration();
+  }
+
+  private createStation() {
     this.stationIndex += 1;
     const stationId = 'station' + this.stationIndex;
     const station = new Station();
     station.id = stationId;
-    this.stations.push(station);
-    this.stationNodes[station.id] = station;
-    this.readyToSave = !Object.values(this.stationNodes).some(node => node.valid === false);
+    this.configurationService.stationNodes[station.id] = station;
   }
 
   public getStationFromEmitter(station: Station): void {
-    this.stationNodes[station.id] = station;
-    this.readyToSave = !Object.values(this.stationNodes).some(node => node.valid === false);
+    this.configurationService.stationNodes[station.id] = station;
+    this.checkIsValidConfiguration();
   }
 
-  public sendStationNodes(): void {
-    if (this.readyToSave) {
-      this.stationsEmitter.emit(this.stationNodes);
+  public checkIsReadyToNext(): void {
+    if (this.isValidConfiguration) {
+      this.configurationService.generateGraph$.next(true);
+      this.stepperService.stepForward();
     }
   }
 
   public removeStation(index: number): void {
-    delete this.stationNodes[index];
-    const arrayIndex = index - 1;
-    this.stations.splice(arrayIndex, 1);
-    this.readyToSave =
-      Object.values(this.stationNodes).length > 0
-        ? !Object.values(this.stationNodes).some(node => node.valid === false)
+    delete this.configurationService.stationNodes[index];
+    this.checkIsValidConfiguration();
+  }
+
+  private checkIsValidConfiguration() {
+    this.isValidConfiguration =
+      Object.values(this.configurationService.stationNodes).length > 0
+        ? !Object.values(this.configurationService.stationNodes).some(node => node.valid === false)
         : false;
   }
 }

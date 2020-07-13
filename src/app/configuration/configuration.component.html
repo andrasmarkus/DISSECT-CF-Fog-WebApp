@@ -13,15 +13,10 @@
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Configure stations</ng-template>
-    <app-list-stations [stationNodes]="stationNodes"
-      (stationsEmitter)="saveStationNodes($event)"></app-list-stations>
+    <app-list-stations></app-list-stations>
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Configure connections</ng-template>
-    <app-connection *ngIf="showConnections"
-      [generateGraphSubject]="generateGraph"
-      [computingNodes]="configurationService.computingNodes"
-      [stationNodes]="stationNodes"
-      (isStepBack)="stepBack($event)" ></app-connection>
+    <app-connection></app-connection>
   </mat-step>
 </mat-horizontal-stepper>

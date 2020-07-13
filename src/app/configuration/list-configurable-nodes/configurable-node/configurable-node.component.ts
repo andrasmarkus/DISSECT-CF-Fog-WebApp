@@ -189,7 +189,7 @@ export class ConfigurableNodeComponent implements OnChanges {
     });
   }
 
-  public onResourceChange(event: any) {
+  public onResourceChange() {
     this.saveNodeInParent(this.nodeCardForm.controls.allAppsConfigured.value);
   }
 

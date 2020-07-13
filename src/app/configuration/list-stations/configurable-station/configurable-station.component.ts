@@ -1,34 +1,50 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Station } from 'src/app/models/station';
+import { ComputingNodeService } from 'src/app/services/computing-node/computing-node.service';
 
 @Component({
   selector: 'app-configurable-station',
   templateUrl: './configurable-station.component.html',
   styleUrls: ['./configurable-station.component.css']
 })
-export class ConfigurableStationComponent implements OnInit {
+export class ConfigurableStationComponent implements OnChanges {
   @Input() public station: Station;
-  @Input() index: string;
-  @Input() public strategys: string[] = ['random', 'distance'];
   @Output() stationEmitter = new EventEmitter<Station>();
   @Output() removeEmitter = new EventEmitter<string>();
-  public strategy = this.strategys[0];
   public stationFormGroup: FormGroup;
   public quantity = 1;
+  public strategys: string[];
+  public strategy: string;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, public nodeService: ComputingNodeService) {
+    this.strategys = nodeService.getAppStrategys();
     this.createForm();
-    this.station = new Station();
+    this.stationFormChangeListener();
+  }
 
-    this.stationFormGroup.valueChanges.subscribe(station => {
-      if (this.stationFormGroup.valid && this.quantity >= 1) {
-        this.stationEmitter.emit(this.getValidStation());
-      } else {
-        this.station.valid = false;
-        this.stationEmitter.emit(this.station);
-      }
+  public ngOnChanges(): void {
+    this.initForm();
+    this.stationFormChangeListener();
+  }
+
+  private stationFormChangeListener() {
+    this.stationFormGroup.valueChanges.subscribe(() => {
+      this.saveStation();
     });
+  }
+
+  public onStrategyChange(): void {
+    this.saveStation();
+  }
+
+  private saveStation() {
+    if (this.stationFormGroup.valid && this.quantity >= 1 && this.strategy !== '') {
+      this.stationEmitter.emit(this.getValidStation());
+    } else {
+      this.station.valid = false;
+      this.stationEmitter.emit(this.station);
+    }
   }
 
   createForm() {
@@ -41,32 +57,36 @@ export class ConfigurableStationComponent implements OnInit {
       maxinbw: new FormControl('', [Validators.required]),
       maxoutbw: new FormControl('', [Validators.required]),
       diskbw: new FormControl('', [Validators.required]),
-
-      strategy: new FormControl(this.strategy, [Validators.required]),
       radius: new FormControl('', [Validators.required])
     });
   }
 
-  public decrease() {
+  private initForm(): void {
+    if (this.station) {
+      this.stationFormGroup.patchValue(this.station, { emitEvent: false });
+    }
+    this.strategy = this.station.strategy ? this.station.strategy : '';
+  }
+
+  public decrease(): void {
     if (this.quantity > 1) {
       this.quantity--;
       this.station.quantity = this.quantity;
     }
   }
 
-  public increase() {
+  public increase(): void {
     this.quantity++;
     this.station.quantity = this.quantity;
   }
 
   public getValidStation() {
-    this.station = new Station();
+    const id = this.station.id;
     this.station = this.stationFormGroup.value;
-    this.station.id = this.index;
+    this.station.id = id;
     this.station.valid = true;
+    this.station.strategy = this.strategy;
     this.station.quantity = this.quantity;
     return this.station;
   }
-
-  ngOnInit(): void {}
 }

@@ -27,32 +27,19 @@ import { ThrowStmt } from '@angular/compiler';
   templateUrl: './configuration.component.html',
   styleUrls: ['./configuration.component.css']
 })
-export class ConfigurationComponent implements AfterViewInit, AfterViewChecked, OnDestroy {
+export class ConfigurationComponent implements AfterViewInit, AfterViewChecked {
   public readonly isLinear = true;
   public back = false;
-  public computingNodes: ComputingNodesObject = { clouds: {}, fogs: {} };
-  public stationNodes: StationsObject = {};
   public showConnections = false;
-  public generateGraph: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-
-  private restartSubscription: Subscription;
 
   @ViewChild('stepper') public stepper: MatStepper;
 
   constructor(
     private changeDetect: ChangeDetectorRef,
     public dialog: MatDialog,
-    private restartConfService: RestartConfigurationService,
     public stepperService: StepperService,
     public configurationService: ConfigurationService
-  ) {
-    this.restartSubscription = this.restartConfService.restartConfiguration$.subscribe(restart => {
-      if (restart) {
-        this.computingNodes = { clouds: {}, fogs: {} };
-        this.stationNodes = {};
-      }
-    });
-  }
+  ) {}
 
   public ngAfterViewInit(): void {
     if (this.stepper) {
@@ -60,32 +47,7 @@ export class ConfigurationComponent implements AfterViewInit, AfterViewChecked, 
     }
   }
 
-  public ngOnDestroy(): void {
-    this.restartSubscription.unsubscribe();
-  }
-
-  ngAfterViewChecked(): void {
+  public ngAfterViewChecked(): void {
     this.changeDetect.detectChanges();
-  }
-
-  public saveComputingNodes(nodes: ComputingNodesObject): void {
-    this.computingNodes = { ...nodes };
-    this.generateGraph.next(true);
-  }
-
-  public stepBack(isBack: boolean): void {
-    if (isBack) {
-      this.stepperService.stepBack();
-    }
-  }
-
-  private enableConnectionComponent(): void {
-    this.showConnections = true;
-  }
-
-  public saveStationNodes(stationNodes: StationsObject): void {
-    this.enableConnectionComponent();
-    this.stationNodes = stationNodes;
-    this.generateGraph.next(true);
   }
 }

@@ -13,13 +13,13 @@
           <mat-select [(ngModel)]="selectedResource"
             name="selectedResource"
             [ngModelOptions]="{ standalone: true }"
-            (selectionChange)="onResourceChange($event)">
+            (selectionChange)="onResourceChange()">
             <mat-option *ngFor="let resource of resources" [value]="resource"> {{ resource }}</mat-option>
           </mat-select>
         </mat-form-field>
         <div class="configure-apps">
           <div fxLayout="column" fxLayoutAlign="space-around center">
-            <label>Number of applications</label>
+            <label>Applications</label>
             <mat-form-field appearance="outline" class="apps-quantity-input">
               <input
                 class="setText-center"
@@ -33,7 +33,7 @@
               matTooltipPosition="below" matSuffix>{{ appsStatusIcon }}</mat-icon>
             </mat-form-field>
           </div>
-          <div *ngIf="nodeCardForm.valid">
+          <div class="open-dialog-pen" *ngIf="nodeCardForm.valid">
             <button mat-icon-button (click)="openDialog()">
               <i class="fas fa-edit fa-2x"></i>
             </button>

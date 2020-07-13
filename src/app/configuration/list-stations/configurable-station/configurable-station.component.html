@@ -3,7 +3,7 @@
     <div class="title">
       <span class="title-text">Station</span>
     </div>
-    <button mat-icon-button (click)="removeEmitter.emit(index)">
+    <button mat-icon-button (click)="removeEmitter.emit(station.id)">
       <i class="fas fa-trash-alt"></i>
     </button>
   </mat-card-header>
@@ -72,7 +72,7 @@
       <div class="centered-input">
         <mat-form-field appearance="outline" class="input-size-min no-padding">
           <mat-label>Strategy</mat-label>
-          <mat-select [(ngModel)]="strategy" [ngModelOptions]="{ standalone: true }">
+          <mat-select [(ngModel)]="strategy" [ngModelOptions]="{ standalone: true }" (selectionChange)="onStrategyChange()">
             <mat-option *ngFor="let strategy of strategys" [value]="strategy"> {{ strategy }}</mat-option>
           </mat-select>
         </mat-form-field>

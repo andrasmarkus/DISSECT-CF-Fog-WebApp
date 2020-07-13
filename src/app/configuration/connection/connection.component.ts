@@ -8,6 +8,8 @@ import { ConfigurationObject, Neighbour } from 'src/app/models/configuration';
 import { omit } from 'lodash';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { StepBackServiceService } from 'src/app/services/step-back/step-back-service.service';
+import { ConfigurationService } from 'src/app/services/configuration/configuration.service';
+import { StepperService } from 'src/app/services/stepper/stepper.service';
 
 export class Node {
   id: string;
@@ -20,12 +22,6 @@ export class Node {
   styleUrls: ['./connection.component.css']
 })
 export class ConnectionComponent implements OnInit, OnDestroy {
-  @Input() public computingNodes: ComputingNodesObject = { clouds: {}, fogs: {} };
-  @Input() public stationNodes: StationsObject;
-  @Input() public haveToGenerate: boolean;
-  @Input() public generateGraphSubject: BehaviorSubject<boolean>;
-  @Output() isStepBack = new EventEmitter<boolean>();
-
   public clouds: CloudNodesObject = {};
   public fogs: FogNodesObject = {};
 
@@ -66,12 +62,16 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   public verticalSpaceBetweenLayers: number;
 
   private readonly circleRangeBackgroundColor = '#00f71b40';
-  private subjectSubscription: Subscription;
+  private generationSubscription: Subscription;
 
-  constructor(private stepBackDialogService: StepBackServiceService) {}
+  constructor(
+    private stepBackDialogService: StepBackServiceService,
+    public configurationService: ConfigurationService,
+    public stepperService: StepperService
+  ) {}
 
   ngOnInit(): void {
-    this.subjectSubscription = this.generateGraphSubject.subscribe(value => {
+    this.generationSubscription = this.configurationService.generateGraph$.subscribe(value => {
       if (value) {
         this.createGraph();
       }
@@ -79,14 +79,14 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subjectSubscription.unsubscribe();
+    this.generationSubscription.unsubscribe();
   }
 
   stepBack() {
     const dialogRef = this.stepBackDialogService.openDialog();
     dialogRef.afterClosed().subscribe((result: { okAction: boolean }) => {
       if (result.okAction) {
-        this.isStepBack.emit(true);
+        this.stepperService.stepBack();
       }
     });
   }
@@ -238,9 +238,9 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   }
 
   private setNodesQuantities(): void {
-    this.clouds = this.getMultipleNodes(this.computingNodes.clouds) as CloudNodesObject;
-    this.fogs = this.getMultipleNodes(this.computingNodes.fogs) as FogNodesObject;
-    this.multipleStationNodes = this.getMultipleNodes(this.stationNodes) as StationsObject;
+    this.clouds = this.getMultipleNodes(this.configurationService.computingNodes.clouds) as CloudNodesObject;
+    this.fogs = this.getMultipleNodes(this.configurationService.computingNodes.fogs) as FogNodesObject;
+    this.multipleStationNodes = this.getMultipleNodes(this.configurationService.stationNodes) as StationsObject;
     this.numOfClouds = Object.keys(this.clouds).length;
     this.numOfFogs = Object.keys(this.fogs).length;
     this.numOfStations = Object.keys(this.multipleStationNodes).length;

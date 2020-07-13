@@ -1,7 +1,9 @@
 <div class="station-container">
-  <div *ngFor="let station of stations">
-    <app-configurable-station (stationEmitter)="getStationFromEmitter($event)" (removeEmitter)="removeStation($event)" [index]="station.id" 
-    [station]="station"></app-configurable-station>
+  <div *ngFor="let station of configurationService.stationNodes | keyvalue">
+    <app-configurable-station
+      (stationEmitter)="getStationFromEmitter($event)"
+      (removeEmitter)="removeStation($event)"
+      [station]="station.value"></app-configurable-station>
   </div>
   <div class="plus-wrapper" (click)="addStation()">
     <i class="fas fa-plus fa-5x plus-icon"></i>
@@ -9,5 +11,5 @@
 </div>
 <div class="main-actions">
   <button mat-raised-button matStepperPrevious >Back</button>
-  <button mat-raised-button [disabled]="!readyToSave" color="primary" (click)="sendStationNodes()" matStepperNext>Next</button>
+  <button mat-raised-button [disabled]="!isValidConfiguration" color="primary" (click)="checkIsReadyToNext()">Next</button>
 </div>
