@@ -6,11 +6,11 @@
         Number of clouds to distribute: {{quantityCounterService.getUndividedClouds()}}
       </span>
     </div>
-    <ng-container *ngFor="let cloud of clouds; index as i">
+    <ng-container *ngFor="let cloud of configurationService.computingNodes.clouds | keyvalue">
       <app-configurable-node
-        [node]="cloud"
+        [node]="cloud.value"
         [resources]="resources"
-        (setComputingNode)="addComputingNode($event)"
+        (setComputingNode)="saveComputingNode($event)"
         (removeEmitter)="removeTypeOfNodes($event)"
       ></app-configurable-node>
     </ng-container>
@@ -26,11 +26,11 @@
         Number of fogs to distribute: {{quantityCounterService.getUndividedFogs()}}
       </span>
     </div>
-    <ng-container *ngFor="let fog of fogs; index as i">
+    <ng-container *ngFor="let fog of configurationService.computingNodes.fogs | keyvalue">
       <app-configurable-node
-        [node]="fog"
+        [node]="fog.value"
         [resources]="resources"
-        (setComputingNode)="addComputingNode($event)"
+        (setComputingNode)="saveComputingNode($event)"
         (removeEmitter)="removeTypeOfNodes($event)"
       ></app-configurable-node>
   </ng-container>
@@ -41,8 +41,8 @@
       </div>
     </div>
     <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2%" class="action-toolbar">
-      <button mat-raised-button matStepperPrevious (click)="saveNodes()">Back</button>
-      <button [disabled]="!readyToSave" mat-raised-button color="primary" matStepperNext (click)="saveNodes()">
+      <button mat-raised-button matStepperPrevious >Back</button>
+      <button [disabled]="!readyToSave" mat-raised-button color="primary" (click)="checkIsReadyToNext()">
         Next
       </button>
     </div>

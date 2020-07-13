@@ -1,21 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroupDirective, ControlContainer, Validators, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ApplicationsDialogComponent } from './applications-dialog/applications-dialog.component';
-import { Application, ApplicationsObject } from 'src/app/models/application';
+import { ApplicationsObject } from 'src/app/models/application';
 import { ComputingNode } from 'src/app/models/computing-node';
-import { IfStmt } from '@angular/compiler';
 import { QuantityCounterService } from 'src/app/services/quantity-counter/quantity-counter.service';
-
-// outsource one other repository
-const NOT_CONFIGURED_ICON = 'fas fa-times-circle fa-2x';
-const CONFIGURED_ICON = 'fas fa-check-circle fa-2x';
-
-const SET_APPS_ICON = 'check_circle_outline';
-const UNSET_APPS_ICON = 'error';
-
-const INVALID_TOOLTIP = 'Invalid quantity!';
-const UNSET_APPS_TOOLTIP = 'Applications are not configured!';
+import { StringUtlis } from '../../utils/string-utlis';
 
 @Component({
   selector: 'app-configurable-node',
@@ -23,7 +13,7 @@ const UNSET_APPS_TOOLTIP = 'Applications are not configured!';
   styleUrls: ['./configurable-node.component.css'],
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }]
 })
-export class ConfigurableNodeComponent implements OnInit {
+export class ConfigurableNodeComponent implements OnChanges {
   @Input() public resources: string[];
   @Input() public node: ComputingNode;
   @Output() public readonly setComputingNode = new EventEmitter<ComputingNode>();
@@ -31,64 +21,73 @@ export class ConfigurableNodeComponent implements OnInit {
 
   public statusIcon: string;
   public appsStatusIcon: string;
-  public cloudCardForm: FormGroup;
+  public nodeCardForm: FormGroup;
   public selectedResource: string;
   public numOfApps = 0;
-  public cloudIcon: string;
+  public nodeIcon: string;
   public errorTooltip: string;
   public showErrorTooltip = true;
 
-  private applications: ApplicationsObject = {};
-  private isCloudBoolean: boolean;
   private readonly maxApplicationsQuantity = 10;
-
-  public readonly MAX_TOOLTIP = 'The maximum value is ' + this.maxApplicationsQuantity + '!';
+  public readonly maxTooltipp: string;
 
   constructor(
     private formBuilder: FormBuilder,
     public dialog: MatDialog,
     public quantityCounterService: QuantityCounterService
-  ) {}
+  ) {
+    this.maxTooltipp = StringUtlis.MAX_TOOLTIP.replace('{0}', '' + this.maxApplicationsQuantity);
+  }
 
-  ngOnInit(): void {
-    this.selectedResource = this.resources[0];
-    this.statusIcon = NOT_CONFIGURED_ICON;
-    this.appsStatusIcon = UNSET_APPS_ICON;
-    this.errorTooltip = INVALID_TOOLTIP;
+  //needed because the keyvalue pipe always return new value
+  ngOnChanges(): void {
+    this.initNode();
+  }
 
-    this.isCloudBoolean = this.node.isCloud === true;
-    this.cloudIcon = 'fas fa-smog fa-4x';
-    if (this.isCloudBoolean) {
-      this.cloudIcon = 'fas fa-cloud fa-4x';
+  private initNode() {
+    this.numOfApps = this.node.applications ? this.getNumberOfConfigurabledApps(this.node.applications) : 0;
+    if (!this.node.applications) {
+      this.node.applications = {};
     }
+    this.selectedResource = this.node.resource ? this.node.resource : '';
+    this.nodeIcon = this.node.isCloud ? StringUtlis.CLOUD_ICON : StringUtlis.FOG_ICON;
     this.initForm();
-    this.sendConfiguredNodeToParent();
+    this.statusIcon = this.isNodevalid() ? StringUtlis.CONFIGURED_ICON : StringUtlis.NOT_CONFIGURED_ICON;
+    this.appsStatusIcon = this.checkAllAppsAreConfigured() ? StringUtlis.SET_APPS_ICON : StringUtlis.UNSET_APPS_ICON;
+
+    this.numOfAppsInputListener();
+    this.nodeFormListener();
   }
 
   onChange(): void {
-    if (
-      (this.numOfApps === this.getNumberOfConfigurabledApps(this.applications) ||
-        this.numOfApps < this.getNumberOfConfigurabledApps(this.applications)) &&
-      this.cloudCardForm.valid
-    ) {
-      this.appsStatusIcon = SET_APPS_ICON;
+    if (this.areAppsValidOnInputChange()) {
+      this.appsStatusIcon = StringUtlis.SET_APPS_ICON;
       this.node.isConfigured = true;
-      this.cloudCardForm.controls.allAppsConfigured.setValue(true);
+      this.nodeCardForm.controls.allAppsConfigured.setValue(true);
       this.showErrorTooltip = false;
     } else {
-      this.appsStatusIcon = UNSET_APPS_ICON;
+      this.appsStatusIcon = StringUtlis.UNSET_APPS_ICON;
       this.node.isConfigured = false;
-      this.cloudCardForm.controls.allAppsConfigured.setValue(false);
+      this.nodeCardForm.controls.allAppsConfigured.setValue(false);
       this.showErrorTooltip = true;
       if (this.numOfApps > this.maxApplicationsQuantity) {
-        this.errorTooltip = this.MAX_TOOLTIP;
+        this.errorTooltip = this.maxTooltipp;
       } else if (this.numOfApps === 0) {
-        this.errorTooltip = INVALID_TOOLTIP;
+        this.errorTooltip = StringUtlis.INVALID_TOOLTIP;
       } else {
-        this.errorTooltip = UNSET_APPS_TOOLTIP;
+        this.errorTooltip = StringUtlis.UNSET_APPS_TOOLTIP;
       }
     }
   }
+
+  private areAppsValidOnInputChange() {
+    return (
+      (this.numOfApps === this.getNumberOfConfigurabledApps(this.node.applications) ||
+        this.numOfApps < this.getNumberOfConfigurabledApps(this.node.applications)) &&
+      this.nodeCardForm.valid
+    );
+  }
+
   private getNumberOfConfigurabledApps(apps: ApplicationsObject): number {
     let sum = 0;
     for (const [id, app] of Object.entries(apps)) {
@@ -103,68 +102,86 @@ export class ConfigurableNodeComponent implements OnInit {
       disableClose: true,
       width: '80%',
       height: '80%',
-      data: { numOfApps: this.numOfApps, applications: this.applications }
+      data: { numOfApps: this.numOfApps, applications: this.node.applications }
     });
 
     dialogRef.afterClosed().subscribe((result: { applications: ApplicationsObject; valid: boolean }) => {
-      this.applications = result.applications;
-      console.log(this.applications);
+      this.node.applications = result.applications;
 
       if (
         !result.valid ||
-        !this.cloudCardForm.valid ||
-        this.getNumberOfConfigurabledApps(this.applications) !== this.numOfApps
+        !this.nodeCardForm.valid ||
+        this.getNumberOfConfigurabledApps(this.node.applications) !== this.numOfApps //check this!!!
       ) {
-        this.cloudCardForm.controls.allAppsConfigured.setValue(false);
-        this.appsStatusIcon = UNSET_APPS_ICON;
+        this.nodeCardForm.controls.allAppsConfigured.setValue(false);
+        this.appsStatusIcon = StringUtlis.UNSET_APPS_ICON;
         this.showErrorTooltip = true;
       } else {
-        this.cloudCardForm.controls.allAppsConfigured.setValue(true);
-        this.appsStatusIcon = SET_APPS_ICON;
+        this.nodeCardForm.controls.allAppsConfigured.setValue(true);
+        this.appsStatusIcon = StringUtlis.SET_APPS_ICON;
         this.showErrorTooltip = false;
       }
     });
   }
 
   private initForm(): void {
-    this.cloudCardForm = this.formBuilder.group({
+    this.nodeCardForm = this.formBuilder.group({
       numOfApplications: [
-        '',
+        this.node.applications ? this.getNumberOfConfigurabledApps(this.node.applications) : 0,
         [Validators.required, Validators.max(this.maxApplicationsQuantity), Validators.pattern(/^[1-9]+[0-9]*$/)]
       ],
-      allAppsConfigured: false,
+      allAppsConfigured: this.checkAllAppsAreConfigured(),
       quantity: [this.node.quantity, [Validators.min(1)]]
     });
   }
 
-  private sendConfiguredNodeToParent(): void {
-    //if the entered number less than it was, then it is correct
-    this.cloudCardForm.controls['numOfApplications'].valueChanges.subscribe((newValue: number) => {
-      const oldValue = this.cloudCardForm.value['numOfApplications'];
-      if (oldValue > newValue && newValue !== 0) {
-        this.applications = this.updateAppsObject(this.applications, newValue);
-      }
-    });
+  private checkAllAppsAreConfigured(): boolean {
+    return (
+      this.node.applications &&
+      this.numOfApps > 0 &&
+      this.getNumberOfConfigurabledApps(this.node.applications) === this.numOfApps
+    );
+  }
 
-    //send node to the parent at form value changes
-    this.cloudCardForm.valueChanges.subscribe(value => {
-      if (value.allAppsConfigured) {
-        this.node.isConfigured = true;
-        this.setNodeProperties();
-        this.setComputingNode.emit(this.node);
-        this.statusIcon = CONFIGURED_ICON;
-      } else {
-        this.node.isConfigured = false;
-        this.setNodeProperties();
-        this.setComputingNode.emit(this.node);
-        this.statusIcon = NOT_CONFIGURED_ICON;
+  private isNodevalid(): boolean {
+    return this.checkAllAppsAreConfigured() && this.node.isConfigured && this.nodeCardForm.valid;
+  }
+
+  private nodeFormListener(): void {
+    this.nodeCardForm.valueChanges.subscribe(value => {
+      this.saveNodeInParent(value.allAppsConfigured);
+    });
+  }
+
+  private saveNodeInParent(allAppsConfigured: boolean) {
+    if (allAppsConfigured && this.selectedResource !== '') {
+      this.node.isConfigured = true;
+      this.setNodeProperties();
+      this.setComputingNode.emit(this.node);
+      this.statusIcon = StringUtlis.CONFIGURED_ICON;
+    } else {
+      this.node.isConfigured = false;
+      this.setNodeProperties();
+      this.setComputingNode.emit(this.node);
+      this.statusIcon = StringUtlis.NOT_CONFIGURED_ICON;
+    }
+  }
+
+  private numOfAppsInputListener() {
+    this.nodeCardForm.controls.numOfApplications.valueChanges.subscribe((newValue: number) => {
+      const oldValue = this.nodeCardForm.value.numOfApplications;
+      if (oldValue > newValue && newValue !== 0) {
+        this.node.applications = this.updateAppsObject(this.node.applications, newValue);
       }
     });
   }
 
+  public onResourceChange(event: any) {
+    this.saveNodeInParent(this.nodeCardForm.controls.allAppsConfigured.value);
+  }
+
   private setNodeProperties(): void {
     this.node.resource = this.selectedResource;
-    this.node.applications = this.applications;
   }
 
   private updateAppsObject(apps: ApplicationsObject, currentValue: number): ApplicationsObject {
@@ -192,12 +209,12 @@ export class ConfigurableNodeComponent implements OnInit {
     if (this.node.isCloud) {
       if (this.quantityCounterService.decreseClouds(this.node.quantity)) {
         this.node.quantity--;
-        this.cloudCardForm.get('quantity').setValue(this.node.quantity);
+        this.nodeCardForm.get('quantity').setValue(this.node.quantity);
       }
     } else {
       if (this.quantityCounterService.decreseFogs(this.node.quantity)) {
         this.node.quantity--;
-        this.cloudCardForm.get('quantity').setValue(this.node.quantity);
+        this.nodeCardForm.get('quantity').setValue(this.node.quantity);
       }
     }
   }
@@ -205,12 +222,12 @@ export class ConfigurableNodeComponent implements OnInit {
     if (this.node.isCloud) {
       if (this.quantityCounterService.increaseClouds()) {
         this.node.quantity++;
-        this.cloudCardForm.get('quantity').setValue(this.node.quantity);
+        this.nodeCardForm.get('quantity').setValue(this.node.quantity);
       }
     } else {
       if (this.quantityCounterService.increaseFogs()) {
         this.node.quantity++;
-        this.cloudCardForm.get('quantity').setValue(this.node.quantity);
+        this.nodeCardForm.get('quantity').setValue(this.node.quantity);
       }
     }
   }

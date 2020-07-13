@@ -1,8 +1,8 @@
  <mat-card class="card">
-  <form [formGroup]="cloudCardForm">
+  <form [formGroup]="nodeCardForm">
     <div class="container">
       <div class="node-icon node-header">
-        <i [class]="cloudIcon"></i>
+        <i [class]="nodeIcon"></i>
         <div class="top-status">
           <i [class]="statusIcon"></i>
         </div>
@@ -10,7 +10,10 @@
       <div class="configuration-tools">
         <mat-form-field class="resource-selector">
           <mat-label>Select resource type</mat-label>
-          <mat-select [(ngModel)]="selectedResource" name="selectedResource" [ngModelOptions]="{ standalone: true }">
+          <mat-select [(ngModel)]="selectedResource"
+            name="selectedResource"
+            [ngModelOptions]="{ standalone: true }"
+            (selectionChange)="onResourceChange($event)">
             <mat-option *ngFor="let resource of resources" [value]="resource"> {{ resource }}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -30,7 +33,7 @@
               matTooltipPosition="below" matSuffix>{{ appsStatusIcon }}</mat-icon>
             </mat-form-field>
           </div>
-          <div *ngIf="cloudCardForm.valid">
+          <div *ngIf="nodeCardForm.valid">
             <button mat-icon-button (click)="openDialog()">
               <i class="fas fa-edit fa-2x"></i>
             </button>
