@@ -100,28 +100,41 @@ export class ConfigurableNodeComponent implements OnChanges {
     const dialogRef = this.dialog.open(ApplicationsDialogComponent, {
       panelClass: 'applications-dialog-panel',
       disableClose: true,
-      width: '80%',
-      height: '80%',
+      maxWidth: '100%',
+      width: this.calculateWidth(),
+      height: '90%',
       data: { numOfApps: this.numOfApps, applications: this.node.applications }
     });
 
     dialogRef.afterClosed().subscribe((result: { applications: ApplicationsObject; valid: boolean }) => {
-      this.node.applications = result.applications;
-
-      if (
-        !result.valid ||
-        !this.nodeCardForm.valid ||
-        this.getNumberOfConfigurabledApps(this.node.applications) !== this.numOfApps //check this!!!
-      ) {
-        this.nodeCardForm.controls.allAppsConfigured.setValue(false);
-        this.appsStatusIcon = StringUtlis.UNSET_APPS_ICON;
-        this.showErrorTooltip = true;
-      } else {
-        this.nodeCardForm.controls.allAppsConfigured.setValue(true);
-        this.appsStatusIcon = StringUtlis.SET_APPS_ICON;
-        this.showErrorTooltip = false;
+      if (result) {
+        this.node.applications = result.applications;
+        if (
+          !result.valid ||
+          !this.nodeCardForm.valid ||
+          this.getNumberOfConfigurabledApps(this.node.applications) !== this.numOfApps //check this!!!
+        ) {
+          this.nodeCardForm.controls.allAppsConfigured.setValue(false);
+          this.appsStatusIcon = StringUtlis.UNSET_APPS_ICON;
+          this.showErrorTooltip = true;
+        } else {
+          this.nodeCardForm.controls.allAppsConfigured.setValue(true);
+          this.appsStatusIcon = StringUtlis.SET_APPS_ICON;
+          this.showErrorTooltip = false;
+        }
       }
     });
+  }
+
+  private calculateWidth(): string {
+    const width = window.innerWidth;
+    if (width < 700) {
+      return '95%';
+    } else if (width > 700 && width < 950) {
+      return '80%';
+    } else {
+      return '55%';
+    }
   }
 
   private initForm(): void {

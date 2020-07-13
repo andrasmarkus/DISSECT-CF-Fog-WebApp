@@ -27,6 +27,7 @@
 
 .input-size-min {
   width: 40%;
+  max-width: 200px;
 }
 
 .app-card.mat-card{
