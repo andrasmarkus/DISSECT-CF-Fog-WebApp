@@ -6,6 +6,7 @@ import { ApplicationsObject } from 'src/app/models/application';
 import { ComputingNode } from 'src/app/models/computing-node';
 import { QuantityCounterService } from 'src/app/services/quantity-counter/quantity-counter.service';
 import { StringUtlis } from '../../utils/string-utlis';
+import { PanelService } from 'src/app/services/panel/panel.service';
 
 @Component({
   selector: 'app-configurable-node',
@@ -34,7 +35,8 @@ export class ConfigurableNodeComponent implements OnChanges {
   constructor(
     private formBuilder: FormBuilder,
     public dialog: MatDialog,
-    public quantityCounterService: QuantityCounterService
+    public quantityCounterService: QuantityCounterService,
+    public panelService: PanelService
   ) {
     this.maxTooltipp = StringUtlis.MAX_TOOLTIP.replace('{0}', '' + this.maxApplicationsQuantity);
   }
@@ -107,6 +109,7 @@ export class ConfigurableNodeComponent implements OnChanges {
     });
 
     dialogRef.afterClosed().subscribe((result: { applications: ApplicationsObject; valid: boolean }) => {
+      this.panelService.setSelectedDrawerBacktoMainDrawer();
       if (result) {
         this.node.applications = result.applications;
         if (
@@ -243,5 +246,10 @@ export class ConfigurableNodeComponent implements OnChanges {
         this.nodeCardForm.get('quantity').setValue(this.node.quantity);
       }
     }
+  }
+
+  public openInfoPanelForResources(): void {
+    this.panelService.getResourceData();
+    this.panelService.toogle();
   }
 }

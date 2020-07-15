@@ -14,3 +14,7 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+.mat-button-focus-overlay {
+  background-color: transparent!important;
+}

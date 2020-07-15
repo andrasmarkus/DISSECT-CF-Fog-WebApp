@@ -17,6 +17,7 @@ import { ConfigurableNodeComponent } from './configuration/list-configurable-nod
 import { ListConfigurableNodesComponent } from './configuration/list-configurable-nodes/list-configurable-nodes.component';
 import { ApplicationsDialogComponent } from './configuration/list-configurable-nodes/configurable-node/applications-dialog/applications-dialog.component';
 import { ApplicationCardComponent } from './configuration/list-configurable-nodes/configurable-node/applications-dialog/application-card/application-card.component';
+import { InfoPanelComponent } from './info-panel/info-panel.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { ApplicationCardComponent } from './configuration/list-configurable-node
     StepBackDialogComponent,
     ConnectionComponent,
     ListStationsComponent,
-    ConfigurableStationComponent
+    ConfigurableStationComponent,
+    InfoPanelComponent
   ],
   imports: [
     BrowserModule,

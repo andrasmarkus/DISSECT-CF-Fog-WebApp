@@ -52,7 +52,7 @@
 }
 
 .resource-selector{
-  width: 150px;
+  width: 130px;
 }
 
 @media screen and (max-width: 700px) {
@@ -93,6 +93,14 @@
 
 .open-dialog-pen{
   margin-left: 0.5rem;
+}
+
+.resource{
+  display: flex;
+}
+
+.info-icon{
+  margin-top: 0.5rem;
 }
 
 @media screen and (max-width: 400px) {

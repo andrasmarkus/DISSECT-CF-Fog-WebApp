@@ -1,22 +1,30 @@
-<mat-horizontal-stepper [linear]="isLinear" #stepper>
-  <mat-step>
-    <ng-template matStepLabel>Number of clouds</ng-template>
-    <app-node-quantity-form></app-node-quantity-form>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Configure nodes</ng-template>
-    <ng-container ></ng-container>
-    <app-list-configurable-nodes
-      [numOfClouds]="(configurationService.nodesQuantity$ | async)?. numberOfClouds"
-      [numOfFogs]="(configurationService.nodesQuantity$ | async)?. numberOfFogs"
-    ></app-list-configurable-nodes>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Configure stations</ng-template>
-    <app-list-stations></app-list-stations>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Configure connections</ng-template>
-    <app-connection></app-connection>
-  </mat-step>
-</mat-horizontal-stepper>
+<mat-drawer-container hasBackdrop="false" class="drawer">
+  <mat-drawer #drawer class="info-panel" mode="over" position="end">
+    <app-info-panel [infoData]="panelService.infoData$ | async"></app-info-panel>
+  </mat-drawer>
+  <div>
+    <mat-horizontal-stepper [linear]="isLinear" #stepper>
+      <mat-step>
+        <ng-template matStepLabel>Number of computing nodes</ng-template>
+        <app-node-quantity-form></app-node-quantity-form>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Configure nodes</ng-template>
+        <ng-container ></ng-container>
+        <app-list-configurable-nodes
+          [numOfClouds]="(configurationService.nodesQuantity$ | async)?. numberOfClouds"
+          [numOfFogs]="(configurationService.nodesQuantity$ | async)?. numberOfFogs"
+        ></app-list-configurable-nodes>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Configure stations</ng-template>
+        <app-list-stations></app-list-stations>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Configure connections</ng-template>
+        <app-connection></app-connection>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </div>
+</mat-drawer-container>
+

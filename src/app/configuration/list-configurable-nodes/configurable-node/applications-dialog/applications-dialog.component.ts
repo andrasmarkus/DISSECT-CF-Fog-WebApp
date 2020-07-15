@@ -1,24 +1,38 @@
-import { Component, OnInit, Inject, QueryList, ViewChildren, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Inject,
+  QueryList,
+  ViewChildren,
+  ChangeDetectorRef,
+  AfterViewChecked,
+  ViewChild,
+  AfterViewInit
+} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Application, ApplicationsObject } from 'src/app/models/application';
 import { ApplicationCardComponent } from './application-card/application-card.component';
 import { QuantityCounterService } from 'src/app/services/quantity-counter/quantity-counter.service';
+import { MatDrawer } from '@angular/material/sidenav';
+import { PanelService } from 'src/app/services/panel/panel.service';
 
 @Component({
   selector: 'app-applications-dialog',
   templateUrl: './applications-dialog.component.html',
   styleUrls: ['./applications-dialog.component.css']
 })
-export class ApplicationsDialogComponent implements OnInit, AfterViewChecked {
+export class ApplicationsDialogComponent implements OnInit, AfterViewChecked, AfterViewInit {
   public appIndex = 0;
 
   @ViewChildren(ApplicationCardComponent) applicationCards: QueryList<ApplicationCardComponent>;
+  @ViewChild('drawer') public drawer: MatDrawer;
 
   constructor(
     public dialogRef: MatDialogRef<ApplicationsDialogComponent>,
     private cdRef: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: { numOfApps: number; applications: ApplicationsObject },
-    public quantityCounterService: QuantityCounterService
+    public quantityCounterService: QuantityCounterService,
+    public panelService: PanelService
   ) {}
 
   public ngOnInit(): void {
@@ -35,6 +49,12 @@ export class ApplicationsDialogComponent implements OnInit, AfterViewChecked {
 
   public ngAfterViewChecked(): void {
     this.cdRef.detectChanges();
+  }
+
+  public ngAfterViewInit(): void {
+    if (this.drawer) {
+      this.panelService.setDialogDrawer(this.drawer);
+    }
   }
 
   private calculateLastAppIndex(): number {

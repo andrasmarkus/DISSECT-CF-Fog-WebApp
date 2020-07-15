@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import { Application } from 'src/app/models/application';
 import { QuantityCounterService } from 'src/app/services/quantity-counter/quantity-counter.service';
 import { ComputingNodeService } from 'src/app/services/computing-node/computing-node.service';
+import { PanelService } from 'src/app/services/panel/panel.service';
 
 @Component({
   selector: 'app-application-card',
@@ -24,7 +25,8 @@ export class ApplicationCardComponent implements OnChanges {
   constructor(
     private formBuilder: FormBuilder,
     public quantityCounterService: QuantityCounterService,
-    public nodeService: ComputingNodeService
+    public nodeService: ComputingNodeService,
+    public panelService: PanelService
   ) {
     this.instances = nodeService.getAppInstances();
     this.strategys = nodeService.getAppStrategys();
@@ -80,5 +82,10 @@ export class ApplicationCardComponent implements OnChanges {
       this.application.quantity++;
       this.appFormGroup.get('quantity').setValue(this.application.quantity);
     }
+  }
+
+  public openInfoPanelForApplications(): void {
+    this.panelService.getApplicationData();
+    this.panelService.toogle();
   }
 }
