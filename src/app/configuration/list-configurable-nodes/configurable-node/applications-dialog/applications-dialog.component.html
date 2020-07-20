@@ -4,7 +4,7 @@
   </mat-drawer>
   <mat-drawer-content class="drawer-content">
     <div class="dialog-header">
-      <h1 mat-dialog-title class="setText-center title">Number of applications {{ data.numOfApps }}</h1>
+      <h1 mat-dialog-title class="setText-center title">Configure applications ({{ data.numOfApps }})</h1>
       <h2  class="setText-center distribution-text"
         *ngIf="quantityCounterService.getUndividedApps() && quantityCounterService.getUndividedApps() > 0">
         Number of apps to distribute: {{quantityCounterService.getUndividedApps()}}
