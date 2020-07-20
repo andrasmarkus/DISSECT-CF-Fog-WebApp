@@ -4,6 +4,7 @@ import { Station } from 'src/app/models/station';
 import { ComputingNodeService } from 'src/app/services/computing-node/computing-node.service';
 import { debounceTime } from 'rxjs/operators';
 import { ConfigurationService } from 'src/app/services/configuration/configuration.service';
+import { PanelService } from 'src/app/services/panel/panel.service';
 
 @Component({
   selector: 'app-configurable-station',
@@ -22,7 +23,8 @@ export class ConfigurableStationComponent implements OnChanges {
   constructor(
     private formBuilder: FormBuilder,
     public nodeService: ComputingNodeService,
-    public configurationService: ConfigurationService
+    public configurationService: ConfigurationService,
+    public panelService: PanelService
   ) {
     this.strategys = nodeService.getAppStrategys();
     this.createForm();
@@ -97,5 +99,10 @@ export class ConfigurableStationComponent implements OnChanges {
     this.station.strategy = this.strategy;
     this.station.quantity = this.quantity;
     return this.station;
+  }
+
+  public openInfoPanelForStations(): void {
+    this.panelService.getStationeData();
+    this.panelService.toogle();
   }
 }

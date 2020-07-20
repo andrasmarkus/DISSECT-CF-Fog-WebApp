@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
-import { InfoPanelData, getResourceFilesInfoData, getApplicationInfoData } from 'src/app/models/info-panel-data';
+import {
+  InfoPanelData,
+  getResourceFilesInfoData,
+  getApplicationInfoData,
+  getStationInfoData
+} from 'src/app/models/info-panel-data';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -49,6 +54,10 @@ export class PanelService {
 
   public getResourceData(): void {
     this.infoData$.next(getResourceFilesInfoData());
+  }
+
+  public getStationeData(): void {
+    this.infoData$.next(getStationInfoData());
   }
 
   public getApplicationData(): void {
