@@ -5,11 +5,11 @@
       (removeEmitter)="removeStation($event)"
       [station]="station.value"></app-configurable-station>
   </div>
-  <div class="plus-wrapper" (click)="addStation()">
-    <i class="fas fa-plus fa-5x plus-icon"></i>
-  </div>
 </div>
 <div class="main-actions">
   <button mat-raised-button matStepperPrevious >Back</button>
+  <div class="plus-wrapper" (click)="addStation()">
+    <i class="fas fa-plus fa-5x plus-icon"></i>
+  </div>
   <button mat-raised-button [disabled]="!isValidConfiguration" color="primary" (click)="checkIsReadyToNext()">Next</button>
 </div>

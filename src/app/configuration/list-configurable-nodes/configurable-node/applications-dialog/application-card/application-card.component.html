@@ -11,41 +11,29 @@
     </button>
   </mat-card-header>
   <form [formGroup]="appFormGroup">
-    <mat-accordion>
-      <mat-expansion-panel class="custom-expansion-panel">
-        <mat-expansion-panel-header class="custom-expansion-panel-header">
-          <mat-panel-title>
-            Further details
-          </mat-panel-title>
-          <mat-panel-description>
-            Setup the application
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <div fxLayout="column" fxLayoutAlign="center center">
-          <div class="double-item-row space-top">
-            <mat-form-field appearance="outline" class="input-size-min">
-              <mat-label>Taksize</mat-label>
-              <input class="setText-center" matInput type="number" formControlName="taksize" />
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="input-size-min">
-              <mat-label>Frequency</mat-label>
-              <input class="setText-center" matInput type="number" formControlName="freq" />
-            </mat-form-field>
-          </div>
-          <div class="double-item-row">
-            <mat-form-field appearance="outline" class="input-size-min">
-              <mat-label>Number of Instruciton</mat-label>
-              <input class="setText-center" matInput type="number" formControlName="numOfInstruction" />
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="input-size-min">
-              <mat-label>Threshold</mat-label>
-              <input class="setText-center" matInput type="number" formControlName="threshold" />
-            </mat-form-field>
-          </div>
-          <mat-checkbox [checked]="canJoin" (change)="canJoin = !canJoin">Can join</mat-checkbox>
-        </div>
-      </mat-expansion-panel>
-  </mat-accordion>
+    <div fxLayout="column" fxLayoutAlign="center center">
+      <div class="double-item-row space-top">
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Taksize</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="taksize" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Frequency</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="freq" />
+        </mat-form-field>
+      </div>
+      <div class="double-item-row">
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Number of Instruciton</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="numOfInstruction" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Threshold</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="threshold" />
+        </mat-form-field>
+      </div>
+      <mat-checkbox [checked]="canJoin" (change)="canJoin = !canJoin">Can join</mat-checkbox>
+    </div>
   <div class="double-item-row space-top">
     <mat-form-field appearance="outline" class="input-size-min">
       <mat-label>Select instances</mat-label>
