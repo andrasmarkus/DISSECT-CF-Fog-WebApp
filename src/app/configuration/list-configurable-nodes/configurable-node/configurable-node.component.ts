@@ -7,6 +7,7 @@ import { ComputingNode } from 'src/app/models/computing-node';
 import { QuantityCounterService } from 'src/app/services/quantity-counter/quantity-counter.service';
 import { StringUtlis } from '../../utils/string-utlis';
 import { PanelService } from 'src/app/services/panel/panel.service';
+import { WindowSizeService } from 'src/app/services/window-size/window-size.service';
 
 @Component({
   selector: 'app-configurable-node',
@@ -36,7 +37,8 @@ export class ConfigurableNodeComponent implements OnChanges {
     private formBuilder: FormBuilder,
     public dialog: MatDialog,
     public quantityCounterService: QuantityCounterService,
-    public panelService: PanelService
+    public panelService: PanelService,
+    public windowService: WindowSizeService
   ) {
     this.maxTooltipp = StringUtlis.MAX_TOOLTIP.replace('{0}', '' + this.maxApplicationsQuantity);
   }
@@ -103,7 +105,7 @@ export class ConfigurableNodeComponent implements OnChanges {
       panelClass: 'applications-dialog-panel',
       disableClose: true,
       maxWidth: '100%',
-      width: this.calculateWidth(),
+      width: this.windowService.calculateWidthForApplicationDialog(),
       height: '90%',
       data: { numOfApps: this.numOfApps, applications: this.node.applications }
     });
@@ -127,17 +129,6 @@ export class ConfigurableNodeComponent implements OnChanges {
         }
       }
     });
-  }
-
-  private calculateWidth(): string {
-    const width = window.innerWidth;
-    if (width < 700) {
-      return '95%';
-    } else if (width > 700 && width < 950) {
-      return '80%';
-    } else {
-      return '55%';
-    }
   }
 
   private initForm(): void {

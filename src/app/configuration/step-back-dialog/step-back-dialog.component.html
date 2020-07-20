@@ -1,9 +1,19 @@
-<div class="content">
-If you go back, the connections and placements you set up will be lost.
-</div>
-<div mat-dialog-actions fxLayout="row" fxLayoutAlign="center end">
-  <button mat-raised-button color="primary" matDialogClose (click)="closeDialog()">Cancel</button>
-  <button mat-raised-button (click)="dicardChanges()">
-    Ok
+<div class="header">
+  <div class="title">
+    <span>Step back</span>
+  </div>
+  <button mat-icon-button matDialogClose (click)="closeDialog">
+    <i class="fas fa-times"></i>
   </button>
+</div>
+<div class="container">
+  <div class="content">
+  If you go back, the connections and placements you set up will be lost.
+  </div>
+  <div fxLayout="row" fxLayoutAlign="center end">
+    <button mat-raised-button color="primary" class="cancelButton" matDialogClose (click)="closeDialog()">Cancel</button>
+    <button mat-raised-button class="okButton" (click)="dicardChanges()">
+      Ok
+    </button>
+  </div>
 </div>
