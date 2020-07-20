@@ -2,6 +2,8 @@ import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Station } from 'src/app/models/station';
 import { ComputingNodeService } from 'src/app/services/computing-node/computing-node.service';
+import { debounceTime } from 'rxjs/operators';
+import { ConfigurationService } from 'src/app/services/configuration/configuration.service';
 
 @Component({
   selector: 'app-configurable-station',
@@ -17,7 +19,11 @@ export class ConfigurableStationComponent implements OnChanges {
   public strategys: string[];
   public strategy: string;
 
-  constructor(private formBuilder: FormBuilder, public nodeService: ComputingNodeService) {
+  constructor(
+    private formBuilder: FormBuilder,
+    public nodeService: ComputingNodeService,
+    public configurationService: ConfigurationService
+  ) {
     this.strategys = nodeService.getAppStrategys();
     this.createForm();
     this.stationFormChangeListener();
@@ -29,7 +35,7 @@ export class ConfigurableStationComponent implements OnChanges {
   }
 
   private stationFormChangeListener() {
-    this.stationFormGroup.valueChanges.subscribe(() => {
+    this.stationFormGroup.valueChanges.pipe(debounceTime(1500)).subscribe(() => {
       this.saveStation();
     });
   }
@@ -39,12 +45,13 @@ export class ConfigurableStationComponent implements OnChanges {
   }
 
   private saveStation() {
+    this.setStationValues();
     if (this.stationFormGroup.valid && this.quantity >= 1 && this.strategy !== '') {
-      this.stationEmitter.emit(this.getValidStation());
+      this.station.valid = true;
     } else {
       this.station.valid = false;
-      this.stationEmitter.emit(this.station);
     }
+    this.stationEmitter.emit(this.station);
   }
 
   createForm() {
@@ -65,6 +72,7 @@ export class ConfigurableStationComponent implements OnChanges {
     if (this.station) {
       this.stationFormGroup.patchValue(this.station, { emitEvent: false });
     }
+    this.quantity = this.station.quantity ? this.station.quantity : 1;
     this.strategy = this.station.strategy ? this.station.strategy : '';
   }
 
@@ -72,19 +80,20 @@ export class ConfigurableStationComponent implements OnChanges {
     if (this.quantity > 1) {
       this.quantity--;
       this.station.quantity = this.quantity;
+      this.saveStation();
     }
   }
 
   public increase(): void {
     this.quantity++;
     this.station.quantity = this.quantity;
+    this.saveStation();
   }
 
-  public getValidStation() {
+  public setStationValues() {
     const id = this.station.id;
     this.station = this.stationFormGroup.value;
     this.station.id = id;
-    this.station.valid = true;
     this.station.strategy = this.strategy;
     this.station.quantity = this.quantity;
     return this.station;

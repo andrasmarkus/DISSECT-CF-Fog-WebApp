@@ -1,6 +1,5 @@
-import { Component, OnInit, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
-import { StationsObject, Station } from 'src/app/models/station';
-import { StepBackServiceService } from 'src/app/services/step-back/step-back-service.service';
+import { Component, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Station } from 'src/app/models/station';
 import { Subscription } from 'rxjs';
 import { RestartConfigurationService } from 'src/app/services/restart-configuration.service';
 import { ConfigurationService } from 'src/app/services/configuration/configuration.service';
@@ -16,7 +15,6 @@ export class ListStationsComponent implements OnDestroy {
 
   public stationIndex = 0;
   public isValidConfiguration = false;
-
   private restartSubscription: Subscription;
 
   constructor(
