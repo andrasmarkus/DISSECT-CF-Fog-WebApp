@@ -3,11 +3,16 @@
     <div id="paper" class="joint-paper"></div>
 </div>
 <div class="actions">
-    <button mat-raised-button class="add-button" (click)="createLinkBetweenSelectedNodes()">Add connection</button>
-    <mat-form-field appearance="outline" class="input-size">
-        <mat-label>Latency</mat-label>
-        <input class="setText-center" matInput type="number" [(ngModel)]="latency" />
-    </mat-form-field>
+    <form [formGroup]="connectionForm">
+        <button mat-raised-button (click)="createLinkBetweenSelectedNodes()">Add connection</button>
+        <mat-form-field appearance="outline" class="input-size">
+            <mat-label>Latency</mat-label>
+            <input class="setText-center" matInput type="number" formControlName="latency" />
+            <mat-error *ngIf="connectionForm.get('latency').hasError('pattern')">
+                The quantity can't be <strong>0</strong>
+              </mat-error>
+        </mat-form-field>
+    </form>
 </div>
 <div class="main-actions">
     <button mat-raised-button (click)="stepBack()">Back</button>

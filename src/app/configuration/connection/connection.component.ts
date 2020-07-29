@@ -10,6 +10,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { StepBackServiceService } from 'src/app/services/step-back/step-back-service.service';
 import { ConfigurationService } from 'src/app/services/configuration/configuration.service';
 import { StepperService } from 'src/app/services/stepper/stepper.service';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 
 export class Node {
   id: string;
@@ -26,22 +27,16 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   public fogs: FogNodesObject = {};
 
   public multipleStationNodes: StationsObject;
-  public numOfClouds = 6;
-  public numOfFogs = 10;
-  public numOfStations = 11;
+  public numOfClouds = 1;
+  public numOfFogs = 0;
+  public numOfStations = 2;
   public nodeWidth: number;
   public nodeHeight: number;
   public latency: number;
-  /* cloudImageSrcURL =
-    'https://cloud.google.com/images/social-icon-google-cloud-1200-630.png'; */
-  cloudImageSrcURL =
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Cloud_computing_icon.svg/1280px-Cloud_computing_icon.svg.png';
-  /* fogImageSrcURL =
-    'https://cdn0.iconfinder.com/data/icons/good-weather-1/96/weather_icons-42-512.png'; */
-  fogImageSrcURL = 'https://freesvg.org/img/1343932181.png';
 
-  //stationImageSrcURL = 'https://image.flaticon.com/icons/svg/63/63930.svg';
-  stationImageSrcURL = 'https://cdn.pixabay.com/photo/2016/12/19/03/14/gadget-1917227_960_720.png';
+  cloudImageSrcURL = '../../../assets/images/cloud_icon.svg.png';
+  fogImageSrcURL = 'https://freesvg.org/img/1343932181.png';
+  stationImageSrcURL = '../../../assets/images/station_icon.png';
 
   selectedNodeQueue: Node[] = [];
   public configuration: ConfigurationObject = { nodes: {}, stations: {} };
@@ -64,11 +59,16 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   private readonly circleRangeBackgroundColor = '#00f71b40';
   private generationSubscription: Subscription;
 
+  public connectionForm: FormGroup;
+
   constructor(
+    private formBuilder: FormBuilder,
     private stepBackDialogService: StepBackServiceService,
     public configurationService: ConfigurationService,
     public stepperService: StepperService
-  ) {}
+  ) {
+    this.initForm();
+  }
 
   ngOnInit(): void {
     this.generationSubscription = this.configurationService.generateGraph$.subscribe(value => {
@@ -108,6 +108,15 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     this.setListenerForPointerMoveOnElement();
     this.setListenerForGraphRemove();
     this.createCellsForTheGraph();
+  }
+
+  private initForm() {
+    this.connectionForm = this.formBuilder.group({
+      latency: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^[1-9]+[0-9]*$/) //prevent 0 value
+      ])
+    });
   }
 
   private createCellsForTheGraph(): void {
@@ -247,7 +256,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   }
 
   public createLinkBetweenSelectedNodes(): void {
-    if (this.isQueueFull) {
+    if (this.isQueueFull && this.connectionForm.controls.latency.valid) {
       const link = new joint.dia.Link({
         source: { id: this.selectedNodeQueue[0].id },
         target: { id: this.selectedNodeQueue[1].id }
@@ -256,7 +265,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
         {
           attrs: {
             text: {
-              text: '' + this.latency
+              text: '' + this.connectionForm.controls.latency.value
             }
           }
         }

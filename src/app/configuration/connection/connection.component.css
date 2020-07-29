@@ -16,17 +16,17 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  margin: 0 30%;
+  flex-wrap: wrap;
+}
+
+.actions mat-form-field, .actions button {
+  margin: 0.5rem;
 }
 
 .main-actions{
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-}
-
-.add-button{
-  margin-right: 2rem;
 }
 
 .latency-input{
