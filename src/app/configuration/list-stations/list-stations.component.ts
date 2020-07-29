@@ -11,8 +11,6 @@ import { StepperService } from 'src/app/services/stepper/stepper.service';
   styleUrls: ['./list-stations.component.css']
 })
 export class ListStationsComponent implements OnDestroy {
-  @Output() public next = new EventEmitter();
-
   public stationIndex = 0;
   public isValidConfiguration = false;
   private restartSubscription: Subscription;
@@ -55,7 +53,7 @@ export class ListStationsComponent implements OnDestroy {
   }
 
   public getStationFromEmitter(station: Station): void {
-    this.configurationService.stationNodes[station.id] = station;
+    this.configurationService.saveStation(station);
     this.checkIsValidConfiguration();
   }
 

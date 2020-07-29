@@ -15,6 +15,7 @@ export class Station {
   yCoord?: number;
   quantity: number;
   valid = false;
+  focusedInputName?: string;
 }
 
 export class StationsObject {
