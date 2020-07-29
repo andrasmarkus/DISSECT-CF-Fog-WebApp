@@ -25,7 +25,7 @@
       <button mat-raised-button matDialogClose class="cancelButton" (click)="onNoClick()">Cancel</button>
       <div [ngClass]="{'plus-wrapper-disabled': quantityCounterService.getUndividedApps() ===0}"
         class="plus-wrapper" (click)="addApp()">
-        <i class="fas fa-plus fa-5x plus-icon"></i>
+        <i class="fas fa-plus fa-2x plus-icon"></i>
       </div>
       <button mat-raised-button color="primary" class="okButton" [disabled]="!checkDialogIsValid()" (click)="submitApplicationCards()">
         Ok
