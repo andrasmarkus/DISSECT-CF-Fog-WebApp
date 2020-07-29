@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, Output, EventEmitter, OnDestroy, Input } from '@angular/core';
 import { Station } from 'src/app/models/station';
 import { Subscription } from 'rxjs';
 import { RestartConfigurationService } from 'src/app/services/restart-configuration.service';
@@ -11,6 +11,7 @@ import { StepperService } from 'src/app/services/stepper/stepper.service';
   styleUrls: ['./list-stations.component.css']
 })
 export class ListStationsComponent implements OnDestroy {
+  @Input() public stations: Station[] = [];
   public stationIndex = 0;
   public isValidConfiguration = false;
   private restartSubscription: Subscription;
@@ -50,6 +51,7 @@ export class ListStationsComponent implements OnDestroy {
     const station = new Station();
     station.id = stationId;
     this.configurationService.stationNodes[station.id] = station;
+    this.stations.push(station);
   }
 
   public getStationFromEmitter(station: Station): void {
@@ -66,6 +68,8 @@ export class ListStationsComponent implements OnDestroy {
 
   public removeStation(index: number): void {
     delete this.configurationService.stationNodes[index];
+    const arrayIndex = index - 1;
+    this.stations.splice(arrayIndex, 1);
     this.checkIsValidConfiguration();
   }
 
