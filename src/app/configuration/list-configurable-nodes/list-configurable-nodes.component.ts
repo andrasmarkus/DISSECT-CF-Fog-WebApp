@@ -239,6 +239,7 @@ export class ListConfigurableNodesComponent implements OnChanges, OnDestroy {
 
   public checkIsReadyToNext(): void {
     if (this.readyToSave) {
+      this.configurationService.passStation$.next(true);
       this.stepperService.stepForward();
     }
   }

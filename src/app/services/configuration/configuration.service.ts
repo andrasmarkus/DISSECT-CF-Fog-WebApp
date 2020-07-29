@@ -11,6 +11,7 @@ export class ConfigurationService {
   public maxNumOfNodes = 10;
 
   public generateGraph$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public passStation$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public nodesQuantity$ = new BehaviorSubject<ComputingNodesQuantityData>(undefined);
   public computingNodes: ComputingNodesObject = { clouds: {}, fogs: {} };
   public stationNodes: StationsObject = {};
@@ -22,11 +23,14 @@ export class ConfigurationService {
   }
 
   public saveStation(station: Station): void {
-    for (const stat of Object.values(this.stationNodes)) {
-      if (stat.id !== station.id && stat.focusedInputName !== undefined) {
-        stat.focusedInputName = undefined;
-      }
-    }
     this.stationNodes[station.id] = station;
+  }
+
+  public getStationArray(): Station[] {
+    const stations: Station[] = [];
+    for (const stat of Object.values(this.stationNodes)) {
+      stations.push(stat);
+    }
+    return stations;
   }
 }

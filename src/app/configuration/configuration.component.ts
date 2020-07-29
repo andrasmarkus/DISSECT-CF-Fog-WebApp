@@ -5,6 +5,7 @@ import { StepperService } from '../services/stepper/stepper.service';
 import { ConfigurationService } from '../services/configuration/configuration.service';
 import { MatDrawer } from '@angular/material/sidenav';
 import { PanelService } from '../services/panel/panel.service';
+import { Station } from '../models/station';
 
 @Component({
   selector: 'app-configuration',
@@ -16,6 +17,7 @@ export class ConfigurationComponent implements AfterViewInit, AfterViewChecked {
   public back = false;
   public showConnections = false;
   public show = false;
+  public stations: Station[] = [];
 
   @ViewChild('stepper') public stepper: MatStepper;
   @ViewChild('drawer') public drawer: MatDrawer;
@@ -26,7 +28,11 @@ export class ConfigurationComponent implements AfterViewInit, AfterViewChecked {
     public stepperService: StepperService,
     public configurationService: ConfigurationService,
     public panelService: PanelService
-  ) {}
+  ) {
+    this.configurationService.passStation$.subscribe(
+      () => (this.stations = this.configurationService.getStationArray())
+    );
+  }
 
   public ngAfterViewInit(): void {
     if (this.stepper) {

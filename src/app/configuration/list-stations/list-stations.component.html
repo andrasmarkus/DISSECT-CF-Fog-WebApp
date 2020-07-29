@@ -1,9 +1,9 @@
 <div class="station-container">
-  <div *ngFor="let station of configurationService.stationNodes | keyvalue">
+  <div *ngFor="let station of stations">
     <app-configurable-station
       (stationEmitter)="getStationFromEmitter($event)"
       (removeEmitter)="removeStation($event)"
-      [station]="station.value"></app-configurable-station>
+      [station]="station"></app-configurable-station>
   </div>
 </div>
 <div class="main-actions">
