@@ -11,10 +11,12 @@ import { StepBackServiceService } from 'src/app/services/step-back/step-back-ser
 import { ConfigurationService } from 'src/app/services/configuration/configuration.service';
 import { StepperService } from 'src/app/services/stepper/stepper.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export class Node {
   id: string;
   nodeId: string;
+  isStation: boolean;
 }
 
 @Component({
@@ -65,7 +67,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private stepBackDialogService: StepBackServiceService,
     public configurationService: ConfigurationService,
-    public stepperService: StepperService
+    public stepperService: StepperService,
+    private snackBar: MatSnackBar
   ) {
     this.initForm();
   }
@@ -113,6 +116,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   private initForm() {
     this.connectionForm = this.formBuilder.group({
       latency: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^[1-9]+[0-9]*$/) //prevent 0 value
+      ]),
+      parentLatency: new FormControl('', [
         Validators.required,
         Validators.pattern(/^[1-9]+[0-9]*$/) //prevent 0 value
       ])
@@ -256,24 +263,39 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   }
 
   public createLinkBetweenSelectedNodes(): void {
-    if (this.isQueueFull && this.connectionForm.controls.latency.valid) {
-      const link = new joint.dia.Link({
-        source: { id: this.selectedNodeQueue[0].id },
-        target: { id: this.selectedNodeQueue[1].id }
-      });
-      link.labels([
-        {
-          attrs: {
-            text: {
-              text: '' + this.connectionForm.controls.latency.value
+    if (this.isQueueFull() && this.connectionForm.controls.latency.valid) {
+      if (this.isLinkBetweenNonStationNodes()) {
+        const link = new joint.dia.Link({
+          source: { id: this.selectedNodeQueue[0].id },
+          target: { id: this.selectedNodeQueue[1].id }
+        });
+        link.labels([
+          {
+            attrs: {
+              text: {
+                text: '' + this.connectionForm.controls.latency.value
+              }
             }
           }
-        }
-      ]);
-      this.createNeighbours();
-      this.graph.addCell(link);
+        ]);
+        this.createNeighbours();
+        this.graph.addCell(link);
+      } else {
+        this.openSnackBar('You can not create connection for devices.', 'OK');
+      }
+    } else {
+      this.openSnackBar('You should add latency to the connection!', 'OK');
     }
-    console.log(this.graph.toJSON());
+  }
+
+  private openSnackBar(messageText: string, actionText: string, duration: number = 3000): void {
+    this.snackBar.open(messageText, actionText, {
+      duration
+    });
+  }
+
+  private isLinkBetweenNonStationNodes(): boolean {
+    return this.isQueueFull() && !(this.selectedNodeQueue[0].isStation || this.selectedNodeQueue[1].isStation);
   }
 
   private createImageNode(
@@ -282,7 +304,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     y: number,
     imageSrc: string,
     width = this.nodeWidth,
-    height = this.nodeHeight
+    height = this.nodeHeight,
+    isStation: boolean = false
   ): joint.shapes.standard.Image {
     const node = new joint.shapes.standard.Image({
       position: { x, y },
@@ -294,6 +317,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     node.attributes.attrs.label.refY = '100%';
     node.attributes.attrs.label.refY2 = '1';
     node.attr('nodeId', nodeId);
+    node.attr('isStation', isStation);
     return node;
   }
 
@@ -314,7 +338,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     }
     this.selectedNodeQueue.push({
       id: elementView.model.id as string,
-      nodeId: elementView.model.attributes.attrs.nodeId as string
+      nodeId: elementView.model.attributes.attrs.nodeId as string,
+      isStation: elementView.model.attributes.attrs.isStation as boolean
     });
     elementView.highlight();
     elementView.model.attr('selected', 'true');
@@ -412,7 +437,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     let counter = 0;
     for (const [stationId, station] of Object.entries(items)) {
       const xPos = space + (counter * this.nodeWidth + space * counter);
-      const node = this.createImageNode(stationId, xPos, startYpos, imageUrl);
+      const node = this.createImageNode(stationId, xPos, startYpos, imageUrl, this.nodeWidth, this.nodeHeight, true);
       if (station.radius > 0) {
         const nodeRange = this.getCircleRangeForNode(node, xPos, startYpos, station.radius);
         nodes.push(...[nodeRange, node]);
