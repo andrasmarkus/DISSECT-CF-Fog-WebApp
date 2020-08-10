@@ -2,18 +2,38 @@
     <div class="clouds"></div>
     <div id="paper" class="joint-paper"></div>
 </div>
-<div class="actions">
-    <form [formGroup]="connectionForm">
-        <button mat-raised-button (click)="createLinkBetweenSelectedNodes()">Add connection</button>
-        <mat-form-field appearance="outline" class="input-size">
-            <mat-label>Latency</mat-label>
-            <input class="setText-center" matInput type="number" formControlName="latency" />
-            <mat-error *ngIf="connectionForm.get('latency').hasError('pattern')">
-                The quantity can't be <strong>0</strong>
-              </mat-error>
-        </mat-form-field>
-    </form>
-</div>
+<form [formGroup]="simpleConnectionForm">
+    <div class="actions">
+        <div class="connection-button">
+            <button class="button-size" mat-raised-button (click)="createLinkBetweenSelectedNodes()">Add connection</button>
+        </div>
+        <div class="connection-input">
+            <mat-form-field appearance="outline" class="input-size">
+                <mat-label>Latency</mat-label>
+                <input class="setText-center" matInput type="number" formControlName="latency" />
+                <mat-error *ngIf="simpleConnectionForm.get('latency').hasError('pattern')">
+                    The quantity can't be <strong>0</strong> or less!
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+</form>
+<form [formGroup]="parentConnectionForm">
+    <div class="actions">
+        <div class="connection-button">
+            <button class="button-size" mat-raised-button (click)="createParentLinkBetweenSelectedCloudAndFog()">Add parent</button>
+        </div>
+        <div class="connection-input">
+            <mat-form-field appearance="outline" class="input-size">
+                <mat-label>Latency</mat-label>
+                <input class="setText-center" matInput type="number" formControlName="parentLatency" />
+                <mat-error *ngIf="parentConnectionForm.get('parentLatency').hasError('pattern')">
+                    The quantity can't be <strong>0</strong> or less!
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+</form>
 <div class="main-actions">
     <button mat-raised-button (click)="stepBack()">Back</button>
     <button mat-raised-button color="primary" (click)="save()">Configure</button>

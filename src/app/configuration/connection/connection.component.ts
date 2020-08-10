@@ -16,8 +16,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class Node {
   id: string;
   nodeId: string;
-  isStation: boolean;
+  nodeType: string;
+  parent?: string;
 }
+
+export const NODETYPES = {
+  CLOUD: 'cloud',
+  FOG: 'fog',
+  STATION: 'station'
+} as const;
 
 @Component({
   selector: 'app-connection',
@@ -27,20 +34,19 @@ export class Node {
 export class ConnectionComponent implements OnInit, OnDestroy {
   public clouds: CloudNodesObject = {};
   public fogs: FogNodesObject = {};
-
   public multipleStationNodes: StationsObject;
+
   public numOfClouds = 1;
   public numOfFogs = 0;
   public numOfStations = 2;
   public nodeWidth: number;
   public nodeHeight: number;
-  public latency: number;
 
-  cloudImageSrcURL = '../../../assets/images/cloud_icon.svg.png';
-  fogImageSrcURL = 'https://freesvg.org/img/1343932181.png';
-  stationImageSrcURL = '../../../assets/images/station_icon.png';
+  private readonly cloudImageSrcURL = '../../../assets/images/cloud_icon.svg.png';
+  private readonly fogImageSrcURL = 'https://freesvg.org/img/1343932181.png'; // find other img for that
+  private readonly stationImageSrcURL = '../../../assets/images/station_icon.png';
 
-  selectedNodeQueue: Node[] = [];
+  private selectedNodeQueue: Node[] = [];
   public configuration: ConfigurationObject = { nodes: {}, stations: {} };
 
   public paper: joint.dia.Paper;
@@ -61,7 +67,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   private readonly circleRangeBackgroundColor = '#00f71b40';
   private generationSubscription: Subscription;
 
-  public connectionForm: FormGroup;
+  public simpleConnectionForm: FormGroup;
+  public parentConnectionForm: FormGroup;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -114,11 +121,13 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   }
 
   private initForm() {
-    this.connectionForm = this.formBuilder.group({
+    this.simpleConnectionForm = this.formBuilder.group({
       latency: new FormControl('', [
         Validators.required,
         Validators.pattern(/^[1-9]+[0-9]*$/) //prevent 0 value
-      ]),
+      ])
+    });
+    this.parentConnectionForm = this.formBuilder.group({
       parentLatency: new FormControl('', [
         Validators.required,
         Validators.pattern(/^[1-9]+[0-9]*$/) //prevent 0 value
@@ -129,17 +138,24 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   private createCellsForTheGraph(): void {
     const graphElements: (joint.dia.Link | joint.shapes.standard.Image | joint.dia.Cell)[] = [];
     graphElements.push(
-      ...this.createNodesInQueue(this.clouds, this.sapceForClouds, this.cloudsStartYpos, this.cloudImageSrcURL)
+      ...this.createNodesInQueue(
+        this.clouds,
+        this.sapceForClouds,
+        this.cloudsStartYpos,
+        this.cloudImageSrcURL,
+        NODETYPES.CLOUD
+      )
     );
     graphElements.push(
-      ...this.createNodesInQueue(this.fogs, this.sapceForFogs, this.fogsStartYpos, this.fogImageSrcURL)
+      ...this.createNodesInQueue(this.fogs, this.sapceForFogs, this.fogsStartYpos, this.fogImageSrcURL, NODETYPES.FOG)
     );
     graphElements.push(
       ...this.createNodesWithRangeInQueue(
         this.multipleStationNodes,
         this.sapceForStations,
         this.stationsStartYpos,
-        this.stationImageSrcURL
+        this.stationImageSrcURL,
+        NODETYPES.STATION
       )
     );
     this.graph.addCells(this.inintCells(graphElements));
@@ -153,6 +169,11 @@ export class ConnectionComponent implements OnInit, OnDestroy {
         const targetCell = this.graph.getCells().find(c => c.id === cell.attributes.target.id);
         const sourceNodeId = sourceCell.attributes.attrs.nodeId;
         const targetNodeId = targetCell.attributes.attrs.nodeId;
+
+        if (cell.attributes.attrs.isParentLink && cell.attributes.attrs.isParentLink === 'true') {
+          this.addAttributeToCell(sourceCell.attributes.attrs.nodeId, 'parent', 'none');
+        }
+
         if (this.configuration.nodes[sourceNodeId] && this.configuration.nodes[targetNodeId]) {
           const sourceNeighbours = this.configuration.nodes[sourceNodeId].neighbours;
           const targetNeighbours = this.configuration.nodes[targetNodeId].neighbours;
@@ -263,9 +284,9 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   }
 
   public createLinkBetweenSelectedNodes(): void {
-    if (this.isQueueFull() && this.connectionForm.controls.latency.valid) {
-      if (this.isLinkBetweenNonStationNodes()) {
-        const link = new joint.dia.Link({
+    if (this.isQueueFull() && this.simpleConnectionForm.controls.latency.valid) {
+      if (this.isLinkBetweenNonStationNodes() && this.isFreeToAddSimpleConnection()) {
+        const link = new joint.shapes.standard.Link({
           source: { id: this.selectedNodeQueue[0].id },
           target: { id: this.selectedNodeQueue[1].id }
         });
@@ -273,19 +294,123 @@ export class ConnectionComponent implements OnInit, OnDestroy {
           {
             attrs: {
               text: {
-                text: '' + this.connectionForm.controls.latency.value
+                text: '' + this.simpleConnectionForm.controls.latency.value
               }
             }
           }
         ]);
-        this.createNeighbours();
+        link.attributes.attrs.line.targetMarker = {};
+        link.attr('isParentLink', 'false');
+        this.createNeighbours(this.simpleConnectionForm.controls.latency.value);
         this.graph.addCell(link);
+        this.createLinkTools(link);
       } else {
-        this.openSnackBar('You can not create connection for devices.', 'OK');
+        this.openSnackBar('You can not create simple connection between these nodes!.', 'OK');
       }
     } else {
-      this.openSnackBar('You should add latency to the connection!', 'OK');
+      this.openSnackBar('You should add latency to the simple connection!', 'OK');
     }
+  }
+
+  public createParentLinkBetweenSelectedCloudAndFog(): void {
+    if (this.isQueueFull() && this.parentConnectionForm.controls.parentLatency.valid) {
+      if (this.isLinkBetweenNonStationNodes() && this.isFreeToAddParentConnection()) {
+        const fog: Node = this.selectedNodeQueue.filter(node => node.nodeType === NODETYPES.FOG)[0];
+        const cloud: Node = this.selectedNodeQueue.filter(node => node.nodeType === NODETYPES.CLOUD)[0];
+        const link = new joint.shapes.standard.Link({
+          source: { id: fog.id },
+          target: { id: cloud.id }
+        });
+        link.labels([
+          {
+            attrs: {
+              text: {
+                text: '' + this.parentConnectionForm.controls.parentLatency.value
+              }
+            }
+          }
+        ]);
+        link.attr('line/stroke', 'orange');
+        link.attr('isParentLink', 'true');
+        this.addAttributeToCell(fog.nodeId, 'parent', cloud.nodeId);
+
+        const fogIndex = this.selectedNodeQueue.findIndex(node => node.nodeType === NODETYPES.FOG);
+        this.selectedNodeQueue[fogIndex].parent = cloud.nodeId;
+        this.createNeighbours(this.parentConnectionForm.controls.parentLatency.value);
+        this.graph.addCell(link);
+        this.createLinkTools(link);
+      } else {
+        this.openSnackBar(
+          'You have to select 1 cloud and 1 fog! Such nodes which have not parent connection yet.',
+          'OK'
+        );
+      }
+    } else {
+      this.openSnackBar('You should add latency to the parent connection!', 'OK');
+    }
+  }
+
+  private isFreeToAddParentConnection(): boolean {
+    const fogArray = this.selectedNodeQueue.filter(node => node.nodeType === NODETYPES.FOG);
+    if (fogArray.length !== 1) {
+      return false;
+    }
+    return fogArray[0].parent && fogArray[0].parent === 'none';
+  }
+
+  private isFreeToAddSimpleConnection(): boolean {
+    if (
+      this.graph
+        .getCells()
+        .filter(cell => cell.isLink())
+        .some(cell =>
+          this.doesThisLinkCointainTheseNodes(cell, this.selectedNodeQueue[0].id, this.selectedNodeQueue[1].id)
+        )
+    ) {
+      return false;
+    }
+    const fogArray = this.selectedNodeQueue.filter(node => node.nodeType === NODETYPES.FOG);
+    if (fogArray.length === 1) {
+      return false;
+    }
+    return true;
+  }
+
+  private doesThisLinkCointainTheseNodes(cell: joint.dia.Cell, first: string, second: string): boolean {
+    return (
+      (cell.attributes.source.id === first || cell.attributes.source.id === second) &&
+      (cell.attributes.target.id === first || cell.attributes.target.id === second)
+    );
+  }
+
+  private addAttributeToCell(nodeId: string, attrKey: string, attrValue: string): void {
+    this.graph.getCells().forEach((cell: joint.shapes.standard.Image | joint.dia.Link | joint.dia.Cell) => {
+      if (cell.attributes.attrs.nodeId && nodeId === cell.attributes.attrs.nodeId) {
+        cell.attr(attrKey, attrValue);
+      }
+    });
+  }
+
+  private createLinkTools(link: joint.shapes.standard.Link) {
+    const removeAction = (evt: joint.dia.Event, view: joint.dia.LinkView) => {
+      console.log(evt);
+      console.log(view);
+      view.model.remove({ ui: true });
+    };
+    const removeButton = new joint.linkTools.Remove({
+      distance: 20,
+      action: removeAction
+    });
+
+    const toolsView = new joint.dia.ToolsView({
+      tools: [removeButton]
+    });
+    const linkView = link.findView(this.paper);
+    linkView.addTools(toolsView);
+    linkView.hideTools();
+
+    this.paper.on('link:mouseenter', view => view.showTools());
+    this.paper.on('link:mouseleave', view => view.hideTools());
   }
 
   private openSnackBar(messageText: string, actionText: string, duration: number = 3000): void {
@@ -295,7 +420,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   }
 
   private isLinkBetweenNonStationNodes(): boolean {
-    return this.isQueueFull() && !(this.selectedNodeQueue[0].isStation || this.selectedNodeQueue[1].isStation);
+    return !(
+      this.selectedNodeQueue[0].nodeType === NODETYPES.STATION ||
+      this.selectedNodeQueue[1].nodeType === NODETYPES.STATION
+    );
   }
 
   private createImageNode(
@@ -303,9 +431,9 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     x: number,
     y: number,
     imageSrc: string,
-    width = this.nodeWidth,
-    height = this.nodeHeight,
-    isStation: boolean = false
+    width: number,
+    height: number,
+    nodeType: string
   ): joint.shapes.standard.Image {
     const node = new joint.shapes.standard.Image({
       position: { x, y },
@@ -317,7 +445,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     node.attributes.attrs.label.refY = '100%';
     node.attributes.attrs.label.refY2 = '1';
     node.attr('nodeId', nodeId);
-    node.attr('isStation', isStation);
+    node.attr('nodeTpye', nodeType);
+    if (nodeType === NODETYPES.CLOUD || nodeType === NODETYPES.FOG) {
+      node.attr('parent', 'none');
+    }
     return node;
   }
 
@@ -339,7 +470,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     this.selectedNodeQueue.push({
       id: elementView.model.id as string,
       nodeId: elementView.model.attributes.attrs.nodeId as string,
-      isStation: elementView.model.attributes.attrs.isStation as boolean
+      nodeType: elementView.model.attributes.attrs.nodeTpye as string,
+      parent: elementView.model.attributes.attrs.parent
+        ? (elementView.model.attributes.attrs.parent as string)
+        : undefined
     });
     elementView.highlight();
     elementView.model.attr('selected', 'true');
@@ -430,14 +564,22 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     items: StationsObject,
     space: number,
     startYpos: number,
-    imageUrl: string
+    imageUrl: string,
+    nodeType: string
   ): (joint.shapes.standard.Image | joint.shapes.standard.Circle)[] {
     const nodes: (joint.shapes.standard.Image | joint.shapes.standard.Circle)[] = [];
-    const itemsLength = Object.keys(items).length;
     let counter = 0;
     for (const [stationId, station] of Object.entries(items)) {
       const xPos = space + (counter * this.nodeWidth + space * counter);
-      const node = this.createImageNode(stationId, xPos, startYpos, imageUrl, this.nodeWidth, this.nodeHeight, true);
+      const node = this.createImageNode(
+        stationId,
+        xPos,
+        startYpos,
+        imageUrl,
+        this.nodeWidth,
+        this.nodeHeight,
+        nodeType
+      );
       if (station.radius > 0) {
         const nodeRange = this.getCircleRangeForNode(node, xPos, startYpos, station.radius);
         nodes.push(...[nodeRange, node]);
@@ -453,7 +595,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     items: CloudNodesObject | FogNodesObject,
     space: number,
     startYpos: number,
-    imageUrl: string
+    imageUrl: string,
+    nodeType: string
   ): joint.shapes.standard.Image[] {
     const nodes: joint.shapes.standard.Image[] = [];
     const itemsLength = Object.keys(items).length;
@@ -461,7 +604,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     if (itemsLength > 0) {
       for (const [nodeId, node] of Object.entries(items)) {
         const xPos = space + (counter * this.nodeWidth + space * counter);
-        nodes.push(this.createImageNode(nodeId, xPos, startYpos, imageUrl));
+        nodes.push(this.createImageNode(nodeId, xPos, startYpos, imageUrl, this.nodeWidth, this.nodeHeight, nodeType));
         counter++;
       }
     }
@@ -478,21 +621,22 @@ export class ConnectionComponent implements OnInit, OnDestroy {
       this.configuration.nodes[id] = { ...node, neighbours: {} };
     }
     this.configuration.stations = this.multipleStationNodes;
-    //console.log(this.configuration);
   }
 
-  private createNeighbours(): void {
+  private createNeighbours(latency: number): void {
     const firstSelectedNodeId = this.selectedNodeQueue[0].nodeId;
     const secondSelectedNodeId = this.selectedNodeQueue[1].nodeId;
     if (this.configuration.nodes[firstSelectedNodeId] && this.configuration.nodes[secondSelectedNodeId]) {
       const firstToSecond = {
         name: secondSelectedNodeId,
-        latency: this.latency
+        latency,
+        parent: this.selectedNodeQueue[0].parent === secondSelectedNodeId ? true : false
       } as Neighbour;
 
       const secondToFirst = {
         name: firstSelectedNodeId,
-        latency: this.latency
+        latency,
+        parent: this.selectedNodeQueue[1].parent === firstSelectedNodeId ? true : false
       } as Neighbour;
       this.configuration.nodes[firstSelectedNodeId].neighbours[secondSelectedNodeId] = firstToSecond;
       this.configuration.nodes[secondSelectedNodeId].neighbours[firstSelectedNodeId] = secondToFirst;

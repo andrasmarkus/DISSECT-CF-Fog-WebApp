@@ -16,11 +16,6 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  flex-wrap: wrap;
-}
-
-.actions mat-form-field, .actions button {
-  margin: 0.5rem;
 }
 
 .main-actions{
@@ -34,9 +29,28 @@
 }
 
 .input-size{
-  width: 150px;
+  width: 125px;
+}
+
+.button-size{
+  width: 125px;
 }
 
 .actions .mat-form-field .mat-form-field-wrapper{
   padding: 0 !important;
+}
+
+.connection-button, .connection-input{
+  flex: 1;
+  display: flex;
+}
+
+.connection-button{
+  justify-content: flex-end;
+  margin-right: 0.25rem;
+}
+
+.connection-input{
+  justify-content: flex-start;
+  margin-left: 0.25rem;
 }
