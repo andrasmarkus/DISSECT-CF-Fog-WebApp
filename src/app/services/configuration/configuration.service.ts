@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ComputingNodesQuantityData } from 'src/app/models/computing-nodes-quantity-data';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { ComputingNodesObject } from 'src/app/models/computing-nodes-object';
 import { StationsObject, Station } from 'src/app/models/station';
 
@@ -10,8 +10,12 @@ import { StationsObject, Station } from 'src/app/models/station';
 export class ConfigurationService {
   public maxNumOfNodes = 10;
 
-  public generateGraph$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public passStation$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public generateGraphSubject: Subject<any> = new Subject();
+  public generateGraph$ = this.generateGraphSubject.asObservable();
+
+  public passStationSubject: Subject<any> = new Subject();
+  public passStation$ = this.passStationSubject.asObservable();
+
   public nodesQuantity$ = new BehaviorSubject<ComputingNodesQuantityData>(undefined);
   public computingNodes: ComputingNodesObject = { clouds: {}, fogs: {} };
   public stationNodes: StationsObject = {};

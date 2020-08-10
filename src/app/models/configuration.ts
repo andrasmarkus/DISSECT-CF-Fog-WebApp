@@ -20,3 +20,16 @@ export interface Neighbour {
   latency: number;
   parent?: boolean;
 }
+
+export interface Node {
+  id: string;
+  nodeId: string;
+  nodeType: string;
+  parent?: string;
+}
+
+export const NODETYPES = {
+  CLOUD: 'cloud',
+  FOG: 'fog',
+  STATION: 'station'
+} as const;

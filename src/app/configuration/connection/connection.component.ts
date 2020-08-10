@@ -1,30 +1,17 @@
-import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import * as jQuery from 'jquery';
 import * as _ from 'lodash';
 import * as joint from 'jointjs';
-import { FogNodesObject, CloudNodesObject, ComputingNodesObject } from 'src/app/models/computing-nodes-object';
+import { FogNodesObject, CloudNodesObject } from 'src/app/models/computing-nodes-object';
 import { StationsObject } from 'src/app/models/station';
-import { ConfigurationObject, Neighbour } from 'src/app/models/configuration';
+import { ConfigurationObject, Neighbour, NODETYPES, Node } from 'src/app/models/configuration';
 import { omit } from 'lodash';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { StepBackServiceService } from 'src/app/services/step-back/step-back-service.service';
 import { ConfigurationService } from 'src/app/services/configuration/configuration.service';
 import { StepperService } from 'src/app/services/stepper/stepper.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
-export class Node {
-  id: string;
-  nodeId: string;
-  nodeType: string;
-  parent?: string;
-}
-
-export const NODETYPES = {
-  CLOUD: 'cloud',
-  FOG: 'fog',
-  STATION: 'station'
-} as const;
 
 @Component({
   selector: 'app-connection',
@@ -34,41 +21,40 @@ export const NODETYPES = {
 export class ConnectionComponent implements OnInit, OnDestroy {
   public clouds: CloudNodesObject = {};
   public fogs: FogNodesObject = {};
+  public configuration: ConfigurationObject = { nodes: {}, stations: {} };
   public multipleStationNodes: StationsObject;
 
   public numOfClouds = 1;
   public numOfFogs = 0;
   public numOfStations = 2;
-  public nodeWidth: number;
-  public nodeHeight: number;
+  public numOfLayers: number;
+  public verticalSpaceBetweenLayers: number;
+  public proportionOfTheTotalSize = 0.8;
 
-  private readonly cloudImageSrcURL = '../../../assets/images/cloud_icon.svg.png';
-  private readonly fogImageSrcURL = 'https://freesvg.org/img/1343932181.png'; // find other img for that
-  private readonly stationImageSrcURL = '../../../assets/images/station_icon.png';
-
-  private selectedNodeQueue: Node[] = [];
-  public configuration: ConfigurationObject = { nodes: {}, stations: {} };
+  public simpleConnectionForm: FormGroup;
+  public parentConnectionForm: FormGroup;
 
   public paper: joint.dia.Paper;
   public graph: joint.dia.Graph;
 
-  public paperWidth: any;
-  public paperHeight: any;
-  public proportionOfTheTotalSize = 0.8;
+  public nodeWidth: number;
+  public nodeHeight: number;
+  public paperWidth: number;
+  public paperHeight: number;
   public sapceForClouds: number;
   public sapceForFogs: number;
   public sapceForStations: number;
-  public numOfLayers: number;
   public cloudsStartYpos: number;
   public fogsStartYpos: number;
   public stationsStartYpos: number;
-  public verticalSpaceBetweenLayers: number;
 
-  private readonly circleRangeBackgroundColor = '#00f71b40';
   private generationSubscription: Subscription;
+  private selectedNodeQueue: Node[] = [];
 
-  public simpleConnectionForm: FormGroup;
-  public parentConnectionForm: FormGroup;
+  private readonly cloudImageSrcURL = '../../../assets/images/cloud_icon.svg.png';
+  private readonly fogImageSrcURL = 'https://freesvg.org/img/1343932181.png'; // find other img for that
+  private readonly stationImageSrcURL = '../../../assets/images/station_icon.png';
+  private readonly circleRangeBackgroundColor = '#00f71b40';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -80,19 +66,17 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     this.initForm();
   }
 
-  ngOnInit(): void {
-    this.generationSubscription = this.configurationService.generateGraph$.subscribe(value => {
-      if (value) {
-        this.createGraph();
-      }
-    });
+  public ngOnInit(): void {
+    this.generationSubscription = this.configurationService.generateGraph$.subscribe(() => this.createGraph());
   }
 
-  ngOnDestroy(): void {
-    this.generationSubscription.unsubscribe();
+  public ngOnDestroy(): void {
+    if (this.generationSubscription) {
+      this.generationSubscription.unsubscribe();
+    }
   }
 
-  stepBack() {
+  public stepBack(): void {
     const dialogRef = this.stepBackDialogService.openDialog();
     dialogRef.afterClosed().subscribe((result: { okAction: boolean }) => {
       if (result.okAction) {
@@ -164,7 +148,6 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   private setListenerForGraphRemove(): void {
     this.graph.on('remove', cell => {
       if (cell.isLink()) {
-        console.log(cell);
         const sourceCell = this.graph.getCells().find(c => c.id === cell.attributes.source.id);
         const targetCell = this.graph.getCells().find(c => c.id === cell.attributes.target.id);
         const sourceNodeId = sourceCell.attributes.attrs.nodeId;
@@ -393,8 +376,6 @@ export class ConnectionComponent implements OnInit, OnDestroy {
 
   private createLinkTools(link: joint.shapes.standard.Link) {
     const removeAction = (evt: joint.dia.Event, view: joint.dia.LinkView) => {
-      console.log(evt);
-      console.log(view);
       view.model.remove({ ui: true });
     };
     const removeButton = new joint.linkTools.Remove({

@@ -51,6 +51,6 @@ export class NodeQuantityFormComponent {
     this.configurationService.setNodesQuantity(undefined);
     this.configurationService.computingNodes = { clouds: {}, fogs: {} };
     this.configurationService.stationNodes = {};
-    this.restartConfService.restartConfiguration$.next(true);
+    this.restartConfService.restartConfigurationSubject.next();
   }
 }

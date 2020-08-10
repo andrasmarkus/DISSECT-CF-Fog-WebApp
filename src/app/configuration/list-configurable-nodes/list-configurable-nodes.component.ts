@@ -37,12 +37,10 @@ export class ListConfigurableNodesComponent implements OnChanges, OnDestroy {
     public nodeService: ComputingNodeService
   ) {
     this.resources = this.nodeService.getResurceFiles();
-    this.restartSubscription = this.restartConfService.restartConfiguration$.subscribe(restart => {
-      if (restart) {
-        this.cloudIndex = 1;
-        this.fogIndex = 1;
-        this.readyToSave = false;
-      }
+    this.restartSubscription = this.restartConfService.restartConfiguration$.subscribe(() => {
+      this.cloudIndex = 1;
+      this.fogIndex = 1;
+      this.readyToSave = false;
     });
   }
 
@@ -239,7 +237,7 @@ export class ListConfigurableNodesComponent implements OnChanges, OnDestroy {
 
   public checkIsReadyToNext(): void {
     if (this.readyToSave) {
-      this.configurationService.passStation$.next(true);
+      this.configurationService.passStationSubject.next();
       this.stepperService.stepForward();
     }
   }

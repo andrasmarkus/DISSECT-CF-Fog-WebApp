@@ -23,12 +23,10 @@ export class ListStationsComponent implements OnDestroy {
   ) {
     this.initStations();
 
-    this.restartSubscription = this.restartConfService.restartConfiguration$.subscribe(restart => {
-      if (restart) {
-        this.stationIndex = 0;
-        this.isValidConfiguration = false;
-        this.initStations();
-      }
+    this.restartSubscription = this.restartConfService.restartConfiguration$.subscribe(() => {
+      this.stationIndex = 0;
+      this.isValidConfiguration = false;
+      this.initStations();
     });
   }
 
@@ -61,7 +59,7 @@ export class ListStationsComponent implements OnDestroy {
 
   public checkIsReadyToNext(): void {
     if (this.isValidConfiguration) {
-      this.configurationService.generateGraph$.next(true);
+      this.configurationService.generateGraphSubject.next();
       this.stepperService.stepForward();
     }
   }
