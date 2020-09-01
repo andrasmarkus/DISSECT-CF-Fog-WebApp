@@ -64,9 +64,9 @@ export class ListStationsComponent implements OnDestroy {
     }
   }
 
-  public removeStation(index: number): void {
-    delete this.configurationService.stationNodes[index];
-    const arrayIndex = index - 1;
+  public removeStation(stationId: string): void {
+    delete this.configurationService.stationNodes[stationId];
+    const arrayIndex = this.stations.findIndex(station => station.id === stationId);
     this.stations.splice(arrayIndex, 1);
     this.checkIsValidConfiguration();
   }
