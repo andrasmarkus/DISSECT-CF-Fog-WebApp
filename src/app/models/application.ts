@@ -2,12 +2,11 @@ export class Application {
   id: string;
   taksize: number;
   freq: number;
-  instance: string; //shuld be select
+  instance: string;
   numOfInstruction: number;
   threshold: number;
-  strategy: string; //shuld be select
+  strategy: string;
   canJoin: boolean;
-  quantity: number;
   isConfigured: boolean;
 }
 

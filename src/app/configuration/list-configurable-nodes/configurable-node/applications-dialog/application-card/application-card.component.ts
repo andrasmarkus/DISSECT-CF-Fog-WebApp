@@ -24,7 +24,6 @@ export class ApplicationCardComponent implements OnChanges {
 
   constructor(
     private formBuilder: FormBuilder,
-    public quantityCounterService: QuantityCounterService,
     public nodeService: ComputingNodeService,
     public panelService: PanelService
   ) {
@@ -43,8 +42,7 @@ export class ApplicationCardComponent implements OnChanges {
       taksize: new FormControl('', [Validators.required]),
       freq: new FormControl('', [Validators.required]),
       numOfInstruction: new FormControl('', [Validators.required]),
-      threshold: new FormControl('', [Validators.required]),
-      quantity: [this.application.quantity, [Validators.min(1)]]
+      threshold: new FormControl('', [Validators.required])
     });
   }
 
@@ -69,19 +67,6 @@ export class ApplicationCardComponent implements OnChanges {
 
   public checkValidation(): boolean {
     return this.appFormGroup.valid && this.instance !== '' && this.strategy !== '';
-  }
-
-  public decrease(): void {
-    if (this.quantityCounterService.decreseApps(this.application.quantity)) {
-      this.application.quantity--;
-      this.appFormGroup.get('quantity').setValue(this.application.quantity);
-    }
-  }
-  public increase(): void {
-    if (this.quantityCounterService.increaseApps()) {
-      this.application.quantity++;
-      this.appFormGroup.get('quantity').setValue(this.application.quantity);
-    }
   }
 
   public openInfoPanelForApplications(): void {

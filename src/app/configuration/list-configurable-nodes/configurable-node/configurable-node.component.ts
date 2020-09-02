@@ -49,7 +49,7 @@ export class ConfigurableNodeComponent implements OnChanges {
   }
 
   private initNode() {
-    this.numOfApps = this.node.applications ? this.getNumberOfConfigurabledApps(this.node.applications) : 0;
+    this.numOfApps = this.node.applications ? Object.keys(this.node.applications).length : 0;
     if (!this.node.applications) {
       this.node.applications = {};
     }
@@ -86,18 +86,11 @@ export class ConfigurableNodeComponent implements OnChanges {
 
   private areAppsValidOnInputChange() {
     return (
-      (this.numOfApps === this.getNumberOfConfigurabledApps(this.node.applications) ||
-        this.numOfApps < this.getNumberOfConfigurabledApps(this.node.applications)) &&
-      this.nodeCardForm.valid
+      (this.numOfApps === Object.keys(this.node.applications).length ||
+        this.numOfApps < Object.keys(this.node.applications).length) &&
+      this.nodeCardForm.valid &&
+      !Object.values(this.node.applications).find(app => !app.isConfigured)
     );
-  }
-
-  private getNumberOfConfigurabledApps(apps: ApplicationsObject): number {
-    let sum = 0;
-    for (const [id, app] of Object.entries(apps)) {
-      sum += app.quantity;
-    }
-    return sum;
   }
 
   openDialog(): void {
@@ -117,7 +110,7 @@ export class ConfigurableNodeComponent implements OnChanges {
         if (
           !result.valid ||
           !this.nodeCardForm.valid ||
-          this.getNumberOfConfigurabledApps(this.node.applications) !== this.numOfApps //check this!!!
+          Object.keys(this.node.applications).length !== this.numOfApps
         ) {
           this.nodeCardForm.controls.allAppsConfigured.setValue(false);
           this.appsStatusIcon = StringUtlis.UNSET_APPS_ICON;
@@ -134,7 +127,7 @@ export class ConfigurableNodeComponent implements OnChanges {
   private initForm(): void {
     this.nodeCardForm = this.formBuilder.group({
       numOfApplications: [
-        this.node.applications ? this.getNumberOfConfigurabledApps(this.node.applications) : 0,
+        this.node.applications ? Object.keys(this.node.applications).length : 0,
         [Validators.required, Validators.max(this.maxApplicationsQuantity), Validators.pattern(/^[1-9]+[0-9]*$/)]
       ],
       allAppsConfigured: this.checkAllAppsAreConfigured(),
@@ -144,9 +137,7 @@ export class ConfigurableNodeComponent implements OnChanges {
 
   private checkAllAppsAreConfigured(): boolean {
     return (
-      this.node.applications &&
-      this.numOfApps > 0 &&
-      this.getNumberOfConfigurabledApps(this.node.applications) === this.numOfApps
+      this.node.applications && this.numOfApps > 0 && Object.keys(this.node.applications).length === this.numOfApps
     );
   }
 
@@ -198,15 +189,9 @@ export class ConfigurableNodeComponent implements OnChanges {
       if (index === currentValue) {
         break;
       }
-      if (index + app.quantity <= currentValue) {
+      if (index <= currentValue) {
         restOfTheNodes[id] = app;
-        index += app.quantity;
-      } else {
-        const quantity = currentValue - index;
-        index += quantity;
-        app.quantity = quantity;
-        restOfTheNodes[id] = app;
-        break;
+        index++;
       }
     }
     return restOfTheNodes;

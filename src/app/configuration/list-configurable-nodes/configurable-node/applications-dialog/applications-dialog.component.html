@@ -5,28 +5,18 @@
   <mat-drawer-content class="drawer-content">
     <div class="dialog-header">
       <h1 mat-dialog-title class="setText-center title">Configure applications ({{ data.numOfApps }})</h1>
-      <h2  class="setText-center distribution-text"
-        *ngIf="quantityCounterService.getUndividedApps() && quantityCounterService.getUndividedApps() > 0">
-        Number of apps to distribute: {{quantityCounterService.getUndividedApps()}}
-      </h2>
     </div>
-    <div class="dialog-content">
-      <div fxLayout="row wrap" fxLayoutAlign="center center">
-        <ng-container *ngFor="let app of data.applications | keyvalue">
-          <app-application-card
-           class="app-card"
-            [application]="app.value"
-            (removeEmitter)="removeTypeOfApp($event)"
-          ></app-application-card>
-        </ng-container>
-      </div>
+    <div fxLayout="row wrap" fxLayoutAlign="center center">
+      <ng-container *ngFor="let app of data.applications | keyvalue">
+        <app-application-card
+          class="app-card"
+          [application]="app.value"
+        ></app-application-card>
+      </ng-container>
     </div>
+    <mat-divider></mat-divider>
     <div fxLayout="row" fxLayoutAlign="center center" class="dialog-actions">
       <button mat-raised-button matDialogClose class="cancelButton" (click)="onNoClick()">Cancel</button>
-      <div [ngClass]="{'plus-wrapper-disabled': quantityCounterService.getUndividedApps() ===0}"
-        class="plus-wrapper" (click)="addApp()">
-        <i class="fas fa-plus fa-2x plus-icon"></i>
-      </div>
       <button mat-raised-button color="primary" class="okButton" [disabled]="!checkDialogIsValid()" (click)="submitApplicationCards()">
         Ok
       </button>

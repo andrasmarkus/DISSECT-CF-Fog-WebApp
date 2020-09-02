@@ -31,20 +31,17 @@ export class ApplicationsDialogComponent implements OnInit, AfterViewChecked, Af
     public dialogRef: MatDialogRef<ApplicationsDialogComponent>,
     private cdRef: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: { numOfApps: number; applications: ApplicationsObject },
-    public quantityCounterService: QuantityCounterService,
     public panelService: PanelService
   ) {}
 
   public ngOnInit(): void {
-    if (Object.values(this.data.applications).length === 0) {
-      this.createApp();
-    } else {
-      this.appIndex = this.calculateLastAppIndex();
+    const appsArrayLength = Object.values(this.data.applications).length;
+    this.appIndex = this.calculateLastAppIndex();
+    if (appsArrayLength < this.data.numOfApps) {
+      for (let i = 0; i < this.data.numOfApps - appsArrayLength; i++) {
+        this.createApp();
+      }
     }
-    this.quantityCounterService.setAppsQuantities(
-      this.data.numOfApps,
-      this.getNumberOfConfigurabledApps(this.data.applications)
-    );
   }
 
   public ngAfterViewChecked(): void {
@@ -58,19 +55,14 @@ export class ApplicationsDialogComponent implements OnInit, AfterViewChecked, Af
   }
 
   private calculateLastAppIndex(): number {
+    if (Object.keys(this.data.applications).length === 0) {
+      return 0;
+    }
     const keys: number[] = [];
     for (const id of Object.keys(this.data.applications)) {
       keys.push(+id.replace('app', ''));
     }
     return Math.max(...keys);
-  }
-
-  private getNumberOfConfigurabledApps(apps: ApplicationsObject): number {
-    let sum = 0;
-    for (const [id, app] of Object.entries(apps)) {
-      sum += app.quantity;
-    }
-    return sum;
   }
 
   public onNoClick(): void {
@@ -94,18 +86,14 @@ export class ApplicationsDialogComponent implements OnInit, AfterViewChecked, Af
 
   public checkDialogIsValid(): boolean {
     let isValidAll = true;
-    if (this.quantityCounterService.getUndividedApps() > 0) {
-      isValidAll = false;
-    } else {
-      if (this.applicationCards) {
-        this.applicationCards.forEach(appCard => {
-          if (!appCard.checkValidation()) {
-            isValidAll = false;
-          } else {
-            appCard.application.isConfigured = true;
-          }
-        });
-      }
+    if (this.applicationCards) {
+      this.applicationCards.forEach(appCard => {
+        if (!appCard.checkValidation()) {
+          isValidAll = false;
+        } else {
+          appCard.application.isConfigured = true;
+        }
+      });
     }
     return isValidAll;
   }
@@ -119,19 +107,11 @@ export class ApplicationsDialogComponent implements OnInit, AfterViewChecked, Af
     this.dialogRef.close(dialogResult);
   }
 
-  public addApp(): void {
-    if (this.quantityCounterService.increaseApps()) {
-      this.saveApplicationsState();
-      this.createApp();
-    }
-  }
-
   private createApp(): void {
     this.appIndex += 1;
     const appId = 'app' + this.appIndex;
     const app = new Application();
     app.id = appId;
-    app.quantity = 1;
     app.isConfigured = false;
     this.data.applications[app.id] = app;
   }
@@ -144,14 +124,5 @@ export class ApplicationsDialogComponent implements OnInit, AfterViewChecked, Af
         this.data.applications[application.id] = application;
       });
     }
-  }
-
-  public removeTypeOfApp(id: string): void {
-    this.saveApplicationsState();
-    delete this.data.applications[id];
-    this.quantityCounterService.setAppsQuantities(
-      this.data.numOfApps,
-      this.getNumberOfConfigurabledApps(this.data.applications)
-    );
   }
 }
