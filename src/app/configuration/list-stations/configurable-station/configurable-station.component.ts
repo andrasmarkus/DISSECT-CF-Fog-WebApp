@@ -79,6 +79,7 @@ export class ConfigurableStationComponent implements OnChanges {
       maxinbw: new FormControl('', [Validators.required]),
       maxoutbw: new FormControl('', [Validators.required]),
       diskbw: new FormControl('', [Validators.required]),
+      number: new FormControl('', [Validators.required]),
       radius: new FormControl('', [Validators.required])
     });
   }

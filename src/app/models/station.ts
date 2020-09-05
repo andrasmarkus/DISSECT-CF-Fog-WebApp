@@ -9,7 +9,8 @@ export class Station {
   maxoutbw: number;
   diskbw: number;
 
-  strategy: string; //should be select
+  strategy: string;
+  number: number;
   radius: number;
   xCoord?: number;
   yCoord?: number;
