@@ -71,17 +71,21 @@ export class ConfigurableStationComponent implements OnChanges {
 
   createForm() {
     this.stationFormGroup = this.formBuilder.group({
-      starttime: new FormControl('', [Validators.required]),
-      stoptime: new FormControl('', [Validators.required]),
-      filesize: new FormControl('', [Validators.required]),
-      freq: new FormControl('', [Validators.required]),
-      sensor: new FormControl('', [Validators.required]),
-      maxinbw: new FormControl('', [Validators.required]),
-      maxoutbw: new FormControl('', [Validators.required]),
-      diskbw: new FormControl('', [Validators.required]),
-      number: new FormControl('', [Validators.required]),
-      radius: new FormControl('', [Validators.required])
+      starttime: this.createNumberFormControl(),
+      stoptime: this.createNumberFormControl(),
+      filesize: this.createNumberFormControl(),
+      freq: this.createNumberFormControl(),
+      sensor: this.createNumberFormControl(),
+      maxinbw: this.createNumberFormControl(),
+      maxoutbw: this.createNumberFormControl(),
+      diskbw: this.createNumberFormControl(),
+      number: this.createNumberFormControl(),
+      radius: this.createNumberFormControl()
     });
+  }
+
+  private createNumberFormControl(): FormControl {
+    return new FormControl('', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.min(1)]);
   }
 
   private initForm(): void {

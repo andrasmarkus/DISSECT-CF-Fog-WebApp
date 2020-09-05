@@ -27,9 +27,14 @@ export class NodeQuantityFormComponent {
       numOfClouds: new FormControl('', [
         Validators.required,
         Validators.max(this.configurationService.maxNumOfNodes),
-        Validators.pattern(/^[1-9]+[0-9]*$/) //prevent 0 value
+        Validators.pattern('^[0-9]*$'),
+        Validators.min(1)
       ]),
-      numOfFogs: new FormControl('', [Validators.max(this.configurationService.maxNumOfNodes)])
+      numOfFogs: new FormControl('', [
+        Validators.max(this.configurationService.maxNumOfNodes),
+        Validators.pattern('^[0-9]*$'),
+        Validators.min(1)
+      ])
     });
   }
 

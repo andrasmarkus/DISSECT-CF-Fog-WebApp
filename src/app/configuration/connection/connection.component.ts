@@ -106,16 +106,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
 
   private initForm() {
     this.simpleConnectionForm = this.formBuilder.group({
-      latency: new FormControl('', [
-        Validators.required,
-        Validators.pattern(/^[1-9]+[0-9]*$/) //prevent 0 value
-      ])
+      latency: new FormControl('', [Validators.required, Validators.min(1)])
     });
     this.parentConnectionForm = this.formBuilder.group({
-      parentLatency: new FormControl('', [
-        Validators.required,
-        Validators.pattern(/^[1-9]+[0-9]*$/) //prevent 0 value
-      ])
+      parentLatency: new FormControl('', [Validators.required, Validators.min(1)])
     });
   }
 

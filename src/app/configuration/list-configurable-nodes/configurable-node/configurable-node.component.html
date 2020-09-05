@@ -36,6 +36,9 @@
               />
               <mat-icon [matTooltip]="errorTooltip" [matTooltipDisabled]="!showErrorTooltip"
               matTooltipPosition="below" matSuffix>{{ appsStatusIcon }}</mat-icon>
+              <mat-error *ngIf="nodeCardForm.get('numOfApplications').hasError('min')">
+                It can't be <strong>0 or less!</strong>
+              </mat-error>
             </mat-form-field>
           </div>
           <div class="open-dialog-pen" *ngIf="nodeCardForm.valid">

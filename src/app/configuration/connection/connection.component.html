@@ -11,15 +11,15 @@
             <mat-form-field appearance="outline" class="input-size">
                 <mat-label>Latency</mat-label>
                 <input class="setText-center" matInput type="number" formControlName="latency" />
-                <mat-error *ngIf="simpleConnectionForm.get('latency').hasError('pattern')">
-                    The quantity can't be <strong>0</strong> or less!
+                <mat-error *ngIf="simpleConnectionForm.get('latency').hasError('min')">
+                    The quantity can't be <strong>0 or less!</strong>
                 </mat-error>
             </mat-form-field>
         </div>
     </div>
 </form>
 <form [formGroup]="parentConnectionForm">
-    <div class="actions">
+    <div class="actions space-top">
         <div class="connection-button">
             <button class="button-size" mat-raised-button (click)="createParentLinkBetweenSelectedCloudAndFog()">Add parent</button>
         </div>
@@ -27,8 +27,8 @@
             <mat-form-field appearance="outline" class="input-size">
                 <mat-label>Latency</mat-label>
                 <input class="setText-center" matInput type="number" formControlName="parentLatency" />
-                <mat-error *ngIf="parentConnectionForm.get('parentLatency').hasError('pattern')">
-                    The quantity can't be <strong>0</strong> or less!
+                <mat-error *ngIf="parentConnectionForm.get('parentLatency').hasError('min')">
+                    The quantity can't be <strong>0 or less!</strong>
                 </mat-error>
             </mat-form-field>
         </div>

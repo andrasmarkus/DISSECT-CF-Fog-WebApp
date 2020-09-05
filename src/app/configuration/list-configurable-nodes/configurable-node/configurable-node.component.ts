@@ -128,7 +128,12 @@ export class ConfigurableNodeComponent implements OnChanges {
     this.nodeCardForm = this.formBuilder.group({
       numOfApplications: [
         this.node.applications ? Object.keys(this.node.applications).length : 0,
-        [Validators.required, Validators.max(this.maxApplicationsQuantity), Validators.pattern(/^[1-9]+[0-9]*$/)]
+        [
+          Validators.required,
+          Validators.max(this.maxApplicationsQuantity),
+          Validators.pattern('^[0-9]*$'),
+          Validators.min(1)
+        ]
       ],
       allAppsConfigured: this.checkAllAppsAreConfigured(),
       quantity: [this.node.quantity, [Validators.min(1)]]

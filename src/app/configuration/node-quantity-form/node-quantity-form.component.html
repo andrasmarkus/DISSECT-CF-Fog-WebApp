@@ -10,8 +10,8 @@
         <mat-error *ngIf="numOfComputingNodes.get('numOfClouds').hasError('max')">
           Max quantity is <strong>{{configurationService.maxNumOfNodes}}</strong>
         </mat-error>
-        <mat-error *ngIf="numOfComputingNodes.get('numOfClouds').hasError('pattern')">
-          The quantity can't be <strong>0</strong>
+        <mat-error *ngIf="numOfComputingNodes.get('numOfClouds').hasError('min')">
+          The quantity can't be <strong>0 or less!</strong>
         </mat-error>
       </mat-form-field>
     </div>
@@ -21,6 +21,9 @@
         <input class="setText-center" matInput type="number" formControlName="numOfFogs" />
         <mat-error *ngIf="numOfComputingNodes.get('numOfFogs').hasError('max')">
           Max quantity is <strong>{{configurationService.maxNumOfNodes}}</strong>
+        </mat-error>
+        <mat-error *ngIf="numOfComputingNodes.get('numOfFogs').hasError('min')">
+          The quantity can't be <strong>0 or less!</strong>
         </mat-error>
       </mat-form-field>
     </div>
