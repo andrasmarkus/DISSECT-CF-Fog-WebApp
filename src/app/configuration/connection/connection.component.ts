@@ -171,12 +171,36 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     this.paper.on('element:pointermove', (elementView: joint.dia.ElementView) => {
       const currentElement = elementView.model;
       if (!currentElement.isEmbedded()) {
-        const xPos = currentElement.attributes.position.x;
-        const yPos = currentElement.attributes.position.y;
-        const name = currentElement.attributes.attrs.nodeId;
-        currentElement.attr('label/text', name + '\n[' + `${xPos}` + ',' + `${yPos}` + ']');
+        this.writeOutNodeDetails(currentElement);
+      } else {
+        const parent = currentElement.getParentCell();
+        this.writeOutNodeDetails(parent);
       }
     });
+  }
+
+  private writeOutNodeDetails(currentElement: joint.dia.Element | joint.dia.Cell): void {
+    const xPos = currentElement.attributes.position.x;
+    const yPos = currentElement.attributes.position.y;
+    const [lon, lat] = this.convertXYCoordToLatLon(xPos, yPos);
+    const name = currentElement.attributes.attrs.nodeId;
+    currentElement.attr('label/text', name + '\n[' + `${lon}` + ',' + `${lat}` + ']');
+  }
+
+  private convertXYCoordToLatLon(x: number, y: number) {
+    const yPos = y + this.nodeHeight / 2;
+    const xPos = x + this.nodeWidth / 2;
+    const lat = (yPos / (this.paperHeight / 180) - 90) * -1;
+    const lon = xPos / (this.paperWidth / 360) - 180;
+    let roundedLat = Math.round(lat);
+    let roundedLon = Math.round(lon);
+    if (Math.abs(roundedLat) > 90) {
+      roundedLat -= roundedLat - 90;
+    }
+    if (Math.abs(roundedLon) > 180) {
+      roundedLon -= roundedLon - 180;
+    }
+    return [roundedLon, roundedLat];
   }
 
   private setListenerForPointerClickOnBlank(): void {
@@ -421,7 +445,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
       size: { width, height }
     });
     node.attr('image/xlinkHref', imageSrc);
-    node.attr('label/text', nodeId + '\n[' + `${Math.round(x)}` + ',' + `${Math.round(y)}` + ']');
+    const [lon, lat] = this.convertXYCoordToLatLon(x, y);
+    node.attr('label/text', nodeId + '\n[' + `${lon}` + ',' + `${lat}` + ']');
     node.attr('label/fontSize', '11');
     node.attributes.attrs.label.refY = '100%';
     node.attributes.attrs.label.refY2 = '1';
