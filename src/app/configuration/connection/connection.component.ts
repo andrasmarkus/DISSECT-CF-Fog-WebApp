@@ -184,7 +184,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     const yPos = currentElement.attributes.position.y;
     const [lon, lat] = this.convertXYCoordToLatLon(xPos, yPos);
     const name = currentElement.attributes.attrs.nodeId;
-    currentElement.attr('label/text', name + '\n[' + `${lon}` + ',' + `${lat}` + ']');
+    currentElement.attr(
+      'label/text',
+      (name as string).replace('station', 'devices') + '\n[' + `${lon}` + ',' + `${lat}` + ']'
+    );
   }
 
   private convertXYCoordToLatLon(x: number, y: number) {
@@ -446,7 +449,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     });
     node.attr('image/xlinkHref', imageSrc);
     const [lon, lat] = this.convertXYCoordToLatLon(x, y);
-    node.attr('label/text', nodeId + '\n[' + `${lon}` + ',' + `${lat}` + ']');
+    node.attr('label/text', (nodeId as string).replace('station', 'devices') + '\n[' + `${lon}` + ',' + `${lat}` + ']');
     node.attr('label/fontSize', '11');
     node.attributes.attrs.label.refY = '100%';
     node.attributes.attrs.label.refY2 = '1';
