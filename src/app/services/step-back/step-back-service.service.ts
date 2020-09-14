@@ -14,7 +14,6 @@ export class StepBackServiceService {
       panelClass: 'applications-dialog-panel',
       disableClose: true,
       width: this.windowService.calculateWidthForStepBackDialog(),
-      height: '30%',
       data: { discard: false }
     });
   }
