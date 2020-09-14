@@ -18,6 +18,9 @@ import { ListConfigurableNodesComponent } from './configuration/list-configurabl
 import { ApplicationsDialogComponent } from './configuration/list-configurable-nodes/configurable-node/applications-dialog/applications-dialog.component';
 import { ApplicationCardComponent } from './configuration/list-configurable-nodes/configurable-node/applications-dialog/application-card/application-card.component';
 import { InfoPanelComponent } from './info-panel/info-panel.component';
+import { SidenavItemsComponent } from './navigation/sidenav-items/sidenav-items.component';
+import { ToolbarComponent } from './navigation/toolbar/toolbar.component';
+import { HomeComponent } from './home/home/home.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +35,10 @@ import { InfoPanelComponent } from './info-panel/info-panel.component';
     ConnectionComponent,
     ListStationsComponent,
     ConfigurableStationComponent,
-    InfoPanelComponent
+    InfoPanelComponent,
+    SidenavItemsComponent,
+    ToolbarComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
