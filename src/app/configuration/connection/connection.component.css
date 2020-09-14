@@ -6,10 +6,7 @@
 
 .joint-paper {
   position: relative;
-  left: 10%;
-  right: 10%;
-  top: 10%;
-  bottom: 10%;
+  margin-right: 0;
 }
 
 .actions{

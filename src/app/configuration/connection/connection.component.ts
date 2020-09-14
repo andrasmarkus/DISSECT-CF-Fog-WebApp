@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import * as jQuery from 'jquery';
 import * as _ from 'lodash';
 import * as joint from 'jointjs';
@@ -29,7 +29,6 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   public numOfStations = 2;
   public numOfLayers: number;
   public verticalSpaceBetweenLayers: number;
-  public proportionOfTheTotalSize = 0.8;
 
   public simpleConnectionForm: FormGroup;
   public parentConnectionForm: FormGroup;
@@ -270,8 +269,12 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   }
 
   private setSizes(): void {
-    this.paperWidth = window.innerWidth * this.proportionOfTheTotalSize;
-    this.paperHeight = window.innerHeight * this.proportionOfTheTotalSize;
+    let paperMargin = 48; /*the static 24 px on left and add +24 for the right*/
+    if (window.innerWidth >= 1000) {
+      paperMargin += 150; /*sidenav*/
+    }
+    this.paperWidth = window.innerWidth - paperMargin;
+    this.paperHeight = window.innerHeight;
     const computedNodeWidth = this.paperWidth / (this.getTheMaxQuantityOfNodes() * 2);
     const computedNodeHeight = this.paperHeight / (this.getTheMaxQuantityOfNodes() * 2);
     this.nodeWidth = computedNodeWidth > 75 ? 75 : computedNodeWidth;
