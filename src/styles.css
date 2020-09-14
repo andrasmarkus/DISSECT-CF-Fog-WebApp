@@ -23,3 +23,8 @@ main{
 .mat-button-focus-overlay {
   background-color: transparent!important;
 }
+
+.mat-simple-snackbar-action > button {
+  color: #ff5722;
+  font-weight: 500;
+}

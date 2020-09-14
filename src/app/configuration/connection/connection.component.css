@@ -55,3 +55,22 @@
 .space-top{
   margin-top:0.5rem
 }
+
+.header{
+  display: flex;
+  margin: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.parent-conn-btn{
+  background-color: #ffa500d4;
+}
+
+.simple-conn-btn{
+  background-color: #ccc;
+}
+
+.customer-snack-bar-panel button{
+  color: red;
+}

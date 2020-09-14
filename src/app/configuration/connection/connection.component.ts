@@ -422,7 +422,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
 
   private openSnackBar(messageText: string, actionText: string, duration: number = 3000): void {
     this.snackBar.open(messageText, actionText, {
-      duration
+      duration,
+      panelClass: ['customer-snack-bar-panel']
     });
   }
 

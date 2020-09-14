@@ -16,7 +16,7 @@
     </div>
     <mat-divider></mat-divider>
     <div fxLayout="row" fxLayoutAlign="center center" class="dialog-actions">
-      <button mat-raised-button matDialogClose class="cancelButton" (click)="onNoClick()">Cancel</button>
+      <button mat-raised-button matDialogClose color="accent" class="cancelButton" (click)="onNoClick()">Cancel</button>
       <button mat-raised-button color="primary" class="okButton" [disabled]="!checkDialogIsValid()" (click)="submitApplicationCards()">
         Ok
       </button>
