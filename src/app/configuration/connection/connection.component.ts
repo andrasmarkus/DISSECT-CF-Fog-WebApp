@@ -12,6 +12,7 @@ import { ConfigurationService } from 'src/app/services/configuration/configurati
 import { StepperService } from 'src/app/services/stepper/stepper.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { PanelService } from 'src/app/services/panel/panel.service';
 
 @Component({
   selector: 'app-connection',
@@ -60,7 +61,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     private stepBackDialogService: StepBackServiceService,
     public configurationService: ConfigurationService,
     public stepperService: StepperService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public panelService: PanelService
   ) {
     this.initForm();
   }
@@ -665,5 +667,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
       }
     });
     console.log(this.configuration);
+  }
+
+  public openInfoPanelForConnection(): void {
+    this.panelService.getConnectionData();
+    this.panelService.toogle();
   }
 }

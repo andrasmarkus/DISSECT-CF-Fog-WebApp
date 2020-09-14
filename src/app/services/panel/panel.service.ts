@@ -4,7 +4,8 @@ import {
   InfoPanelData,
   getResourceFilesInfoData,
   getApplicationInfoData,
-  getStationInfoData
+  getStationInfoData,
+  getConectionInfoData
 } from 'src/app/models/info-panel-data';
 import { BehaviorSubject } from 'rxjs';
 
@@ -62,5 +63,8 @@ export class PanelService {
 
   public getApplicationData(): void {
     this.infoData$.next(getApplicationInfoData());
+  }
+  public getConnectionData(): void {
+    this.infoData$.next(getConectionInfoData());
   }
 }

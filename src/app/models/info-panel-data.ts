@@ -26,3 +26,11 @@ export function getStationInfoData(): InfoPanelData {
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus dignissimos, odit natus dolorem unde quo quis! Fugit praesentium reprehenderit debitis enim voluptas officia ullam adipisci id minima. Amet, obcaecati delectus.'
   } as InfoPanelData;
 }
+
+export function getConectionInfoData(): InfoPanelData {
+  return {
+    title: 'Connections',
+    text:
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus dignissimos, odit natus dolorem unde quo quis! Fugit praesentium reprehenderit debitis enim voluptas officia ullam adipisci id minima. Amet, obcaecati delectus.'
+  } as InfoPanelData;
+}
