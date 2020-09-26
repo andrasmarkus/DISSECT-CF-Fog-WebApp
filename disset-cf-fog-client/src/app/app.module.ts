@@ -21,6 +21,7 @@ import { InfoPanelComponent } from './info-panel/info-panel.component';
 import { SidenavItemsComponent } from './navigation/sidenav-items/sidenav-items.component';
 import { ToolbarComponent } from './navigation/toolbar/toolbar.component';
 import { HomeComponent } from './home/home/home.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { HomeComponent } from './home/home/home.component';
     AngularMaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

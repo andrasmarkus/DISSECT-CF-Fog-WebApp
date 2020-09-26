@@ -1,6 +1,6 @@
 export class Application {
   id: string;
-  taksize: number;
+  tasksize: number;
   freq: number;
   instance: string;
   numOfInstruction: number;

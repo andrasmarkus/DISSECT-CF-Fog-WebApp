@@ -5,7 +5,7 @@ import * as joint from 'jointjs';
 import { FogNodesObject, CloudNodesObject } from 'src/app/models/computing-nodes-object';
 import { StationsObject } from 'src/app/models/station';
 import { ConfigurationObject, Neighbour, NODETYPES, Node } from 'src/app/models/configuration';
-import { omit } from 'lodash';
+import { omit, cloneDeep } from 'lodash';
 import { Subscription } from 'rxjs';
 import { StepBackServiceService } from 'src/app/services/step-back/step-back-service.service';
 import { ConfigurationService } from 'src/app/services/configuration/configuration.service';
@@ -13,6 +13,7 @@ import { StepperService } from 'src/app/services/stepper/stepper.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PanelService } from 'src/app/services/panel/panel.service';
+import { ConfigurationRequestCreatorService } from 'src/app/services/configuration-request-creator.service';
 
 @Component({
   selector: 'app-connection',
@@ -62,7 +63,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     public configurationService: ConfigurationService,
     public stepperService: StepperService,
     private snackBar: MatSnackBar,
-    public panelService: PanelService
+    public panelService: PanelService,
+    public requestCreatorService: ConfigurationRequestCreatorService
   ) {
     this.initForm();
   }
@@ -539,7 +541,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
       if (node.quantity > 1) {
         for (let i = 1; i <= node.quantity; i++) {
           const subNodeKey = id + '.' + i;
-          resultObject[subNodeKey] = { ...node };
+          resultObject[subNodeKey] = { ...cloneDeep(node), id: subNodeKey };
           resultObject[subNodeKey].quantity = 1;
         }
       } else {
@@ -624,10 +626,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   private createInitCongifuration(): void {
     this.configuration.nodes = {};
     for (const [id, node] of Object.entries(this.clouds)) {
-      this.configuration.nodes[id] = { ...node, neighbours: {} };
+      this.configuration.nodes[id] = { ...cloneDeep(node), neighbours: {} };
     }
     for (const [id, node] of Object.entries(this.fogs)) {
-      this.configuration.nodes[id] = { ...node, neighbours: {} };
+      this.configuration.nodes[id] = { ...cloneDeep(node), neighbours: {} };
     }
     this.configuration.stations = this.multipleStationNodes;
   }
@@ -656,18 +658,18 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     this.graph.getCells().forEach(cell => {
       if (!cell.isLink() && cell.attributes.attrs.nodeId) {
         const nodeId = cell.attributes.attrs.nodeId;
-        const x = cell.attributes.position.x;
-        const y = cell.attributes.position.y;
+        const [lon, lat] = this.convertXYCoordToLatLon(cell.attributes.position.x, cell.attributes.position.y);
         if (this.configuration.nodes[nodeId]) {
-          this.configuration.nodes[nodeId].x = x;
-          this.configuration.nodes[nodeId].y = y;
+          this.configuration.nodes[nodeId].x = lon;
+          this.configuration.nodes[nodeId].y = lat;
         } else if (this.configuration.stations[nodeId]) {
-          this.configuration.stations[nodeId].yCoord = x;
-          this.configuration.stations[nodeId].xCoord = y;
+          this.configuration.stations[nodeId].yCoord = lon;
+          this.configuration.stations[nodeId].xCoord = lat;
         }
       }
     });
     console.log(this.configuration);
+    this.requestCreatorService.sendConfiguration(this.configuration);
   }
 
   public openInfoPanelForConnection(): void {

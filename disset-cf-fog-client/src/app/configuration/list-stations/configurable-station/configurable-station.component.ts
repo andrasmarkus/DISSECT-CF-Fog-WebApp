@@ -79,6 +79,7 @@ export class ConfigurableStationComponent implements OnChanges {
       maxinbw: this.createNumberFormControl(),
       maxoutbw: this.createNumberFormControl(),
       diskbw: this.createNumberFormControl(),
+      reposize: this.createNumberFormControl(),
       number: this.createNumberFormControl(),
       radius: this.createNumberFormControl()
     });

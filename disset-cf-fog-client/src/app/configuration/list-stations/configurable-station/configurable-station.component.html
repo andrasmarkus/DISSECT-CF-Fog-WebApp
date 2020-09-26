@@ -25,12 +25,12 @@
         </div>
         <div class="double-item-row">
           <mat-form-field appearance="outline" class="input-size-min">
-            <mat-label>Frequency</mat-label>
-            <input class="setText-center" matInput type="number" formControlName="freq" />
-          </mat-form-field>
-          <mat-form-field appearance="outline" class="input-size-min">
             <mat-label>File size</mat-label>
             <input class="setText-center" matInput type="number" formControlName="filesize" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="input-size-min">
+            <mat-label>Frequency</mat-label>
+            <input class="setText-center" matInput type="number" formControlName="freq" />
           </mat-form-field>
         </div>
         <div class="double-item-row">
@@ -65,7 +65,11 @@
              matInput type="number" formControlName="radius" />
         </mat-form-field>
       </div>
-      <div class="centered-input">
+      <div class="double-item-row">
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Repo size</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="reposize" />
+        </mat-form-field>
         <mat-form-field appearance="outline" class="input-size-min no-padding">
           <mat-label>Strategy</mat-label>
           <mat-select [(ngModel)]="strategy" [ngModelOptions]="{ standalone: true }" (selectionChange)="onStrategyChange()">

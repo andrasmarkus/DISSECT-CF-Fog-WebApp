@@ -39,7 +39,7 @@ export class ApplicationCardComponent implements OnChanges {
   private createForm(): void {
     this.appFormGroup = this.formBuilder.group({
       id: [this.application.id],
-      taksize: this.createNumberFormControl(),
+      tasksize: this.createNumberFormControl(),
       freq: this.createNumberFormControl(),
       numOfInstruction: this.createNumberFormControl(),
       threshold: this.createNumberFormControl()

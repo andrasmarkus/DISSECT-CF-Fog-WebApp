@@ -8,7 +8,7 @@ export class Station {
   maxinbw: number;
   maxoutbw: number;
   diskbw: number;
-
+  reposize: number;
   strategy: string;
   number: number;
   radius: number;
