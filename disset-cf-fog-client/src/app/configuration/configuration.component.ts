@@ -6,6 +6,7 @@ import { ConfigurationService } from '../services/configuration/configuration.se
 import { MatDrawer } from '@angular/material/sidenav';
 import { PanelService } from '../services/panel/panel.service';
 import { Station } from '../models/station';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-configuration',
@@ -21,6 +22,9 @@ export class ConfigurationComponent implements AfterViewInit, AfterViewChecked {
 
   @ViewChild('stepper') public stepper: MatStepper;
   @ViewChild('drawer') public drawer: MatDrawer;
+
+  public stepperAnimationDoneSubject = new BehaviorSubject<boolean>(false);
+  public stepperAnimationDone$ = this.stepperAnimationDoneSubject.asObservable();
 
   constructor(
     private changeDetect: ChangeDetectorRef,
@@ -55,5 +59,11 @@ export class ConfigurationComponent implements AfterViewInit, AfterViewChecked {
   public openInfoPanelForApplications(): void {
     this.panelService.getApplicationData();
     this.panelService.open();
+  }
+
+  public stepperDone(): void {
+    if (this.stepper.selectedIndex === 4) {
+      this.stepperAnimationDoneSubject.next(true);
+    }
   }
 }

@@ -1,0 +1,13 @@
+<div class="container">
+  <ng-container *ngIf="configResult && !showSpinner; else spinnerTemp" >
+      <div class="result" [innerHTML]="configResult.html | safeHtml" appRunScripts></div>
+  </ng-container>
+  <ng-template #spinnerTemp>
+    <div class="spinner-wrapper" *ngIf="showSpinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  </ng-template>
+  <div class="actions">
+    <button mat-raised-button color="accent" (click)="back()">Back</button>
+  </div>
+</div>

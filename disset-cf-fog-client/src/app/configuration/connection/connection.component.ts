@@ -670,6 +670,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     });
     console.log(this.configuration);
     this.requestCreatorService.sendConfiguration(this.configuration);
+    this.stepperService.stepForward();
   }
 
   public openInfoPanelForConnection(): void {

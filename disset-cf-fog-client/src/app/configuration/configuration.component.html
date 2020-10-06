@@ -3,7 +3,7 @@
     <app-info-panel [infoData]="panelService.infoData$ | async"></app-info-panel>
   </mat-drawer>
   <div>
-    <mat-horizontal-stepper [linear]="isLinear" #stepper>
+    <mat-horizontal-stepper (animationDone)="stepperDone()" [linear]="isLinear" #stepper>
       <mat-step>
         <ng-template matStepLabel>Number of computing nodes</ng-template>
         <app-node-quantity-form></app-node-quantity-form>
@@ -24,7 +24,12 @@
         <ng-template matStepLabel>Configure connections</ng-template>
         <app-connection></app-connection>
       </mat-step>
+      <mat-step #fifth_step>
+        <ng-template matStepLabel>Result</ng-template>
+        <ng-container *ngIf="stepper.selected == fifth_step">
+          <app-configuration-result [showSpinner]="stepperAnimationDone$ | async"></app-configuration-result>
+        </ng-container>
+      </mat-step>
     </mat-horizontal-stepper>
   </div>
 </mat-drawer-container>
-

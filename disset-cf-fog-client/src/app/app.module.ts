@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,6 +22,10 @@ import { SidenavItemsComponent } from './navigation/sidenav-items/sidenav-items.
 import { ToolbarComponent } from './navigation/toolbar/toolbar.component';
 import { HomeComponent } from './home/home/home.component';
 import { HttpClientModule } from '@angular/common/http';
+import { ConfigurationResultComponent } from './configuration/configuration-result/configuration-result.component';
+import { RunScriptsDirective } from './directives/run-scripts.directive';
+import { SafeHtmlPipe } from './pipes/safe-html.pipe';
+import { ConfigurationRequestCreatorService } from './services/configuration-request-creator.service';
 
 @NgModule({
   declarations: [
@@ -39,7 +43,10 @@ import { HttpClientModule } from '@angular/common/http';
     InfoPanelComponent,
     SidenavItemsComponent,
     ToolbarComponent,
-    HomeComponent
+    HomeComponent,
+    ConfigurationResultComponent,
+    RunScriptsDirective,
+    SafeHtmlPipe
   ],
   imports: [
     BrowserModule,
@@ -51,7 +58,7 @@ import { HttpClientModule } from '@angular/common/http';
     FlexLayoutModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [ConfigurationRequestCreatorService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
