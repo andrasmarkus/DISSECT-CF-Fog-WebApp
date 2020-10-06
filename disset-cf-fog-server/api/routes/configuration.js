@@ -3,8 +3,8 @@ const router = express.Router({caseSensitive:true});
 const fs = require('fs');
 const { isEmpty } = require('lodash');
 const Parser = require("fast-xml-parser").j2xParser;
-const exec = require('child_process').exec;
 const path = require('path'); 
+const cmd =require('node-cmd');
 
 router.get('/', (req, res , next)=> {
     res.status(200).json({
@@ -37,33 +37,17 @@ router.post('/', (req, res , next)=> {
       console.log('devices > devices.xml');
     });
 
-    const appFullPath = 'target/'
-    const mainClassPath ='hu.u_szeged.inf.fog.simulator.demo.'
-    const pwd = '../'
-    const fileToSave = '../configurations/';
-
-    const cmd = 'cd dissect-cf && java -cp ' + appFullPath + 'dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar ' 
-      + mainClassPath + 'CLFogSimulation ' + pwd + 'configurations/appliances.xml '
-      + pwd +'configurations/devices.xml '+ fileToSave;
-
-      exec(cmd, {maxBuffer: 1024 * 1024}, (errExec, stdout, stderr) => {
-      if (errExec) {
-        console.error(errExec);
-        return;
-      }
-      console.log(stdout);
-      const fileName = getLastCreatedHtmlFile('configurations').file;
-      const html = fs.readFileSync( 'configurations/' + fileName );
-      res.json({html: html.toString(), data: stdout});
-      /* res.sendFile(fileName, {root: 'configurations' }, (errSending) => {
-        if (errSending) {
-          res.status(500).json({message:'Can not find the generated html!'})
-        } else {
-          console.log('Sent:', fileName)
-          res.end();
-        }
-      }); */
-    });
+    cmd.get(
+      'cd dissect-cf && java -cp target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar '+
+        'hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation ../configurations/appliances.xml '+
+        '../configurations/devices.xml ../configurations/',
+      (err, data, stderr) =>{
+          const fileName = getLastCreatedHtmlFile('configurations').file;
+          const html = fs.readFileSync( 'configurations/' + fileName );
+          setTimeout( ()=>{
+            res.json({html: html.toString(), data: data});
+          },3000);
+      });
     const getLastCreatedHtmlFile = (dirName) => {
       console.log(fs.readdirSync(dirName));
       const files = fs.readdirSync(dirName)
