@@ -1,18 +1,7 @@
-import {
-  AfterViewChecked,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges
-} from '@angular/core';
-import { first, take } from 'rxjs/operators';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ConfigurationRequestCreatorService } from 'src/app/services/configuration-request-creator.service';
-import { StepperService } from 'src/app/services/stepper/stepper.service';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ConfigurationRequestCreatorService } from 'src/app/services/configuration/configuration-request-creator/configuration-request-creator.service';
 import { Subscription } from 'rxjs';
+import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
 
 export interface ConfigurationResult {
   html: string;

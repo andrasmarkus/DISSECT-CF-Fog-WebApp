@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ConfigurationObject } from '../models/configuration';
-import { parseConfigurationObjectToXml } from '../util/configuration-util';
+import { ConfigurationObject } from '../../../models/configuration';
+import { parseConfigurationObjectToXml } from '../../../util/configuration-util';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';

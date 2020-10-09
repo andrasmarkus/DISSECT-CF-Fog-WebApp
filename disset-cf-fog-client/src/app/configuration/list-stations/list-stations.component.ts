@@ -1,9 +1,9 @@
 import { Component, Output, EventEmitter, OnDestroy, Input } from '@angular/core';
 import { Station } from 'src/app/models/station';
 import { Subscription } from 'rxjs';
-import { RestartConfigurationService } from 'src/app/services/restart-configuration.service';
-import { ConfigurationService } from 'src/app/services/configuration/configuration.service';
-import { StepperService } from 'src/app/services/stepper/stepper.service';
+import { ConfigurationService } from 'src/app/services/configuration/configuration-state/configuration.service';
+import { RestartConfigurationService } from 'src/app/services/configuration/restart-configuration/restart-configuration.service';
+import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
 
 @Component({
   selector: 'app-list-stations',

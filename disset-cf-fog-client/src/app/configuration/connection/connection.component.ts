@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import * as jQuery from 'jquery';
 import * as _ from 'lodash';
 import * as joint from 'jointjs';
@@ -7,13 +7,13 @@ import { StationsObject } from 'src/app/models/station';
 import { ConfigurationObject, Neighbour, NODETYPES, Node } from 'src/app/models/configuration';
 import { omit, cloneDeep } from 'lodash';
 import { Subscription } from 'rxjs';
-import { StepBackServiceService } from 'src/app/services/step-back/step-back-service.service';
-import { ConfigurationService } from 'src/app/services/configuration/configuration.service';
-import { StepperService } from 'src/app/services/stepper/stepper.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PanelService } from 'src/app/services/panel/panel.service';
-import { ConfigurationRequestCreatorService } from 'src/app/services/configuration-request-creator.service';
+import { ConfigurationRequestCreatorService } from 'src/app/services/configuration/configuration-request-creator/configuration-request-creator.service';
+import { StepBackServiceService } from 'src/app/services/configuration/step-back/step-back-service.service';
+import { ConfigurationService } from 'src/app/services/configuration/configuration-state/configuration.service';
+import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
 
 @Component({
   selector: 'app-connection',

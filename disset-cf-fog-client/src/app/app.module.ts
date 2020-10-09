@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -25,7 +25,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ConfigurationResultComponent } from './configuration/configuration-result/configuration-result.component';
 import { RunScriptsDirective } from './directives/run-scripts.directive';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
-import { ConfigurationRequestCreatorService } from './services/configuration-request-creator.service';
+import { ConfigurationRequestCreatorService } from './services/configuration/configuration-request-creator/configuration-request-creator.service';
 
 @NgModule({
   declarations: [

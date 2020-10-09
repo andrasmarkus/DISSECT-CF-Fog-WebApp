@@ -4,10 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ApplicationsDialogComponent } from './applications-dialog/applications-dialog.component';
 import { ApplicationsObject } from 'src/app/models/application';
 import { ComputingNode } from 'src/app/models/computing-node';
-import { QuantityCounterService } from 'src/app/services/quantity-counter/quantity-counter.service';
 import { StringUtlis } from '../../utils/string-utlis';
 import { PanelService } from 'src/app/services/panel/panel.service';
 import { WindowSizeService } from 'src/app/services/window-size/window-size.service';
+import { QuantityCounterService } from 'src/app/services/configuration/quantity-counter/quantity-counter.service';
 
 @Component({
   selector: 'app-configurable-node',

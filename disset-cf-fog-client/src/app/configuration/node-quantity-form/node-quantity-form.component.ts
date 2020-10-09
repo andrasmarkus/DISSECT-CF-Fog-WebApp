@@ -1,9 +1,9 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder, NgForm } from '@angular/forms';
 import { ComputingNodesQuantityData } from 'src/app/models/computing-nodes-quantity-data';
-import { RestartConfigurationService } from 'src/app/services/restart-configuration.service';
-import { ConfigurationService } from 'src/app/services/configuration/configuration.service';
-import { StepperService } from 'src/app/services/stepper/stepper.service';
+import { ConfigurationService } from 'src/app/services/configuration/configuration-state/configuration.service';
+import { RestartConfigurationService } from 'src/app/services/configuration/restart-configuration/restart-configuration.service';
+import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
 
 @Component({
   selector: 'app-node-quantity-form',

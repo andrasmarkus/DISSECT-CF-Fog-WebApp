@@ -1,8 +1,7 @@
 import { Component, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Application } from 'src/app/models/application';
-import { QuantityCounterService } from 'src/app/services/quantity-counter/quantity-counter.service';
-import { ComputingNodeService } from 'src/app/services/computing-node/computing-node.service';
+import { ComputingNodeService } from 'src/app/services/configuration/computing-node/computing-node.service';
 import { PanelService } from 'src/app/services/panel/panel.service';
 
 @Component({

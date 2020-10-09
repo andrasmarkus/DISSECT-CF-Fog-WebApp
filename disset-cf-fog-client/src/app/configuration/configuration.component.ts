@@ -1,12 +1,12 @@
 import { Component, ViewChild, AfterViewChecked, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { MatDialog } from '@angular/material/dialog';
-import { StepperService } from '../services/stepper/stepper.service';
-import { ConfigurationService } from '../services/configuration/configuration.service';
 import { MatDrawer } from '@angular/material/sidenav';
 import { PanelService } from '../services/panel/panel.service';
 import { Station } from '../models/station';
 import { BehaviorSubject } from 'rxjs';
+import { StepperService } from '../services/configuration/stepper/stepper.service';
+import { ConfigurationService } from '../services/configuration/configuration-state/configuration.service';
 
 @Component({
   selector: 'app-configuration',

@@ -12,7 +12,6 @@ import {
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Application, ApplicationsObject } from 'src/app/models/application';
 import { ApplicationCardComponent } from './application-card/application-card.component';
-import { QuantityCounterService } from 'src/app/services/quantity-counter/quantity-counter.service';
 import { MatDrawer } from '@angular/material/sidenav';
 import { PanelService } from 'src/app/services/panel/panel.service';
 

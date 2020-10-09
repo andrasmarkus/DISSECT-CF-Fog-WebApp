@@ -1,21 +1,8 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  OnChanges,
-  ElementRef,
-  ViewChild,
-  AfterViewInit,
-  NgZone,
-  ChangeDetectionStrategy,
-  SimpleChange,
-  SimpleChanges
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Station } from 'src/app/models/station';
-import { ComputingNodeService } from 'src/app/services/computing-node/computing-node.service';
-import { ConfigurationService } from 'src/app/services/configuration/configuration.service';
+import { ComputingNodeService } from 'src/app/services/configuration/computing-node/computing-node.service';
+import { ConfigurationService } from 'src/app/services/configuration/configuration-state/configuration.service';
 import { PanelService } from 'src/app/services/panel/panel.service';
 
 @Component({

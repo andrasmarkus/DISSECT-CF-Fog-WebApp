@@ -1,17 +1,13 @@
-import { Component, OnInit, Input, OnChanges, Output, EventEmitter, SimpleChanges, OnDestroy } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { ComputingNode } from 'src/app/models/computing-node';
-import { ComputingNodesObject, CloudNodesObject, FogNodesObject } from 'src/app/models/computing-nodes-object';
+import { CloudNodesObject, FogNodesObject } from 'src/app/models/computing-nodes-object';
 import * as _ from 'lodash';
-import { StepBackServiceService } from 'src/app/services/step-back/step-back-service.service';
-import { QuantityCounterService } from 'src/app/services/quantity-counter/quantity-counter.service';
-import { StationsObject } from 'src/app/models/station';
-import { map } from 'lodash';
-import { RestartConfigurationService } from 'src/app/services/restart-configuration.service';
 import { Subscription } from 'rxjs';
-import { ConfigurationService } from 'src/app/services/configuration/configuration.service';
-import { StepperService } from 'src/app/services/stepper/stepper.service';
-import { ComputingNodeService } from 'src/app/services/computing-node/computing-node.service';
+import { QuantityCounterService } from 'src/app/services/configuration/quantity-counter/quantity-counter.service';
+import { RestartConfigurationService } from 'src/app/services/configuration/restart-configuration/restart-configuration.service';
+import { ConfigurationService } from 'src/app/services/configuration/configuration-state/configuration.service';
+import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
+import { ComputingNodeService } from 'src/app/services/configuration/computing-node/computing-node.service';
 
 @Component({
   selector: 'app-list-configurable-nodes',
