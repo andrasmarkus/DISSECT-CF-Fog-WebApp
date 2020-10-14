@@ -1,0 +1,45 @@
+<div class="page-container bg-image">
+  <div class="cover cover-register" *ngIf="!isLogin">
+    <img alt="profile" class="image" src="https://cdn.pixabay.com/photo/2016/08/31/11/55/user-1633250_1280.png">
+    <div class="cover-title">Do you have account?</div>
+    <button type="submit" class="btn-bottom-margin" 
+        mat-raised-button color="primary" routerLink="/login" >
+        Login
+      </button>
+  </div>
+  <mat-card class="register-form-containter">
+    <form [formGroup]="entranceForm" class="form">
+      <div class="title">{{data.title}}</div>
+      <mat-form-field appearance="outline">
+          <mat-label>E-mail</mat-label>
+          <input class="setText-center" matInput type="text" formControlName="email">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input class="setText-center" matInput type="password" 
+              formControlName="password">
+      </mat-form-field>
+      <div *ngIf="isRegisterFailed || isLoginFailed" class="notification error">
+        Email or password is invalid!
+      </div>
+      <button type="submit" class="btn-bottom-margin" 
+        mat-raised-button color="primary" 
+        (click)="onSubmit()">
+        {{data.buttonLabel}}
+      </button>
+      <div *ngIf="isRegisterSuccessful && !isLogin" class="notification success">
+        Your registration is successful!
+      </div>
+    </form>
+  </mat-card>
+  <div class="cover cover-login" *ngIf="isLogin">
+    <img alt="key" class="image-login" src="https://cdn.pixabay.com/photo/2020/06/22/10/55/house-5328786_1280.png">
+    <div class="cover-title">Have not registered yet?</div>
+    <button type="submit" class="btn-bottom-margin" 
+        mat-raised-button color="warn" routerLink="/register" >
+        Register
+      </button>
+  </div>
+</div>
+
+

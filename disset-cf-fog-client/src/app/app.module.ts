@@ -26,6 +26,8 @@ import { ConfigurationResultComponent } from './configuration/configuration-resu
 import { RunScriptsDirective } from './directives/run-scripts.directive';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { ConfigurationRequestCreatorService } from './services/configuration/configuration-request-creator/configuration-request-creator.service';
+import { authInterceptorProviders } from './interceptors/auth.interceptor';
+import { UserEntranceComponent } from './user-entrance/user-entrance.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +48,8 @@ import { ConfigurationRequestCreatorService } from './services/configuration/con
     HomeComponent,
     ConfigurationResultComponent,
     RunScriptsDirective,
-    SafeHtmlPipe
+    SafeHtmlPipe,
+    UserEntranceComponent
   ],
   imports: [
     BrowserModule,
@@ -58,7 +61,7 @@ import { ConfigurationRequestCreatorService } from './services/configuration/con
     FlexLayoutModule,
     HttpClientModule
   ],
-  providers: [ConfigurationRequestCreatorService],
+  providers: [ConfigurationRequestCreatorService, authInterceptorProviders],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
