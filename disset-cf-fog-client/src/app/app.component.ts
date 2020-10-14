@@ -1,5 +1,6 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
+import { TokenStorageService } from './services/token-storage/token-storage.service';
 
 @Component({
   selector: 'app-root',
@@ -11,8 +12,14 @@ export class AppComponent implements OnInit {
   public isLinear = false;
   public shouldOpenSidenav = true;
   public isBigScreen = true;
+  public isLoggedIn = true;
+
+  @ViewChild('sidenav') public sidenav: MatSidenav;
+
+  constructor(private tokenStorageService: TokenStorageService) {}
 
   public ngOnInit(): void {
+    this.isLoggedIn = !!this.tokenStorageService.getToken();
     this.isBigScreen = window.innerWidth > 1000;
   }
 
@@ -21,7 +28,9 @@ export class AppComponent implements OnInit {
     this.isBigScreen = event.target.innerWidth > 1000;
   }
 
-  public toggleExpanded(sidenav: MatSidenav): void {
-    sidenav.toggle();
+  public toggleExpanded(): void {
+    if (this.sidenav) {
+      this.sidenav.toggle();
+    }
   }
 }
