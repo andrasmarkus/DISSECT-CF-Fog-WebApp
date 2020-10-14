@@ -1,4 +1,5 @@
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
+import { TokenStorageService } from 'src/app/services/token-storage/token-storage.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -9,4 +10,6 @@ export class ToolbarComponent {
   @Input() showItems: boolean;
   @Input() title: string;
   @Output() sidenavToggle = new EventEmitter<void>();
+
+  constructor(public tokenStorageService: TokenStorageService) {}
 }

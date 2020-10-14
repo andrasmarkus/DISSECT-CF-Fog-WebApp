@@ -5,3 +5,11 @@
 .nav-icon{
   margin: 0.5rem 0.5rem 0.5rem 0;
 }
+
+.menu-item{
+  border-bottom: 1px solid rgb(143 126 126 / 17%);
+}
+
+.nav-list{
+  padding-top: 0 !important;
+}
