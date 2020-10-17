@@ -16,10 +16,9 @@ export class AppComponent implements OnInit {
 
   @ViewChild('sidenav') public sidenav: MatSidenav;
 
-  constructor(private tokenStorageService: TokenStorageService) {}
+  constructor(public tokenStorageService: TokenStorageService) {}
 
   public ngOnInit(): void {
-    this.isLoggedIn = !!this.tokenStorageService.getToken();
     this.isBigScreen = window.innerWidth > 1000;
   }
 

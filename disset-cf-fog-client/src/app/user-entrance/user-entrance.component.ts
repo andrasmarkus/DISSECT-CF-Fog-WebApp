@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { distinctUntilChanged, take } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { TokenStorageService } from '../services/token-storage/token-storage.service';
 
@@ -27,6 +28,7 @@ export class UserEntranceComponent implements OnInit {
     private authService: AuthService,
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
+    private router: Router,
     private tokenStorageService: TokenStorageService
   ) {}
 
@@ -47,18 +49,22 @@ export class UserEntranceComponent implements OnInit {
 
   public onSubmit(): void {
     if (this.isLogin) {
-      this.authService.login(this.entranceForm.value).subscribe(
-        data => {
-          this.tokenStorageService.saveToken(data.accessToken);
-          this.tokenStorageService.saveUser(data);
+      this.authService
+        .login(this.entranceForm.value)
+        .pipe(take(1))
+        .subscribe(
+          data => {
+            this.tokenStorageService.saveToken(data.accessToken);
+            this.tokenStorageService.saveUser(data);
 
-          this.isLoginFailed = false;
-          this.isLoginSucessful = true;
-        },
-        err => {
-          this.isLoginFailed = true;
-        }
-      );
+            this.isLoginFailed = false;
+            this.isLoginSucessful = true;
+            this.router.navigate(['/home']);
+          },
+          err => {
+            this.isLoginFailed = true;
+          }
+        );
     } else {
       this.authService.register(this.entranceForm.value).subscribe(
         data => {

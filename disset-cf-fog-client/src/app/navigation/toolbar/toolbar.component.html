@@ -3,7 +3,7 @@
       <i class="fa fa-bars" aria-hidden="true"></i>
 	</button>
   <h1 class="header-title" 
-    [ngClass]="!!tokenStorageService.getToken() ? (showItems ? 'header-without-side-nav':'header-with-side-nav') : 'header-without-side-nav'">
+    [ngClass]="!!(tokenStorageService.userToken$ | async) ? (showItems ? 'header-without-side-nav':'header-with-side-nav') : 'header-without-side-nav'">
     <a target="blank" class="github-link" href="https://github.com/andrasmarkus/dissect-cf"><u>Try out on desktop!</u></a>
     <img alt="github icon" class="github-icon" src="https://iconape.com/wp-content/files/hu/122171/png/Github-circle__CoreUI_Icons_v1.0.0_.png">
   </h1>

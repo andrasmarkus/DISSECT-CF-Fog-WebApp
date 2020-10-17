@@ -1,6 +1,6 @@
   <app-toolbar class="toolbar" [showItems]="!isBigScreen" [title]="title" (sidenavToggle)="toggleExpanded()"></app-toolbar>
   <mat-sidenav-container class="sidenav-container" autosize>
-    <mat-sidenav *ngIf="isLoggedIn" #sidenav class="sidenav" role="navigation" [mode]="isBigScreen ? 'side':'over'" [opened]="isBigScreen" >
+    <mat-sidenav *ngIf="tokenStorageService.userToken$ | async" #sidenav class="sidenav" role="navigation" [mode]="isBigScreen ? 'side':'over'" [opened]="isBigScreen" >
       <app-sidenav-items (closeSidenav)="sidenav.close()"></app-sidenav-items>
     </mat-sidenav>
     <mat-sidenav-content>
