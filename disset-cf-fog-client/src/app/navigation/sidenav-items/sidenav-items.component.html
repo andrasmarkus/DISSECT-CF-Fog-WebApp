@@ -12,4 +12,9 @@
     <i class="fa fa-user nav-icon" aria-hidden="true"></i>
     <span class="full-width">Profile</span>
   </a>
+  <a mat-list-item routerLink="/login"  class="menu-item"
+    (click)="tokenService.signOut()">
+    <i class="fa fa-arrow-right nav-icon" aria-hidden="true"></i>
+    <span class="full-width">Logout</span>
+  </a>
 </mat-nav-list>
