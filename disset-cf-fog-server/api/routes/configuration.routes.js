@@ -6,12 +6,6 @@ const Parser = require("fast-xml-parser").j2xParser;
 const path = require('path'); 
 const cmd =require('node-cmd');
 
-router.get('/', (req, res , next)=> {
-    res.status(200).json({
-      message:'it works!'
-    });
-});
-
 router.post('/', (req, res , next)=> {
   if(checkConfigurationRequestBody(req)){
     const defaultOptions = {
