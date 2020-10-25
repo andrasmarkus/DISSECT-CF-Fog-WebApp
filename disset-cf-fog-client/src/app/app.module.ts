@@ -28,6 +28,7 @@ import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { ConfigurationRequestCreatorService } from './services/configuration/configuration-request-creator/configuration-request-creator.service';
 import { authInterceptorProviders } from './interceptors/auth.interceptor';
 import { UserEntranceComponent } from './user-entrance/user-entrance.component';
+import { ComputingNodeService } from './services/configuration/computing-node/computing-node.service';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,7 @@ import { UserEntranceComponent } from './user-entrance/user-entrance.component';
     FlexLayoutModule,
     HttpClientModule
   ],
-  providers: [ConfigurationRequestCreatorService, authInterceptorProviders],
+  providers: [ConfigurationRequestCreatorService, ComputingNodeService, authInterceptorProviders],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

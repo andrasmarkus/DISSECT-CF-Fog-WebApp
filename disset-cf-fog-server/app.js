@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const configRoute = require('./api/routes/configuration.routes');
 const authorizationRoute = require('./api/routes/auth.routes');
 const userRoute = require('./api/routes/user.routes');
+const propertiesRoute = require('./api/routes/porperties.routes');
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
@@ -23,6 +24,7 @@ app.use((req, res, next) => {
 app.use('/auth', authorizationRoute);
 app.use('/user', userRoute);
 app.use('/configuration', configRoute);
+app.use('/properties', propertiesRoute);
 
 /* Error message when the response not found */
 app.use((req, res, next) => {

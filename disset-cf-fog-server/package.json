@@ -15,9 +15,11 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "fast-xml-parser": "^3.17.4",
+    "he": "^1.2.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
     "morgan": "^1.10.0",
+    "mysql2": "^2.2.5",
     "node-cmd": "^3.0.0",
     "path": "^0.12.7",
     "sequelize": "^6.3.5"

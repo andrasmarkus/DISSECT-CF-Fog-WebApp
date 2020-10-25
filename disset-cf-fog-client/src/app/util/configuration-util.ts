@@ -18,7 +18,7 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject): XmlB
         $tasksize: app.tasksize,
         name: app.id,
         freq: app.freq,
-        instance: app.instance,
+        instance: app.instance.name,
         numOfInstruction: app.numOfInstruction,
         threshold: app.threshold,
         strategy: app.strategy,

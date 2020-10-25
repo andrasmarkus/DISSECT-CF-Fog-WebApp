@@ -1,8 +1,10 @@
+import { Instance } from './server-api/server-api';
+
 export class Application {
   id: string;
   tasksize: number;
   freq: number;
-  instance: string;
+  instance: Instance;
   numOfInstruction: number;
   threshold: number;
   strategy: string;

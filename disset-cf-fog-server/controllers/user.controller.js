@@ -1,3 +1,5 @@
+const db = require("../models");
+
 const User = db.user;
 
 const getAllUser = (req, res) => {

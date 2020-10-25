@@ -1,6 +1,8 @@
 import { Component, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
 import { Application } from 'src/app/models/application';
+import { Instance } from 'src/app/models/server-api/server-api';
 import { ComputingNodeService } from 'src/app/services/configuration/computing-node/computing-node.service';
 import { PanelService } from 'src/app/services/panel/panel.service';
 
@@ -13,21 +15,22 @@ export class ApplicationCardComponent implements OnChanges {
   @Input() application: Application;
   @Output() removeEmitter = new EventEmitter<string>();
 
+  public instances$: Observable<Instance[]>;
+  public strategys$: Observable<string[]>;
+
   public appFormGroup: FormGroup;
   public canJoin: boolean;
-  public instance: string;
+  public instance: Instance;
   public strategy: string;
-
-  public strategys: string[];
-  public instances: string[];
 
   constructor(
     private formBuilder: FormBuilder,
     public nodeService: ComputingNodeService,
-    public panelService: PanelService
+    public panelService: PanelService,
+    public computingNodeService: ComputingNodeService
   ) {
-    this.instances = nodeService.getAppInstances();
-    this.strategys = nodeService.getAppStrategys();
+    this.instances$ = this.computingNodeService.getAppInstances();
+    this.strategys$ = this.computingNodeService.getStrategies();
   }
 
   public ngOnChanges(): void {
@@ -54,7 +57,7 @@ export class ApplicationCardComponent implements OnChanges {
       this.appFormGroup.patchValue(this.application);
     }
     this.canJoin = this.application.canJoin ? this.application.canJoin : false;
-    this.instance = this.application.instance ? this.application.instance : '';
+    this.instance = this.application.instance ? this.application.instance : undefined;
     this.strategy = this.application.strategy ? this.application.strategy : '';
   }
 
@@ -69,7 +72,7 @@ export class ApplicationCardComponent implements OnChanges {
   }
 
   public checkValidation(): boolean {
-    return this.appFormGroup.valid && this.instance !== '' && this.strategy !== '';
+    return this.appFormGroup.valid && this.instance.name !== '' && this.strategy !== '';
   }
 
   public openInfoPanelForApplications(): void {

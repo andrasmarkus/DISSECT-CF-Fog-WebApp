@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 import { Station } from 'src/app/models/station';
 import { ComputingNodeService } from 'src/app/services/configuration/computing-node/computing-node.service';
 import { ConfigurationService } from 'src/app/services/configuration/configuration-state/configuration.service';
@@ -15,18 +16,21 @@ export class ConfigurableStationComponent implements OnChanges {
   @Input() public station: Station;
   @Output() stationEmitter = new EventEmitter<Station>();
   @Output() removeEmitter = new EventEmitter<string>();
+
+  public strategys$: Observable<string[]>;
+
   public stationFormGroup: FormGroup;
   public quantity = 1;
-  public strategys: string[];
   public strategy: string;
 
   constructor(
     private formBuilder: FormBuilder,
     public nodeService: ComputingNodeService,
     public configurationService: ConfigurationService,
-    public panelService: PanelService
+    public panelService: PanelService,
+    public computingNodeService: ComputingNodeService
   ) {
-    this.strategys = nodeService.getAppStrategys();
+    this.strategys$ = this.computingNodeService.getStrategies();
     this.createForm();
     this.stationFormChangeListener();
   }

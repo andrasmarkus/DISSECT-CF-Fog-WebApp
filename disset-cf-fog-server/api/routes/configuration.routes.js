@@ -39,8 +39,8 @@ router.post('/', (req, res , next)=> {
           const fileName = getLastCreatedHtmlFile('configurations').file;
           const html = fs.readFileSync( 'configurations/' + fileName );
           setTimeout( ()=>{
-            res.json({html: html.toString(), data: data});
-          },3000);
+            res.status(201).json({html: html.toString(), data: data});
+          });
       });
     const getLastCreatedHtmlFile = (dirName) => {
       console.log(fs.readdirSync(dirName));

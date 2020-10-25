@@ -35,13 +35,13 @@
     <mat-form-field appearance="outline" class="input-size-min">
       <mat-label>Select instances</mat-label>
       <mat-select [(ngModel)]="instance" name="instance" [ngModelOptions]="{ standalone: true }">
-        <mat-option *ngFor="let instance of instances" [value]="instance"> {{ instance }}</mat-option>
+        <mat-option *ngFor="let instance of instances$ | async" [value]="instance"> {{ instance.name }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="input-size-min">
       <mat-label>Strategy</mat-label>
       <mat-select [(ngModel)]="strategy" [ngModelOptions]="{ standalone: true }">
-        <mat-option *ngFor="let strategy of strategys" [value]="strategy"> {{ strategy }}</mat-option>
+        <mat-option *ngFor="let strategy of strategys$ | async" [value]="strategy"> {{ strategy }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
