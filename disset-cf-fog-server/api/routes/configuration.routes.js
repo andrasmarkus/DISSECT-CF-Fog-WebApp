@@ -31,15 +31,32 @@ router.post('/', (req, res , next)=> {
       console.log('devices > devices.xml');
     });
 
+    const command =  'cd dissect-cf && java -cp target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar '+
+    'hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation ../configurations/appliances.xml '+
+    '../configurations/devices.xml ../configurations/';
+
+    /* const commandDemo =  'cd dissect-cf && java -cp target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar '+
+    'hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation ../configurations/appliances_demo.xml '+
+    '../configurations/devices_demo.xml ../configurations/' */;
+
     cmd.get(
-      'cd dissect-cf && java -cp target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar '+
-        'hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation ../configurations/appliances.xml '+
-        '../configurations/devices.xml ../configurations/',
+      command,
       (err, data, stderr) =>{
+          if(err || stderr){
+            console.log(stderr);
+            const errorMsg = stderr.toString().split('\n')[0].split(':')[1];
+            return res.status(200).json({html: 'Not created!', data: 'Error!', err:errorMsg });
+          }
           const fileName = getLastCreatedHtmlFile('configurations').file;
+          //const fileName = '2020-10-22-12-50-31.html'
           const html = fs.readFileSync( 'configurations/' + fileName );
-          setTimeout( ()=>{
-            res.status(201).json({html: html.toString(), data: data});
+          const stdOut = data.toString();
+          const finalstdOut = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'))
+          console.log(finalstdOut);
+          fs.writeFile('./configurations/stdout.txt', finalstdOut, (writeErr) => {
+            if (writeErr) return console.log(writeErr);
+            console.log('stdout > stdout.txt');
+            return res.status(201).json({html: html.toString(), data: finalstdOut, err: null});
           });
       });
     const getLastCreatedHtmlFile = (dirName) => {
@@ -51,7 +68,7 @@ router.post('/', (req, res , next)=> {
       return  files.length ? files[0] : undefined;
     }
   }else{
-    res.status(500).json({message:'Bad request!'})
+    return res.status(500).json({message:'Bad request!'})
   }
 });
 

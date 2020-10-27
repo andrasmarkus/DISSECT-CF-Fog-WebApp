@@ -2,10 +2,12 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } 
 import { ConfigurationRequestCreatorService } from 'src/app/services/configuration/configuration-request-creator/configuration-request-creator.service';
 import { Subscription } from 'rxjs';
 import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
+import { PanelService } from 'src/app/services/panel/panel.service';
 
 export interface ConfigurationResult {
   html: string;
   data: string;
+  err: string;
 }
 
 @Component({
@@ -22,11 +24,13 @@ export class ConfigurationResultComponent implements OnInit {
   constructor(
     public configService: ConfigurationRequestCreatorService,
     public stepperService: StepperService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private panelService: PanelService
   ) {}
   ngOnInit(): void {
     this.resultSub = this.configService.configurationResult$?.subscribe(res => {
-      this.configResult = res;
+      const data = res.data.replace(/\r\n/g, '<br>');
+      this.configResult = { ...res, data };
       this.showSpinner = false;
       this.changeDetectorRef.detectChanges();
     });
@@ -35,5 +39,10 @@ export class ConfigurationResultComponent implements OnInit {
   public back(): void {
     this.resultSub?.unsubscribe();
     this.stepperService.stepBack();
+  }
+
+  public openPanelInfoForConfigurationError() {
+    this.panelService.getConfigurationErrorData();
+    this.panelService.toogle();
   }
 }

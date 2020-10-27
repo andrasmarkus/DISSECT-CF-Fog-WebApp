@@ -34,3 +34,11 @@ export function getConectionInfoData(): InfoPanelData {
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus dignissimos, odit natus dolorem unde quo quis! Fugit praesentium reprehenderit debitis enim voluptas officia ullam adipisci id minima. Amet, obcaecati delectus.'
   } as InfoPanelData;
 }
+
+export function getConfigurationErrorData(): InfoPanelData {
+  return {
+    title: 'Configuration errors',
+    text:
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus dignissimos, odit natus dolorem unde quo quis! Fugit praesentium reprehenderit debitis enim voluptas officia ullam adipisci id minima. Amet, obcaecati delectus.'
+  } as InfoPanelData;
+}
