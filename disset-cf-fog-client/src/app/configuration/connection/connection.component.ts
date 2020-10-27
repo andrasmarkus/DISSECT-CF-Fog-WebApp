@@ -152,6 +152,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
 
         if (cell.attributes.attrs.isParentLink && cell.attributes.attrs.isParentLink === 'true') {
           this.addAttributeToCell(sourceCell.attributes.attrs.nodeId, 'parent', 'none');
+          const fogIndex = this.selectedNodeQueue.findIndex(node => node.nodeType === NODETYPES.FOG);
+          if (fogIndex !== -1) {
+            this.selectedNodeQueue[fogIndex].parent = 'none';
+          }
         }
 
         if (this.configuration.nodes[sourceNodeId] && this.configuration.nodes[targetNodeId]) {
@@ -212,6 +216,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
           elView.unhighlight();
         }
       });
+      this.selectedNodeQueue = [];
     });
   }
 
@@ -357,7 +362,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
         );
       }
     } else {
-      this.openSnackBar('You should add latency to the parent connection!', 'OK');
+      this.openSnackBar('You have to select 1 cloud and 1 fog and add latency to the parent connection!', 'OK');
     }
   }
 
