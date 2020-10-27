@@ -29,7 +29,7 @@ export class ApplicationsDialogComponent implements OnInit, AfterViewChecked, Af
   constructor(
     public dialogRef: MatDialogRef<ApplicationsDialogComponent>,
     private cdRef: ChangeDetectorRef,
-    @Inject(MAT_DIALOG_DATA) public data: { numOfApps: number; applications: ApplicationsObject },
+    @Inject(MAT_DIALOG_DATA) public data: { nodeId: string; numOfApps: number; applications: ApplicationsObject },
     public panelService: PanelService
   ) {}
 
@@ -59,7 +59,7 @@ export class ApplicationsDialogComponent implements OnInit, AfterViewChecked, Af
     }
     const keys: number[] = [];
     for (const id of Object.keys(this.data.applications)) {
-      keys.push(+id.replace('app', ''));
+      keys.push(+id.split('app')[1]);
     }
     return Math.max(...keys);
   }
@@ -108,7 +108,7 @@ export class ApplicationsDialogComponent implements OnInit, AfterViewChecked, Af
 
   private createApp(): void {
     this.appIndex += 1;
-    const appId = 'app' + this.appIndex;
+    const appId = this.data.nodeId + '_app' + this.appIndex;
     const app = new Application();
     app.id = appId;
     app.isConfigured = false;

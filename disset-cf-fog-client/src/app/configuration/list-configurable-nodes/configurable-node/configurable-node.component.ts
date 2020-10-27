@@ -101,7 +101,7 @@ export class ConfigurableNodeComponent implements OnChanges {
       maxWidth: '100%',
       width: this.windowService.calculateWidthForApplicationDialog(),
       height: '90%',
-      data: { numOfApps: this.numOfApps, applications: this.node.applications }
+      data: { nodeId: this.node.id, numOfApps: this.numOfApps, applications: this.node.applications }
     });
 
     dialogRef.afterClosed().subscribe((result: { applications: ApplicationsObject; valid: boolean }) => {
