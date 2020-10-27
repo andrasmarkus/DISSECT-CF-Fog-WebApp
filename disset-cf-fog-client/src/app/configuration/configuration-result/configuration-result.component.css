@@ -9,6 +9,12 @@
   left: 0%;
 }
 
+@media screen and (min-width: 1000px) {
+  .spinner-wrapper{
+    left: 5%;
+  }
+}
+
 .container{
   height: 82vh;
   display: flex;
