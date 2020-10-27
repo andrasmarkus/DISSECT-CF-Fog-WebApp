@@ -1,10 +1,11 @@
 import { Application, ApplicationsObject } from './application';
+import { Resource } from './server-api/server-api';
 
 export class ComputingNode {
   id: string;
   x: number;
   y: number;
-  resource: string; //should be an interface from server
+  resource: Resource;
   applications: ApplicationsObject;
   isCloud: boolean;
   isConfigured: boolean;

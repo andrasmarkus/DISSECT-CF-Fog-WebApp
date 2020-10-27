@@ -9,13 +9,15 @@
     <ng-container *ngFor="let cloud of configurationService.computingNodes.clouds | keyvalue">
       <app-configurable-node
         [node]="cloud.value"
-        [resources]="resources"
+        [resources]="nodeService.resources$ | async"
         (setComputingNode)="saveComputingNode($event)"
         (removeEmitter)="removeTypeOfNodes($event)"
       ></app-configurable-node>
     </ng-container>
     <div class="plus-container">
-      <div [ngClass]="{'plus-wrapper-disabled': quantityCounterService.getUndividedClouds() ===0}" class="plus-wrapper" (click)="addCloud()">
+      <div [ngClass]="{'plus-wrapper-disabled': quantityCounterService.getUndividedClouds() ===0}"
+        class="plus-wrapper"
+        (click)="addCloud()">
         <i class="fas fa-plus fa-3x plus-icon"></i>
       </div>
     </div>
@@ -29,14 +31,16 @@
     <ng-container *ngFor="let fog of configurationService.computingNodes.fogs | keyvalue">
       <app-configurable-node
         [node]="fog.value"
-        [resources]="resources"
+        [resources]="nodeService.resources$ | async"
         (setComputingNode)="saveComputingNode($event)"
         (removeEmitter)="removeTypeOfNodes($event)"
       ></app-configurable-node>
   </ng-container>
     <div class="plus-container">
       <div *ngIf="quantityCounterService.numOfFogs > 0"
-        [ngClass]="{'plus-wrapper-disabled': quantityCounterService.getUndividedFogs() ===0}" (click)="addFog()" class="plus-wrapper">
+        [ngClass]="{'plus-wrapper-disabled': quantityCounterService.getUndividedFogs() ===0}"
+        (click)="addFog()"
+        class="plus-wrapper">
         <i class="fas fa-plus fa-3x plus-icon"></i>
       </div>
     </div>

@@ -17,8 +17,6 @@ export class ConfigurableStationComponent implements OnChanges {
   @Output() stationEmitter = new EventEmitter<Station>();
   @Output() removeEmitter = new EventEmitter<string>();
 
-  public strategys$: Observable<string[]>;
-
   public stationFormGroup: FormGroup;
   public quantity = 1;
   public strategy: string;
@@ -30,7 +28,6 @@ export class ConfigurableStationComponent implements OnChanges {
     public panelService: PanelService,
     public computingNodeService: ComputingNodeService
   ) {
-    this.strategys$ = this.computingNodeService.getStrategies();
     this.createForm();
     this.stationFormChangeListener();
   }

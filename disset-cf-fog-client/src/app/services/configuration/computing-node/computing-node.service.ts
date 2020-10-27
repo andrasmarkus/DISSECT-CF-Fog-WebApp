@@ -1,25 +1,32 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, publish, refCount, share, shareReplay } from 'rxjs/operators';
 import {
   Instance,
   InstancesResponse,
+  Resource,
   StrategysResponse as StrategiesResponse
 } from 'src/app/models/server-api/server-api';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ComputingNodeService {
   private readonly PROPERTIES_API = 'http://localhost:3000/properties';
 
-  private readonly resources: string[] = ['LPDS_Fog_T1', 'LPDS_Fog_T2', 'LPDS_original'];
+  public instances$: Observable<Instance[]>;
+  public strategies$: Observable<string[]>;
+  public resources$: Observable<Resource[]>;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.instances$ = this.getAppInstances().pipe(shareReplay(1));
+    this.strategies$ = this.getStrategies().pipe(shareReplay(1));
+    this.resources$ = this.getResurceFiles().pipe(shareReplay(1));
+  }
 
-  public sendConfiguration(): void {}
-
-  public getResurceFiles(): string[] {
-    return this.resources;
+  public getResurceFiles(): Observable<Resource[]> {
+    return this.http.get<Resource[]>(this.PROPERTIES_API + '/resources');
   }
 
   public getAppInstances(): Observable<Instance[]> {

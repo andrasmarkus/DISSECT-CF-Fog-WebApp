@@ -1,6 +1,7 @@
-import { Component, Input, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnChanges, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 import { Application } from 'src/app/models/application';
 import { Instance } from 'src/app/models/server-api/server-api';
 import { ComputingNodeService } from 'src/app/services/configuration/computing-node/computing-node.service';
@@ -15,9 +16,6 @@ export class ApplicationCardComponent implements OnChanges {
   @Input() application: Application;
   @Output() removeEmitter = new EventEmitter<string>();
 
-  public instances$: Observable<Instance[]>;
-  public strategys$: Observable<string[]>;
-
   public appFormGroup: FormGroup;
   public canJoin: boolean;
   public instance: Instance;
@@ -28,10 +26,7 @@ export class ApplicationCardComponent implements OnChanges {
     public nodeService: ComputingNodeService,
     public panelService: PanelService,
     public computingNodeService: ComputingNodeService
-  ) {
-    this.instances$ = this.computingNodeService.getAppInstances();
-    this.strategys$ = this.computingNodeService.getStrategies();
-  }
+  ) {}
 
   public ngOnChanges(): void {
     this.createForm();
@@ -72,7 +67,7 @@ export class ApplicationCardComponent implements OnChanges {
   }
 
   public checkValidation(): boolean {
-    return this.appFormGroup.valid && this.instance.name !== '' && this.strategy !== '';
+    return this.appFormGroup.valid && this.instance && this.strategy !== '';
   }
 
   public openInfoPanelForApplications(): void {

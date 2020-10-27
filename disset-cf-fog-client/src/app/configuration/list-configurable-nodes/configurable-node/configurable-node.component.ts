@@ -8,6 +8,7 @@ import { StringUtlis } from '../../utils/string-utlis';
 import { PanelService } from 'src/app/services/panel/panel.service';
 import { WindowSizeService } from 'src/app/services/window-size/window-size.service';
 import { QuantityCounterService } from 'src/app/services/configuration/quantity-counter/quantity-counter.service';
+import { Resource } from 'src/app/models/server-api/server-api';
 
 @Component({
   selector: 'app-configurable-node',
@@ -16,7 +17,7 @@ import { QuantityCounterService } from 'src/app/services/configuration/quantity-
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }]
 })
 export class ConfigurableNodeComponent implements OnChanges {
-  @Input() public resources: string[];
+  @Input() public resources: Resource[];
   @Input() public node: ComputingNode;
   @Output() public readonly setComputingNode = new EventEmitter<ComputingNode>();
   @Output() public readonly removeEmitter = new EventEmitter<string>();
@@ -24,7 +25,7 @@ export class ConfigurableNodeComponent implements OnChanges {
   public statusIcon: string;
   public appsStatusIcon: string;
   public nodeCardForm: FormGroup;
-  public selectedResource: string;
+  public selectedResource: Resource;
   public numOfApps = 0;
   public nodeIcon: string;
   public errorTooltip: string;
@@ -53,7 +54,7 @@ export class ConfigurableNodeComponent implements OnChanges {
     if (!this.node.applications) {
       this.node.applications = {};
     }
-    this.selectedResource = this.node.resource ? this.node.resource : '';
+    this.selectedResource = this.node.resource ? this.node.resource : undefined;
     this.nodeIcon = this.node.isCloud ? StringUtlis.CLOUD_ICON : StringUtlis.FOG_ICON;
     this.initForm();
     this.statusIcon = this.isNodevalid() ? StringUtlis.CONFIGURED_ICON : StringUtlis.NOT_CONFIGURED_ICON;
@@ -157,7 +158,7 @@ export class ConfigurableNodeComponent implements OnChanges {
   }
 
   private saveNodeInParent(allAppsConfigured: boolean) {
-    if (allAppsConfigured && this.selectedResource !== '') {
+    if (allAppsConfigured && this.selectedResource) {
       this.node.isConfigured = true;
       this.setNodeProperties();
       this.setComputingNode.emit(this.node);

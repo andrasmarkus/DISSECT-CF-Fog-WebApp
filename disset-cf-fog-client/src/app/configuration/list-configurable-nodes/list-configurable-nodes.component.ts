@@ -2,12 +2,13 @@ import { Component, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/
 import { ComputingNode } from 'src/app/models/computing-node';
 import { CloudNodesObject, FogNodesObject } from 'src/app/models/computing-nodes-object';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { QuantityCounterService } from 'src/app/services/configuration/quantity-counter/quantity-counter.service';
 import { RestartConfigurationService } from 'src/app/services/configuration/restart-configuration/restart-configuration.service';
 import { ConfigurationService } from 'src/app/services/configuration/configuration-state/configuration.service';
 import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
 import { ComputingNodeService } from 'src/app/services/configuration/computing-node/computing-node.service';
+import { Instance, Resource } from 'src/app/models/server-api/server-api';
 
 @Component({
   selector: 'app-list-configurable-nodes',
@@ -18,7 +19,6 @@ export class ListConfigurableNodesComponent implements OnChanges, OnDestroy {
   @Input() public readonly numOfClouds: number;
   @Input() public readonly numOfFogs: number;
 
-  public readonly resources: string[];
   public readyToSave = false;
   public cloudIndex = 1;
   public fogIndex = 1;
@@ -32,7 +32,6 @@ export class ListConfigurableNodesComponent implements OnChanges, OnDestroy {
     public stepperService: StepperService,
     public nodeService: ComputingNodeService
   ) {
-    this.resources = this.nodeService.getResurceFiles();
     this.restartSubscription = this.restartConfService.restartConfiguration$.subscribe(() => {
       this.cloudIndex = 1;
       this.fogIndex = 1;

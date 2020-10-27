@@ -62,7 +62,7 @@ import { ComputingNodeService } from './services/configuration/computing-node/co
     FlexLayoutModule,
     HttpClientModule
   ],
-  providers: [ConfigurationRequestCreatorService, ComputingNodeService, authInterceptorProviders],
+  providers: [ConfigurationRequestCreatorService, authInterceptorProviders],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

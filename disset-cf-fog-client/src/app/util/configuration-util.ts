@@ -30,7 +30,7 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject): XmlB
       name: node.id,
       xcoord: node.x,
       ycoord: node.y,
-      file: node.resource,
+      file: node.resource.name,
       applications: { application: applications }
     } as ApplianceXml;
 

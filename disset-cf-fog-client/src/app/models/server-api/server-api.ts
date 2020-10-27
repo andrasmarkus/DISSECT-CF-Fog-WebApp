@@ -16,3 +16,24 @@ export interface Instance {
   networkLoad: number;
   reqDisk: number;
 }
+
+export interface Repository {
+  id: string;
+  capacity: string;
+  inBW: string;
+  outBW: string;
+  diskBW: string;
+}
+
+export interface Machine {
+  id: string;
+  cores: string;
+  processing: string;
+  memory: string;
+}
+
+export interface Resource {
+  name: string;
+  machines: Machine[];
+  repositories: Repository[];
+}

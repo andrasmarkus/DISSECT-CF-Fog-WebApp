@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router({caseSensitive:true});
 const fs = require('fs');
 const parser = require('fast-xml-parser');
+const nodeDir = require('node-dir');
 
 router.use((req, res, next)=>{
   res.header(
@@ -21,56 +22,88 @@ const defaultOptions = {
   supressEmptyNode: true
 };
 
-router.get("/strategies", /* [authJwt.verifyToken], */ (req, res , next) => {
+router.get("/strategies", [authJwt.verifyToken], (req, res , next) => {
   fs.readFile('configurations/strategies/Strategies.xml', (err,data) =>  {
     if (err) {
-      return console.log(err);
+      console.log(err);
+      return res.status(500).json({message:'Something went wrong!'})
     }
     const jsonObj = parser.parse(data.toString(),defaultOptions);
     res.status(200).json(jsonObj.strategies);
   });
 });
 
-router.get("/instances", /* [authJwt.verifyToken], */ (req, res , next) => {
+router.get("/instances", [authJwt.verifyToken], (req, res , next) => {
   fs.readFile('configurations/instances/Instances.xml', (err,data) =>  {
     if (err) {
-      return console.log(err);
+      console.log(err);
+      return res.status(500).json({message:'Something went wrong!'})
     }
     const jsonObj = parser.parse(data.toString(),defaultOptions);
     res.status(200).json(jsonObj.instances);
   });
 });
 
-/*It should wait the files*/
-router.get("/resources", /* [authJwt.verifyToken], */ async (req, res , next) => {
-  var data = []
-  await readFiles('configurations/resources/', (filename, content) => {
-    const jsonContent = parser.parse(content.toString(),defaultOptions);
-    data.push({name:filename, content:jsonContent});
-    console.log(filename);
-    console.log(jsonContent);
-  }, (err) => {
-    res.status(500).send({ message: 'Failed to load resources!', stack: err.stack });
-  });
-  console.log(data)
-  res.status(200).json(data);
+router.get("/resources", [authJwt.verifyToken], (req, res , next) => {
+  const data = []
+    nodeDir.readFiles('configurations/resources/',
+      (err, content, filePath, nextFile) => {
+          if (err){
+            console.log(err);
+            return res.status(500).json({message:'Something went wrong!'})
+          }
+          const jsonObj = parser.parse(content.toString(), defaultOptions);
+          const resource = {
+            name: getFileNameFromFilePath(filePath),
+            machines: getResponseMachines(jsonObj),
+            repositories: getResponseRepositories(jsonObj)
+          };
+          data.push(resource);
+          nextFile();
+      },
+      (err, files)=>{
+          if (err){
+            console.log(err);
+            return res.status(500).json({message:'Something went wrong!'})
+          }
+          res.status(200).json(data);
+      });
 });
 
-async function readFiles(dirname, onFileContent, onError) {
-  fs.readdirSync(dirname, (err, filenames) => {
-    if (err) {
-      return onError(err);
-    }
-    filenames.forEach((filename) => {
-      fs.readFileSync(dirname + filename, (errFile, content)  => {
-        if (err) {
-          return onError(errFile);
-        }
-        onFileContent(filename, content);
-      });
-    });
-  });
+module.exports = router;
+
+function getFileNameFromFilePath(filePath) {
+  const paths = filePath.split('\\');
+  const file = paths[paths.length - 1];
+  const fileFullName = file.split('.');
+  const filename = fileFullName[0];
+  return filename;
 }
 
-module.exports = router;
+function getResponseRepositories(jsonObj) {
+  const result= [];
+  jsonObj.cloud.repository.forEach(repo =>
+    result.push({
+      id: repo.id,
+      capacity: repo.capacity,
+      inBW: repo.inBW,
+      outBW: repo.outBW,
+      diskBW: repo.diskBW
+    })
+  );
+  return result;
+}
+
+function getResponseMachines(jsonObj) {
+  const result= [];
+  jsonObj.cloud.machine.forEach(mach =>
+    result.push({
+      id: mach.id,
+      cores: mach.cores,
+      processing: mach.processing,
+      memory: mach.memory
+    })
+  );
+  return result;
+}
 
