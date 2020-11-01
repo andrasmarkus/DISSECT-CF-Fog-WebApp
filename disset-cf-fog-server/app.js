@@ -28,7 +28,7 @@ app.use('/properties', propertiesRoute);
 
 /* Error message when the response not found */
 app.use((req, res, next) => {
-    const error = new Error('Not found');
+    const error = new Error('The endpoint is not found!');
     next(error);
 });
 

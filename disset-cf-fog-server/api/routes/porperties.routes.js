@@ -1,10 +1,10 @@
 const authJwt = require("../../middleware").authJwt;
-const controller = require("../../controllers/user.controller");
 const express = require('express');
 const router = express.Router({caseSensitive:true});
 const fs = require('fs');
 const parser = require('fast-xml-parser');
 const nodeDir = require('node-dir');
+const apiUtils = require('../util');
 
 router.use((req, res, next)=>{
   res.header(
@@ -14,21 +14,12 @@ router.use((req, res, next)=>{
   next();
 });
 
-const defaultOptions = {
-  attributeNamePrefix : "",
-  ignoreAttributes: false,
-  format: true,
-  indentBy: '  ',
-  supressEmptyNode: true
-};
-
 router.get("/strategies", [authJwt.verifyToken], (req, res , next) => {
   fs.readFile('configurations/strategies/Strategies.xml', (err,data) =>  {
     if (err) {
-      console.log(err);
-      return res.status(500).json({message:'Something went wrong!'})
+      throw new Error('Can not read the file!');
     }
-    const jsonObj = parser.parse(data.toString(),defaultOptions);
+    const jsonObj = parser.parse(data.toString(),apiUtils.getParserOptions());
     res.status(200).json(jsonObj.strategies);
   });
 });
@@ -36,38 +27,35 @@ router.get("/strategies", [authJwt.verifyToken], (req, res , next) => {
 router.get("/instances", [authJwt.verifyToken], (req, res , next) => {
   fs.readFile('configurations/instances/Instances.xml', (err,data) =>  {
     if (err) {
-      console.log(err);
-      return res.status(500).json({message:'Something went wrong!'})
+      throw new Error('Can not read the file!');
     }
-    const jsonObj = parser.parse(data.toString(),defaultOptions);
+    const jsonObj = parser.parse(data.toString(),apiUtils.getParserOptions());
     res.status(200).json(jsonObj.instances);
   });
 });
 
 router.get("/resources", [authJwt.verifyToken], (req, res , next) => {
   const data = []
-    nodeDir.readFiles('configurations/resources/',
-      (err, content, filePath, nextFile) => {
-          if (err){
-            console.log(err);
-            return res.status(500).json({message:'Something went wrong!'})
-          }
-          const jsonObj = parser.parse(content.toString(), defaultOptions);
-          const resource = {
-            name: getFileNameFromFilePath(filePath),
-            machines: getResponseMachines(jsonObj),
-            repositories: getResponseRepositories(jsonObj)
-          };
-          data.push(resource);
-          nextFile();
-      },
-      (err, files)=>{
-          if (err){
-            console.log(err);
-            return res.status(500).json({message:'Something went wrong!'})
-          }
-          res.status(200).json(data);
-      });
+  nodeDir.readFiles('configurations/resources/',
+  (err, content, filePath, nextFile) => {
+    if (err){
+      throw new Error('Can not read the file!');
+    }
+    const jsonObj = parser.parse(content.toString(), apiUtils.getParserOptions());
+    const resource = {
+      name: getFileNameFromFilePath(filePath),
+      machines: getResponseMachines(jsonObj),
+      repositories: getResponseRepositories(jsonObj)
+    };
+    data.push(resource);
+    nextFile();
+  },
+  (err, files)=>{
+      if (err){
+        throw new Error('Can not read the file!');
+      }
+      return res.status(200).json(data);
+  });
 });
 
 module.exports = router;

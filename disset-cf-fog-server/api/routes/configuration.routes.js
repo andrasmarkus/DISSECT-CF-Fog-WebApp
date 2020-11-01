@@ -5,72 +5,83 @@ const { isEmpty } = require('lodash');
 const Parser = require("fast-xml-parser").j2xParser;
 const path = require('path'); 
 const cmd =require('node-cmd');
+const fse = require('fs-extra');
+const apiUtils = require('../util');
 
 router.post('/', (req, res , next)=> {
-  if(checkConfigurationRequestBody(req)){
-    const defaultOptions = {
-      attributeNamePrefix: '$',
-      ignoreAttributes: false,
-      format: true,
-      indentBy: '  ',
-      supressEmptyNode: true
-    };
-    const parser = new Parser(defaultOptions);
-  
-    const pureAppliances = req.body.configuration.appliances;
-    const pureDevices = req.body.configuration.devices;
-    const appliances = parser.parse(pureAppliances);
-    const devices = parser.parse(pureDevices);
-    const xmlFileHeader = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
-    fs.writeFile('./configurations/appliances.xml', xmlFileHeader+appliances, function (err) {
-      if (err) return console.log(err);
-      console.log('appliances > appliances.xml');
-    });
-    fs.writeFile('./configurations/devices.xml', xmlFileHeader+devices, function (err) {
-      if (err) return console.log(err);
-      console.log('devices > devices.xml');
-    });
-
-    const command =  'cd dissect-cf && java -cp target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar '+
-    'hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation ../configurations/appliances.xml '+
-    '../configurations/devices.xml ../configurations/';
-
-    /* const commandDemo =  'cd dissect-cf && java -cp target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar '+
-    'hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation ../configurations/appliances_demo.xml '+
-    '../configurations/devices_demo.xml ../configurations/' */;
-
-    cmd.get(
-      command,
-      (err, data, stderr) =>{
-          if(err || stderr){
-            console.log(stderr);
-            const errorMsg = stderr.toString().split('\n')[0].split(':')[1];
-            return res.status(200).json({html: 'Not created!', data: 'Error!', err:errorMsg });
-          }
-          const fileName = getLastCreatedHtmlFile('configurations').file;
-          //const fileName = '2020-10-22-12-50-31.html'
-          const html = fs.readFileSync( 'configurations/' + fileName );
-          const stdOut = data.toString();
-          const finalstdOut = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'))
-          console.log(finalstdOut);
-          fs.writeFile('./configurations/stdout.txt', finalstdOut, (writeErr) => {
-            if (writeErr) return console.log(writeErr);
-            console.log('stdout > stdout.txt');
-            return res.status(201).json({html: html.toString(), data: finalstdOut, err: null});
-          });
-      });
-    const getLastCreatedHtmlFile = (dirName) => {
-      console.log(fs.readdirSync(dirName));
-      const files = fs.readdirSync(dirName)
-        .filter(file => path.extname(file) == ".html")
-        .map(file => ({ file, mtime: fs.statSync('./' + dirName + '/'+ file).mtime }))
-        .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
-      return  files.length ? files[0] : undefined;
-    }
-  }else{
-    return res.status(500).json({message:'Bad request!'})
+  if(!checkConfigurationRequestBody(req)){
+    throw new Error('Bad request!');
   }
+  const parser = new Parser(apiUtils.getParserOptions('$'));
+  
+  const userEmail = req.body.configuration.email;
+  const configTime = new Date().toISOString().replace('T', '_').replace(/\..+/, '').replace(/:/g, '-');
+  const baseDirPath= './configurations/users_configurations/'+ userEmail +'/'+ configTime;
+
+  saveResourceFiles(req, parser, baseDirPath);
+
+  const command =  'cd dissect-cf && java -cp target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar '+
+  'hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation .'+ baseDirPath + '/appliances.xml '+
+  '.'+ baseDirPath + '/devices.xml .'+ baseDirPath + '/';
+/*
+  const commandDemo =  'cd dissect-cf && java -cp target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar '+
+  'hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation ../configurations/appliances_demo.xml '+
+  '../configurations/devices_demo.xml .'+ baseDirPath + '/' ; */
+
+  cmd.get(
+    command,
+    (err, data, stderr) =>{
+        if(err || stderr){
+          return sendExecutionError(stderr, baseDirPath, res);
+        }
+        sendResponseWithSavingStdOut(baseDirPath, data, res);
+    });
+
 });
+
+function sendResponseWithSavingStdOut(baseDirPath, data, res) {
+  const fileName = apiUtils.getLastCreatedHtmlFile(baseDirPath);
+  const html = apiUtils.readFileSyncWithErrorHandling(baseDirPath + '/' + fileName);
+  const stdOut = data.toString();
+  const finalstdOut = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'));
+  fse.outputFile(baseDirPath + '/stdout.txt', finalstdOut, (writeErr) => {
+    if (writeErr)
+      return console.log(writeErr);
+    console.log('stdout > stdout.txt');
+    return res.status(201).json({ html: html.toString(), data: finalstdOut, err: null });
+  });
+}
+
+function sendExecutionError(stderr, baseDirPath, res) {
+  const errorMsg = stderr.toString().split('\n')[0].split(':')[1];
+  try {
+    fse.removeSync(baseDirPath);
+  } catch {
+    throw new Error('Can not delete created folder, and can not create configuration files!');
+  }
+  return res.status(200).json({ html: 'Not created!', data: 'Error!', err: errorMsg });
+}
+
+function saveResourceFiles(req, parser, baseDirPath) {
+  const pureAppliances = req.body.configuration.appliances;
+  const pureDevices = req.body.configuration.devices;
+  const appliances = parser.parse(pureAppliances);
+  const devices = parser.parse(pureDevices);
+
+  const xmlFileHeader = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+  writeToFile(baseDirPath + '/appliances.xml', xmlFileHeader + appliances);
+  console.log('appliances > appliances.xml');
+  writeToFile(baseDirPath + '/devices.xml', xmlFileHeader + devices);
+  console.log('devices > devices.xml');
+}
+
+function writeToFile(filePath, data) {
+  try{
+    fse.outputFileSync(filePath, data);
+  }catch {
+    throw new Error('Can not write to file!');
+  }
+}
 
 function checkConfigurationRequestBody(req){
   return req.body && req.body.configuration && req.body.configuration.appliances
