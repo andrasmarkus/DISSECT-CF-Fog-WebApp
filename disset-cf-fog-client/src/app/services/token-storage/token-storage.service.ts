@@ -9,26 +9,31 @@ const USER_KEY = 'auth-user';
   providedIn: 'root'
 })
 export class TokenStorageService {
-  private tokenSubject = new BehaviorSubject<string>(undefined);
+  private tokenSubject = new BehaviorSubject<string>(localStorage.getItem(TOKEN_KEY));
   public userToken$ = this.tokenSubject.asObservable();
 
   public signOut(): void {
-    window.sessionStorage.clear();
+    localStorage.clear();
     this.tokenSubject.next(undefined);
   }
 
   public saveToken(token: string): void {
-    window.sessionStorage.removeItem(TOKEN_KEY);
-    window.sessionStorage.setItem(TOKEN_KEY, token);
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.setItem(TOKEN_KEY, token);
+
     this.tokenSubject.next(token);
   }
 
   public saveUser(user: User): void {
-    window.sessionStorage.removeItem(USER_KEY);
-    window.sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+    localStorage.removeItem(USER_KEY);
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 
-  public getUser(): any {
-    return JSON.parse(sessionStorage.getItem(USER_KEY));
+  public getUser(): { accessToken: string; email: string; id: number } {
+    return JSON.parse(localStorage.getItem(USER_KEY));
+  }
+
+  public getToken(): string {
+    return localStorage.getItem(TOKEN_KEY);
   }
 }

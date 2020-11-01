@@ -7,7 +7,7 @@ import {
   XmlBaseConfiguration
 } from '../models/xml-configuration-model';
 
-export function parseConfigurationObjectToXml(object: ConfigurationObject): XmlBaseConfiguration {
+export function parseConfigurationObjectToXml(object: ConfigurationObject, email: string): XmlBaseConfiguration {
   const appliances: ApplianceXml[] = [];
   const devices: DeviceXml[] = [];
 
@@ -75,6 +75,7 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject): XmlB
 
   return {
     configuration: {
+      email,
       appliances: {
         appliances: {
           appliance: appliances
