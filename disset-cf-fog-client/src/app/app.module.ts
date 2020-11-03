@@ -22,13 +22,15 @@ import { SidenavItemsComponent } from './navigation/sidenav-items/sidenav-items.
 import { ToolbarComponent } from './navigation/toolbar/toolbar.component';
 import { HomeComponent } from './home/home/home.component';
 import { HttpClientModule } from '@angular/common/http';
-import { ConfigurationResultComponent } from './configuration/configuration-result/configuration-result.component';
 import { RunScriptsDirective } from './directives/run-scripts.directive';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
-import { ConfigurationRequestCreatorService } from './services/configuration/configuration-request-creator/configuration-request-creator.service';
 import { authInterceptorProviders } from './interceptors/auth.interceptor';
 import { UserEntranceComponent } from './user-entrance/user-entrance.component';
-import { ComputingNodeService } from './services/configuration/computing-node/computing-node.service';
+import { UserConfigurationsComponent } from './profile/user-configurations/user-configurations.component';
+import { UserConfigurationService } from './services/configuration/user-configuration/user-configuration.service';
+import { ConfigurationOverviewComponent } from './profile/configuration-overview/configuration-overview.component';
+import { ConfigurationResultComponent } from './util/configuration-result/configuration-result.component';
+import { ConfigurationEndComponent } from './configuration/configuration-end/configuration-end.component';
 
 @NgModule({
   declarations: [
@@ -47,10 +49,13 @@ import { ComputingNodeService } from './services/configuration/computing-node/co
     SidenavItemsComponent,
     ToolbarComponent,
     HomeComponent,
-    ConfigurationResultComponent,
+    ConfigurationEndComponent,
     RunScriptsDirective,
     SafeHtmlPipe,
-    UserEntranceComponent
+    UserEntranceComponent,
+    UserConfigurationsComponent,
+    ConfigurationOverviewComponent,
+    ConfigurationResultComponent
   ],
   imports: [
     BrowserModule,
@@ -62,7 +67,7 @@ import { ComputingNodeService } from './services/configuration/computing-node/co
     FlexLayoutModule,
     HttpClientModule
   ],
-  providers: [ConfigurationRequestCreatorService, authInterceptorProviders],
+  providers: [UserConfigurationService, authInterceptorProviders],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

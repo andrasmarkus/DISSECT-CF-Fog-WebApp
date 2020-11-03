@@ -15,29 +15,8 @@
   }
 }
 
-.container{
-  height: 82vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-.result-file{
-  height: 78%;
-  overflow: auto;
-  margin-bottom: 0.5rem
-}
-
-.result-data{
-  height: 22%;
-  overflow: auto;
-  padding: 0 2rem;
-  margin-bottom: 1rem;
-}
-
-.stdout-title{
-  text-align: center;
-  margin:0;
+.tab{
+  padding: 1rem 0;
 }
 
 .fail-title{
@@ -50,6 +29,7 @@
   width: 200px;
   height: 200px;
 }
+
 .fail-content{
   text-align: center;
   height: 100%;
@@ -67,3 +47,7 @@
   justify-content: center;
   align-items: flex-start;
 }
+
+::ng-deep .mat-tab-label-active{
+  color: #ff5722 !important;
+} 

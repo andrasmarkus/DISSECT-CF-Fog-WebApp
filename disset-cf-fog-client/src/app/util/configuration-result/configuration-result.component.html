@@ -1,0 +1,38 @@
+<ng-container *ngIf="configResult && !showSpinner; else spinnerTemp" >
+  <mat-tab-group color="warn" mat-align-tabs="center" animationDuration="0ms">
+    <mat-tab label="Diagram">
+      <div class="tab" [style.height.vh]="contentHeight">
+        <ng-container *ngIf="configResult.err === null; else failedConfig">
+          <div [innerHTML]="configResult.html | safeHtml" appRunScripts></div>
+        </ng-container>
+        <ng-template #failedConfig>
+          <div class="fail-content">
+            <img class="fail-img" src="https://static.thenounproject.com/png/2969411-200.png" alt="Ooops">
+            <div class="configuration-fail-header">
+              <h1 class="fail-title">Configuration fail!</h1>
+              <button mat-icon-button type="button" class="info-icon" (click)="openPanelInfoForConfigurationError()">
+                <i class="fas fa-info-circle fa-lg"></i>
+              </button>
+            </div>
+            <h3 *ngIf="configResult.err" class="error">{{configResult.err}}</h3>
+          </div>
+        </ng-template>
+      </div>
+    </mat-tab>
+    <mat-tab [disabled]="configResult.err !== null" label="Output">
+      <div class="tab" [style.height.vh]="contentHeight">
+        <div [innerHTML]="configResult.data | safeHtml" appRunScripts></div>
+      </div>
+    </mat-tab>
+    <mat-tab label="Files">
+      <div class="tab" [style.height.vh]="contentHeight">
+        Content
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</ng-container>
+<ng-template #spinnerTemp>
+  <div class="spinner-wrapper" *ngIf="showSpinner">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

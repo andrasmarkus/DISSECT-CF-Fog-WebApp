@@ -1,0 +1,23 @@
+.configurations-details{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.configuration-table{
+  width: 90%;
+}
+
+.centered-column{
+  text-align: center !important;
+}
+
+:host ::ng-deep .mat-sort-header:not(:first-child) > .mat-sort-header-container {
+  display: flex;
+  justify-content: center;
+}
+
+.right-aligned-column{
+  text-align: right !important;
+}
