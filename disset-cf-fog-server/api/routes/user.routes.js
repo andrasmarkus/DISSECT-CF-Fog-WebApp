@@ -80,7 +80,7 @@ function getConfigurationDetails(dirs, userEmail, res) {
 function getDateTimeStringFromDirName(dirName) {
   const stamp = dirName.split('_');
   const date = stamp[0];
-  const time = stamp[1].replace(/-/g, ':').slice(0, 5);;
+  const time = stamp[1].replace(/-/g, ':').slice(0, 5);
   const dateTime = date + ' ' + time;
   return dateTime;
 }
@@ -105,7 +105,7 @@ function sendResult(req, res) {
   const stdOutPath = dirPath + '/' + 'stdout.txt';
   const htmlFile = apiUtils.readFileSyncWithErrorHandling(htmlFilePath);
   const stdOut = apiUtils.readFileSyncWithErrorHandling(stdOutPath);
-  return res.status(200).json({ html: htmlFile.toString(), stdout: stdOut.toString()});
+  return res.status(200).json({ html: htmlFile.toString(), data: stdOut.toString(), err:null});
 }
 
 function checkResourceRequsetBody(req, res){
