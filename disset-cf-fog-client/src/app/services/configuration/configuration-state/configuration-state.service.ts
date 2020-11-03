@@ -7,7 +7,7 @@ import { StationsObject, Station } from 'src/app/models/station';
 @Injectable({
   providedIn: 'root'
 })
-export class ConfigurationService {
+export class ConfigurationStateService {
   public maxNumOfNodes = 10;
 
   public generateGraphSubject: Subject<any> = new Subject();

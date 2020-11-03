@@ -10,10 +10,10 @@ import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PanelService } from 'src/app/services/panel/panel.service';
-import { ConfigurationRequestCreatorService } from 'src/app/services/configuration/configuration-request-creator/configuration-request-creator.service';
 import { StepBackServiceService } from 'src/app/services/configuration/step-back/step-back-service.service';
-import { ConfigurationService } from 'src/app/services/configuration/configuration-state/configuration.service';
+import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
 import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
+import { UserConfigurationService } from 'src/app/services/configuration/user-configuration/user-configuration.service';
 
 @Component({
   selector: 'app-connection',
@@ -60,11 +60,11 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private stepBackDialogService: StepBackServiceService,
-    public configurationService: ConfigurationService,
+    public configurationService: ConfigurationStateService,
     public stepperService: StepperService,
     private snackBar: MatSnackBar,
     public panelService: PanelService,
-    public requestCreatorService: ConfigurationRequestCreatorService
+    public userConfigurationService: UserConfigurationService
   ) {
     this.initForm();
   }
@@ -674,7 +674,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
       }
     });
     console.log(this.configuration);
-    this.requestCreatorService.sendConfiguration(this.configuration);
+    this.userConfigurationService.sendConfiguration(this.configuration);
     this.stepperService.stepForward();
   }
 

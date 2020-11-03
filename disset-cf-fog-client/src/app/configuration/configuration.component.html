@@ -12,8 +12,8 @@
         <ng-template matStepLabel>Configure nodes</ng-template>
         <ng-container ></ng-container>
         <app-list-configurable-nodes
-          [numOfClouds]="(configurationService.nodesQuantity$ | async)?. numberOfClouds"
-          [numOfFogs]="(configurationService.nodesQuantity$ | async)?. numberOfFogs"
+          [numOfClouds]="(configurationStateService.nodesQuantity$ | async)?. numberOfClouds"
+          [numOfFogs]="(configurationStateService.nodesQuantity$ | async)?. numberOfFogs"
         ></app-list-configurable-nodes>
       </mat-step>
       <mat-step>
@@ -27,7 +27,7 @@
       <mat-step #fifth_step>
         <ng-template matStepLabel>Result</ng-template>
         <ng-container *ngIf="stepper.selected == fifth_step">
-          <app-configuration-result [showSpinner]="stepperAnimationDone$ | async"></app-configuration-result>
+          <app-configuration-end [showSpinner]="stepperAnimationDone$ | async"></app-configuration-end>
         </ng-container>
       </mat-step>
     </mat-horizontal-stepper>

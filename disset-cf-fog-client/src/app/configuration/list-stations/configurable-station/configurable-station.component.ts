@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms'
 import { Observable } from 'rxjs';
 import { Station } from 'src/app/models/station';
 import { ComputingNodeService } from 'src/app/services/configuration/computing-node/computing-node.service';
-import { ConfigurationService } from 'src/app/services/configuration/configuration-state/configuration.service';
+import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
 import { PanelService } from 'src/app/services/panel/panel.service';
 
 @Component({
@@ -24,7 +24,7 @@ export class ConfigurableStationComponent implements OnChanges {
   constructor(
     private formBuilder: FormBuilder,
     public nodeService: ComputingNodeService,
-    public configurationService: ConfigurationService,
+    public configurationService: ConfigurationStateService,
     public panelService: PanelService,
     public computingNodeService: ComputingNodeService
   ) {

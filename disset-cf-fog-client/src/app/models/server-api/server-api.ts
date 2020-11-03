@@ -37,3 +37,17 @@ export interface Resource {
   machines: Machine[];
   repositories: Repository[];
 }
+
+export interface UserConfigurationDetails {
+  directory: string;
+  time: string;
+  clouds: number;
+  fogs: number;
+  devices: number;
+}
+
+export interface ConfigurationResult {
+  html: string;
+  data: string;
+  err: string;
+}

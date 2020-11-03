@@ -6,7 +6,8 @@ import { PanelService } from '../services/panel/panel.service';
 import { Station } from '../models/station';
 import { BehaviorSubject } from 'rxjs';
 import { StepperService } from '../services/configuration/stepper/stepper.service';
-import { ConfigurationService } from '../services/configuration/configuration-state/configuration.service';
+import { ConfigurationStateService } from '../services/configuration/configuration-state/configuration-state.service';
+import { UserConfigurationService } from '../services/configuration/user-configuration/user-configuration.service';
 
 @Component({
   selector: 'app-configuration',
@@ -30,11 +31,12 @@ export class ConfigurationComponent implements AfterViewInit, AfterViewChecked {
     private changeDetect: ChangeDetectorRef,
     public dialog: MatDialog,
     public stepperService: StepperService,
-    public configurationService: ConfigurationService,
+    public configurationStateService: ConfigurationStateService,
+    public configService: UserConfigurationService,
     public panelService: PanelService
   ) {
-    this.configurationService.passStation$.subscribe(
-      () => (this.stations = this.configurationService.getStationArray())
+    this.configurationStateService.passStation$.subscribe(
+      () => (this.stations = this.configurationStateService.getStationArray())
     );
   }
 
