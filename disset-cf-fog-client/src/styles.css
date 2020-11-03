@@ -10,10 +10,6 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
-main{
-  height: 100%;
-}
-
 .applications-dialog-panel .mat-dialog-container{
   padding: 0;
   overflow-y: auto;

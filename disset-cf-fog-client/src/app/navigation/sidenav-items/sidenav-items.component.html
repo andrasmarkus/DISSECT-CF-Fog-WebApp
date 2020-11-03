@@ -1,20 +1,28 @@
 
 <mat-nav-list class="nav-list">
-  <a mat-list-item routerLink="/home" class="menu-item">
-    <i class="fa fa-home nav-icon" aria-hidden="true"></i>
-    <span class="full-width">Home</span>
-  </a>
-  <a mat-list-item routerLink="/configure"  class="menu-item">
-    <i class="fa fa-cogs nav-icon" aria-hidden="true"></i>
-    <span class="full-width">Configure</span>
-  </a>
-  <a mat-list-item routerLink="/profile"  class="menu-item">
-    <i class="fa fa-user nav-icon" aria-hidden="true"></i>
-    <span class="full-width">Profile</span>
-  </a>
-  <a mat-list-item routerLink="/login"  class="menu-item"
+  <div mat-list-item routerLink="/home" class="menu-item" routerLinkActive="active">
+    <div class="nav-item">
+      <i class="fa fa-home fa-2x nav-icon" aria-hidden="true"></i>
+      <span class="nav-label">Home</span>
+    </div>
+  </div>
+  <div mat-list-item routerLink="/configure"  class="menu-item" routerLinkActive="active">
+    <div class="nav-item">
+      <i class="fa fa-cogs fa-2x nav-icon" aria-hidden="true"></i>
+      <span class="nav-label">Configure</span>
+    </div>
+  </div>
+  <div mat-list-item routerLink="/profile"  class="menu-item" routerLinkActive="active">
+    <div class="nav-item">
+      <i class="fa fa-user fa-2x nav-icon" aria-hidden="true"></i>
+      <span class="nav-label">Profile</span>
+    </div>
+  </div>
+  <div mat-list-item routerLink="/login"  class="menu-item"
     (click)="tokenService.signOut()">
-    <i class="fa fa-arrow-right nav-icon" aria-hidden="true"></i>
-    <span class="full-width">Logout</span>
-  </a>
+    <div class="nav-item">
+      <i class="fa fa-arrow-right fa-2x nav-icon" aria-hidden="true"></i>
+      <span class="nav-label">Logout</span>
+    </div>
+  </div>
 </mat-nav-list>
