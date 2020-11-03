@@ -24,3 +24,7 @@ body {
   color: #ff5722;
   font-weight: 500;
 }
+
+.mat-card{
+  border-right: 1px solid #b5b5b599 !important;
+}

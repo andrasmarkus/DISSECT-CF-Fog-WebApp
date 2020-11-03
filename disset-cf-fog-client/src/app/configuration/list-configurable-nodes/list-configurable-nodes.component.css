@@ -61,3 +61,23 @@
   border-radius: 1rem;
   padding: 0.1rem 1rem;
 }
+
+@media screen and (max-width: 350px) {
+  .node-warn-header {
+    flex-wrap: wrap;
+  }
+
+  .node-title {
+    font-size: large;
+  }
+
+  .warn-chip{
+    margin-left: 0 !important;
+  }
+}
+
+@media screen and (max-width: 700px) and (min-width: 500px) {
+  .form-width {
+    width: 50%;
+  }
+}

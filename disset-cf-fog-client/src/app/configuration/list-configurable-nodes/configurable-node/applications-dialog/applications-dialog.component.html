@@ -6,7 +6,7 @@
     <div class="dialog-header">
       <h1 mat-dialog-title class="setText-center title">Configure applications ({{ data.numOfApps }})</h1>
     </div>
-    <div fxLayout="row wrap" fxLayoutAlign="center center">
+    <div class="app-container">
       <ng-container *ngFor="let app of data.applications | keyvalue">
         <app-application-card
           class="app-card"

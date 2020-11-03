@@ -55,12 +55,6 @@
   width: 130px;
 }
 
-@media screen and (max-width: 700px) {
-  .configuration-tools {
-    flex-direction: column;
-  }
-}
-
 @media screen and (max-width: 1000px) {
   .configuration-tools {
     width: 100%;
@@ -106,5 +100,14 @@
 @media screen and (max-width: 400px) {
   .card{
     margin: 2rem -2rem 0 -2rem;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .configuration-tools {
+    flex-direction: column;
+  }
+  .node-header{
+    justify-content: space-evenly;
   }
 }

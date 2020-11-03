@@ -1,7 +1,7 @@
 <div fxLayout="column" fxLayoutAlign="space-around center">
   <form class="form-width">
     <div class="node-warn-header">
-      <h2>Number of clouds: {{numOfClouds}}</h2>
+      <h2 class="node-title">Number of clouds: {{numOfClouds}}</h2>
       <span class="warn-chip" *ngIf="quantityCounterService.getUndividedClouds() && quantityCounterService.getUndividedClouds() > 0">
         Number of clouds to distribute: {{quantityCounterService.getUndividedClouds()}}
       </span>

@@ -47,16 +47,12 @@
 }
 
 @media screen and (max-width: 500px) {
-  .double-item-row {
-    flex-direction: column;
-  }
-
   .app-card.mat-card{
     padding: 0.5rem 3rem;
   }
 
   .input-size-min{
-    width: 100%;
+    width: 120px;
   }
 }
 

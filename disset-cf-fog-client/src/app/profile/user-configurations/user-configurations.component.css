@@ -3,6 +3,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  margin-top: 2rem;
 }
 
 .configuration-table{
@@ -20,4 +21,8 @@
 
 .right-aligned-column{
   text-align: right !important;
+}
+
+.table-header{
+  background-color: #bdbdbd21;
 }

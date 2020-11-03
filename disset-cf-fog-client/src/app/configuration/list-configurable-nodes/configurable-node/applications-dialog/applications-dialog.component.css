@@ -22,6 +22,14 @@
   padding-bottom: 10px;
 }
 
+.app-container{
+  flex-flow: row wrap;
+  display: flex;
+  justify-content: center;
+  height: 83%;
+  overflow: auto;
+}
+
 .drawer{
   height: 100%;
   background: none;

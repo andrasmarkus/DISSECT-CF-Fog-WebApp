@@ -34,3 +34,12 @@
   left: 0%;
   z-index: 998;
 }
+
+@media screen and (max-width: 600px) {
+  .step-title{
+    display: none;
+  }
+  ::ng-deep .mat-horizontal-stepper-header{
+    width: 25px;
+  }
+}

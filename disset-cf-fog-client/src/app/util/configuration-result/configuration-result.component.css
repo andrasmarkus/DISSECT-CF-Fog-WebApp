@@ -50,4 +50,10 @@
 
 ::ng-deep .mat-tab-label-active{
   color: #ff5722 !important;
-} 
+}
+
+@media screen and (max-width: 350px) {
+  ::ng-deep .mat-tab-label{
+    padding: 0 !important;
+  }
+}

@@ -23,7 +23,7 @@
 }
 
 .station-card {
-  width: 340px;
+  /*width: 340px;*/
   margin: 0.5rem;
 }
 
@@ -64,4 +64,10 @@
 .quantity-input{
   width: 25px;
   text-align: center;
+}
+
+@media screen and (max-width: 350px) {
+  .input-size-min {
+    width: 125px;
+  }
 }
