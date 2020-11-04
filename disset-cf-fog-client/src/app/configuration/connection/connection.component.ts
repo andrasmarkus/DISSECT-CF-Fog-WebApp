@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import * as jQuery from 'jquery';
-import * as _ from 'lodash';
 import * as joint from 'jointjs';
 import { FogNodesObject, CloudNodesObject } from 'src/app/models/computing-nodes-object';
 import { StationsObject } from 'src/app/models/station';
@@ -14,6 +13,7 @@ import { StepBackServiceService } from 'src/app/services/configuration/step-back
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
 import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
 import { UserConfigurationService } from 'src/app/services/configuration/user-configuration/user-configuration.service';
+import { MatSliderChange } from '@angular/material/slider';
 
 @Component({
   selector: 'app-connection',
@@ -29,6 +29,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   public numOfClouds = 1;
   public numOfFogs = 0;
   public numOfStations = 2;
+  public graphScale = 1;
+  public sliderValue = 50;
   public numOfLayers: number;
   public verticalSpaceBetweenLayers: number;
 
@@ -84,6 +86,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result: { okAction: boolean }) => {
       if (result.okAction) {
         this.stepperService.stepBack();
+        this.graphScale = 1;
+        this.sliderValue = 50;
       }
     });
   }
@@ -113,6 +117,22 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     });
     this.parentConnectionForm = this.formBuilder.group({
       parentLatency: new FormControl('', [Validators.required, Validators.min(1)])
+    });
+  }
+
+  public onInputChange(event: MatSliderChange): void {
+    if (event.value > this.sliderValue) {
+      this.graphScale += 0.01 * (event.value - this.sliderValue);
+      this.paper.scale(this.graphScale, this.graphScale);
+    } else {
+      this.graphScale -= 0.01 * (this.sliderValue - event.value);
+      this.paper.scale(this.graphScale, this.graphScale);
+    }
+    this.sliderValue = event.value;
+    this.graph.getCells().forEach(cell => {
+      if (!cell.isLink() && !cell.isEmbedded()) {
+        this.writeOutNodeDetails(cell);
+      }
     });
   }
 
@@ -196,8 +216,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     const xPos = x + this.nodeWidth / 2;
     const lat = (yPos / (this.paperHeight / 180) - 90) * -1;
     const lon = xPos / (this.paperWidth / 360) - 180;
-    let roundedLat = Math.round(lat);
-    let roundedLon = Math.round(lon);
+    let roundedLat = Math.round(lat * this.graphScale);
+    let roundedLon = Math.round(lon * this.graphScale);
     if (Math.abs(roundedLat) > 90) {
       roundedLat -= roundedLat - 90;
     }
@@ -676,6 +696,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     console.log(this.configuration);
     this.userConfigurationService.sendConfiguration(this.configuration);
     this.stepperService.stepForward();
+    this.graphScale = 1;
+    this.sliderValue = 50;
   }
 
   public openInfoPanelForConnection(): void {

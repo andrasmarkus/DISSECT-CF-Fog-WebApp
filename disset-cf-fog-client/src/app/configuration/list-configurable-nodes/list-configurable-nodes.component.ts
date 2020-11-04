@@ -1,14 +1,12 @@
 import { Component, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { ComputingNode } from 'src/app/models/computing-node';
 import { CloudNodesObject, FogNodesObject } from 'src/app/models/computing-nodes-object';
-import * as _ from 'lodash';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { QuantityCounterService } from 'src/app/services/configuration/quantity-counter/quantity-counter.service';
 import { RestartConfigurationService } from 'src/app/services/configuration/restart-configuration/restart-configuration.service';
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
 import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
 import { ComputingNodeService } from 'src/app/services/configuration/computing-node/computing-node.service';
-import { Instance, Resource } from 'src/app/models/server-api/server-api';
 
 @Component({
   selector: 'app-list-configurable-nodes',

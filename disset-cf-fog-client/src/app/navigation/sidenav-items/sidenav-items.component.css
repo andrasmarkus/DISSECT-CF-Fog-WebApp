@@ -38,7 +38,10 @@
   color: black;
 }
 
-.first-menu-item{
-  border-top: 0.5px solid rgb(110 107 107 / 63%);
+.nav-list .menu-item:first-child{
   margin-top: 3rem;
+}
+
+.nav-list .menu-item:last-child{
+  border: none;
 }

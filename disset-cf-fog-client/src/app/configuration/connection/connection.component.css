@@ -74,3 +74,12 @@
 .customer-snack-bar-panel button{
   color: red;
 }
+
+.slider-container{
+  display: flex;
+  justify-content: center;
+}
+
+.slider{
+  width: 250px;
+}

@@ -9,6 +9,9 @@
     <div class="clouds"></div>
     <div id="paper" class="joint-paper"></div>
 </div>
+<div class="slider-container">
+    <mat-slider class="slider" [(value)]="sliderValue" (input)="onInputChange($event)"></mat-slider>
+</div>
 <form [formGroup]="simpleConnectionForm">
     <div class="actions">
         <div class="connection-button">
@@ -25,6 +28,7 @@
         </div>
     </div>
 </form>
+
 <form [formGroup]="parentConnectionForm">
     <div class="actions space-top">
         <div class="connection-button">
