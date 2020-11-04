@@ -20,26 +20,25 @@ router.post('/', (req, res , next)=> {
 
   saveResourceFiles(req, parser, baseDirPath);
 
-  const command =  'cd dissect-cf && java -cp target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar '+
+  /* const command =  'cd dissect-cf && java -cp target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar '+
   'hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation .'+ baseDirPath + '/appliances.xml '+
-  '.'+ baseDirPath + '/devices.xml .'+ baseDirPath + '/';
-/*
+  '.'+ baseDirPath + '/devices.xml .'+ baseDirPath + '/'; */
   const commandDemo =  'cd dissect-cf && java -cp target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar '+
   'hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation ../configurations/appliances_demo.xml '+
-  '../configurations/devices_demo.xml .'+ baseDirPath + '/' ; */
+  '../configurations/devices_demo.xml .'+ baseDirPath + '/' ;
 
   cmd.get(
-    command,
+    commandDemo,
     (err, data, stderr) =>{
         if(err || stderr){
           return sendExecutionError(stderr, baseDirPath, res);
         }
-        sendResponseWithSavingStdOut(baseDirPath, data, res);
+        sendResponseWithSavingStdOut(baseDirPath, data, res, configTime);
     });
 
 });
 
-function sendResponseWithSavingStdOut(baseDirPath, data, res) {
+function sendResponseWithSavingStdOut(baseDirPath, data, res, directory) {
   const fileName = apiUtils.getLastCreatedHtmlFile(baseDirPath);
   const html = apiUtils.readFileSyncWithErrorHandling(baseDirPath + '/' + fileName);
   const stdOut = data.toString();
@@ -48,7 +47,7 @@ function sendResponseWithSavingStdOut(baseDirPath, data, res) {
     if (writeErr)
       return console.log(writeErr);
     console.log('stdout > stdout.txt');
-    return res.status(201).json({ html: html.toString(), data: finalstdOut, err: null });
+    return res.status(201).json({directory, html: html.toString(), data: finalstdOut, err: null });
   });
 }
 

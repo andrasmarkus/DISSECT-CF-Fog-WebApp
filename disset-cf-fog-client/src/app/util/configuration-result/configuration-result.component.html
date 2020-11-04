@@ -20,13 +20,41 @@
       </div>
     </mat-tab>
     <mat-tab [disabled]="configResult.err !== null" label="Output">
-      <div class="tab" [style.height.vh]="contentHeight">
+      <div class="tab stdout" [style.height.vh]="contentHeight">
         <div [innerHTML]="configResult.data | safeHtml" appRunScripts></div>
       </div>
     </mat-tab>
     <mat-tab label="Files">
-      <div class="tab" [style.height.vh]="contentHeight">
-        Content
+      <div class="tab files-container" [style.height.vh]="contentHeight">
+        <div class="resource-container">
+          <h1 class="configuration-files-header">Configuration files</h1>
+          <div class=files>
+            <div class="file">
+              <i class="far fa-file-code fa-4x" aria-hidden="true"></i>
+              <button type="button" mat-raised-button color="primary" class="download-btn"
+                (click)="downloadDiagram()">
+                <span>Diagram</span>
+                <i class="fa fa-download download-icon" aria-hidden="true"></i>
+              </button>
+            </div>
+            <div class="file">
+              <i class="far fa-file-code fa-4x" aria-hidden="true"></i>
+              <button type="button" mat-raised-button color="primary" class="download-btn"
+                (click)="downloadAppliances()">
+                <span>Appliances</span>
+                <i class="fa fa-download download-icon" aria-hidden="true"></i>
+              </button>
+            </div>
+            <div class="file">
+              <i class="far fa-file-code fa-4x" aria-hidden="true"></i>
+              <button type="button" mat-raised-button color="primary" class="download-btn"
+                (click)="downloadDevices()">
+                <span>Devices</span>
+                <i class="fa fa-download download-icon" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </mat-tab>
   </mat-tab-group>

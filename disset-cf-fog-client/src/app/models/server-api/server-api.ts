@@ -47,7 +47,10 @@ export interface UserConfigurationDetails {
 }
 
 export interface ConfigurationResult {
+  directory: string;
   html: string;
   data: string;
   err: string;
 }
+
+export type ConfigurationFile = 'diagram' | 'appliances' | 'devices';

@@ -10,7 +10,7 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { ConfigurationResult } from 'src/app/models/server-api/server-api';
+import { ConfigurationFile, ConfigurationResult } from 'src/app/models/server-api/server-api';
 import { UserConfigurationService } from 'src/app/services/configuration/user-configuration/user-configuration.service';
 import { PanelService } from 'src/app/services/panel/panel.service';
 
@@ -55,5 +55,21 @@ export class ConfigurationResultComponent implements OnDestroy, OnInit {
   public openPanelInfoForConfigurationError() {
     this.panelService.getConfigurationErrorData();
     this.panelService.toogle();
+  }
+
+  public downloadDiagram(): void {
+    this.downloadFile('diagram');
+  }
+
+  public downloadAppliances(): void {
+    this.downloadFile('appliances');
+  }
+
+  public downloadDevices(): void {
+    this.downloadFile('devices');
+  }
+
+  private downloadFile(type: ConfigurationFile) {
+    this.configService.downloadFile(this.configResult?.directory, type);
   }
 }

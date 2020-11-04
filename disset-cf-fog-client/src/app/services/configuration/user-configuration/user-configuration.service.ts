@@ -5,7 +5,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
 import { TokenStorageService } from '../../token-storage/token-storage.service';
-import { ConfigurationResult, UserConfigurationDetails } from 'src/app/models/server-api/server-api';
+import { ConfigurationFile, ConfigurationResult, UserConfigurationDetails } from 'src/app/models/server-api/server-api';
+import { saveAs } from 'file-saver';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -45,5 +46,22 @@ export class UserConfigurationService {
       data,
       httpOptions
     );
+  }
+
+  public downloadFile(directory: string, file: ConfigurationFile) {
+    const data = {
+      email: this.tokenService.getUser().email,
+      directory
+    };
+    this.http
+      .post('http://localhost:3000/user/configurations/download/' + file, data, {
+        ...httpOptions.headers,
+        responseType: 'blob'
+      })
+      .toPromise()
+      .then(blob => {
+        saveAs(blob, file === 'diagram' ? `${file}.html` : `${file}.xml`);
+      })
+      .catch(err => console.error('download error = ', err));
   }
 }

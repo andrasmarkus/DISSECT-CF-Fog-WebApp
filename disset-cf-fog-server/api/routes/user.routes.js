@@ -35,12 +35,16 @@ router.post("/configurations/resultfile",/*  [authJwt.verifyToken], */ (req, res
   return sendResult(req, res);
 });
 
-router.post("/configurations/appliances",/*  [authJwt.verifyToken], */ (req, res , next)=> {
-  return sendXmlResource(req, res, 'appliances');
+router.post("/configurations/download/appliances",/*  [authJwt.verifyToken], */ (req, res , next)=> {
+  return sendFile(req, res, 'appliances');
 });
 
-router.post("/configurations/devices",/*  [authJwt.verifyToken], */ (req, res , next)=> {
-  return sendXmlResource(req, res, 'devices');
+router.post("/configurations/download/devices",/*  [authJwt.verifyToken], */ (req, res , next)=> {
+  return sendFile(req, res, 'devices');
+});
+
+router.post("/configurations/download/diagram",/*  [authJwt.verifyToken], */ (req, res , next)=> {
+  return sendFile(req, res, 'diagram');
 });
 
 
@@ -85,14 +89,18 @@ function getDateTimeStringFromDirName(dirName) {
   return dateTime;
 }
 
-function sendXmlResource(req, res, fileName) {
+function sendFile(req, res, fileName) {
   checkResourceRequsetBody(req, res);
   const userEmail = req.body.email;
   const directory = req.body.directory;
   const dirPath = BASE_DIR + userEmail + '/' + directory;
-  const filePath = dirPath + '/' + fileName +'.xml';
-  const file = apiUtils.readFileSyncWithErrorHandling(filePath);
-  return res.status(200).json({ file: file.toString() });
+  let filePath = dirPath + '/';
+  if(fileName === 'diagram'){
+    filePath += apiUtils.getLastCreatedHtmlFile(dirPath);
+  }else{
+    filePath += fileName +'.xml';
+  }
+  return res.download(filePath);
 }
 
 function sendResult(req, res) {
@@ -105,7 +113,7 @@ function sendResult(req, res) {
   const stdOutPath = dirPath + '/' + 'stdout.txt';
   const htmlFile = apiUtils.readFileSyncWithErrorHandling(htmlFilePath);
   const stdOut = apiUtils.readFileSyncWithErrorHandling(stdOutPath);
-  return res.status(200).json({ html: htmlFile.toString(), data: stdOut.toString(), err:null});
+  return res.status(200).json({directory, html: htmlFile.toString(), data: stdOut.toString(), err:null});
 }
 
 function checkResourceRequsetBody(req, res){
