@@ -1,0 +1,10 @@
+@import '../../../../assets/css/formStyle.css';
+
+.margin-around {
+  margin: 25px;
+}
+
+.actions{
+  display: flex;
+  justify-content: space-between;
+}
