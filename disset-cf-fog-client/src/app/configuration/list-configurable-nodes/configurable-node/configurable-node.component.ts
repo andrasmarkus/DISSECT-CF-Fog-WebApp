@@ -31,6 +31,7 @@ export class ConfigurableNodeComponent implements OnChanges {
   public errorTooltip: string;
   public showErrorTooltip = true;
 
+  private readonly ASSESTS_URL = '../../../../assets/';
   private readonly maxApplicationsQuantity = 10;
   public readonly maxTooltipp: string;
 
@@ -55,9 +56,13 @@ export class ConfigurableNodeComponent implements OnChanges {
       this.node.applications = {};
     }
     this.selectedResource = this.node.resource ? this.node.resource : undefined;
-    this.nodeIcon = this.node.isCloud ? StringUtlis.CLOUD_ICON : StringUtlis.FOG_ICON;
+    this.nodeIcon = this.node.isCloud
+      ? this.ASSESTS_URL + StringUtlis.CLOUD_ICON
+      : this.ASSESTS_URL + StringUtlis.FOG_ICON;
     this.initForm();
-    this.statusIcon = this.isNodevalid() ? StringUtlis.CONFIGURED_ICON : StringUtlis.NOT_CONFIGURED_ICON;
+    this.statusIcon = this.isNodevalid()
+      ? this.ASSESTS_URL + StringUtlis.CONFIGURED_ICON
+      : this.ASSESTS_URL + StringUtlis.NOT_CONFIGURED_ICON;
     this.appsStatusIcon = this.checkAllAppsAreConfigured() ? StringUtlis.SET_APPS_ICON : StringUtlis.UNSET_APPS_ICON;
 
     this.numOfAppsInputListener();
@@ -162,12 +167,12 @@ export class ConfigurableNodeComponent implements OnChanges {
       this.node.isConfigured = true;
       this.setNodeProperties();
       this.setComputingNode.emit(this.node);
-      this.statusIcon = StringUtlis.CONFIGURED_ICON;
+      this.statusIcon = this.ASSESTS_URL + StringUtlis.CONFIGURED_ICON;
     } else {
       this.node.isConfigured = false;
       this.setNodeProperties();
       this.setComputingNode.emit(this.node);
-      this.statusIcon = StringUtlis.NOT_CONFIGURED_ICON;
+      this.statusIcon = this.ASSESTS_URL + StringUtlis.NOT_CONFIGURED_ICON;
     }
   }
 

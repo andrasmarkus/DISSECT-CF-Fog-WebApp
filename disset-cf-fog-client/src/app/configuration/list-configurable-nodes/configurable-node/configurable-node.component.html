@@ -2,9 +2,9 @@
   <form [formGroup]="nodeCardForm">
     <div class="container">
       <div class="node-icon node-header">
-        <i [class]="nodeIcon"></i>
+        <img alt="node-icon" class="node-icon-img" [src]="nodeIcon">
         <div class="top-status">
-          <i [class]="statusIcon"></i>
+          <img alt="status" class="status-icon-img" [src]="statusIcon">
         </div>
       </div>
       <div class="configuration-tools">
@@ -64,7 +64,7 @@
         </div>
       </div>
       <div class="bottom-status">
-        <i [class]="statusIcon"></i>
+        <img alt="status" class="status-icon-img" [src]="statusIcon">
       </div>
     </div>
   </form>

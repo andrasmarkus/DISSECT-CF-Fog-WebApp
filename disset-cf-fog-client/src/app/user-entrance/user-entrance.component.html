@@ -1,11 +1,19 @@
 <div class="page-container bg-image">
   <div class="cover cover-register" *ngIf="!isLogin">
-    <img alt="profile" class="image" src="https://cdn.pixabay.com/photo/2016/08/31/11/55/user-1633250_1280.png">
-    <div class="cover-title">Do you have account?</div>
-    <button type="submit" class="btn-bottom-margin" 
-        mat-raised-button color="primary" routerLink="/login" >
-        Login
-      </button>
+    <div class="cover-content">
+      <img alt="profile" class="image" src="../../assets/images/login.png">
+      <div class="cover-title">Do you have account?</div>
+      <button type="submit" class="btn-bottom-margin"
+          mat-raised-button color="primary" routerLink="/login" >
+          Login
+        </button>
+    </div>
+    <div class="attributer-text">
+      Icons made by
+      <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a>
+       from <a  href="https://www.flaticon.com/" title="Flaticon">
+       www.flaticon.com</a>
+    </div>
   </div>
   <mat-card class="register-form-containter">
     <form [formGroup]="entranceForm" class="form">
@@ -33,12 +41,20 @@
     </form>
   </mat-card>
   <div class="cover cover-login" *ngIf="isLogin">
-    <img alt="key" class="image-login" src="https://cdn.pixabay.com/photo/2020/06/22/10/55/house-5328786_1280.png">
-    <div class="cover-title">Have not registered yet?</div>
-    <button type="submit" class="btn-bottom-margin" 
-        mat-raised-button color="warn" routerLink="/register" >
-        Register
-      </button>
+    <div class="cover-content">
+      <img alt="key" class="image" src="../../assets/images/register.png">
+      <div class="cover-title">Don't have an account?</div>
+      <button type="submit" class="btn-bottom-margin" 
+          mat-raised-button color="warn" routerLink="/register" >
+          Register
+        </button>
+    </div>
+    <div class="attributer-text">
+      Icons made by
+      <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a>
+       from <a  href="https://www.flaticon.com/" title="Flaticon">
+       www.flaticon.com</a>
+    </div>
   </div>
 </div>
 

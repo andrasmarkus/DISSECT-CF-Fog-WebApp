@@ -64,7 +64,6 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 }
 .cover-register{
@@ -84,13 +83,24 @@
 }
 
 .image{
-  width: 150px;
-  height: 150px;
+  width: 250px;
+  height: 250px;
 }
 
-.image-login{
-  width: 250px;
-  height: 150px;
+.cover-content{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.attributer-text{
+  color: white;
+  font-size: 10px;
+}
+.attributer-text a{
+  color: white;
 }
 
 .title{

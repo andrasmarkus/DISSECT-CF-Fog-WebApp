@@ -14,6 +14,7 @@ import { ConfigurationStateService } from 'src/app/services/configuration/config
 import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
 import { UserConfigurationService } from 'src/app/services/configuration/user-configuration/user-configuration.service';
 import { MatSliderChange } from '@angular/material/slider';
+import { StringUtlis } from '../utils/string-utlis';
 
 @Component({
   selector: 'app-connection',
@@ -54,9 +55,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   private generationSubscription: Subscription;
   private selectedNodeQueue: Node[] = [];
 
-  private readonly cloudImageSrcURL = '../../../assets/images/cloud_icon.svg.png';
-  private readonly fogImageSrcURL = 'https://freesvg.org/img/1343932181.png'; // find other img for that
-  private readonly stationImageSrcURL = '../../../assets/images/station_icon.png';
+  private readonly ASSESTS_URL = '../../../assets/';
+  private readonly cloudImageSrcURL = this.ASSESTS_URL + StringUtlis.CLOUD_ICON;
+  private readonly fogImageSrcURL = this.ASSESTS_URL + StringUtlis.FOG_ICON;
+  private readonly stationImageSrcURL = this.ASSESTS_URL + StringUtlis.IOT_ICON;
   private readonly circleRangeBackgroundColor = '#00f71b40';
 
   constructor(

@@ -12,7 +12,7 @@ const routes: Routes = [
   { path: 'register', component: UserEntranceComponent },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'configure', component: ConfigurationComponent, canActivate: [AuthGuard] },
-  { path: 'profile', component: UserConfigurationsComponent, canActivate: [AuthGuard] }
+  { path: 'user-configurations', component: UserConfigurationsComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

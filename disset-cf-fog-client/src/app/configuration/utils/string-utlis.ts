@@ -1,9 +1,10 @@
 export class StringUtlis {
-  /* ICONS */
-  public static readonly NOT_CONFIGURED_ICON = 'fas fa-times-circle fa-2x';
-  public static readonly CONFIGURED_ICON = 'far fa-check-circle fa-2x';
-  public static readonly CLOUD_ICON = 'fas fa-cloud fa-4x';
-  public static readonly FOG_ICON = 'fas fa-smog fa-4x';
+  /* Images */
+  public static readonly NOT_CONFIGURED_ICON = 'images/warning.png';
+  public static readonly CONFIGURED_ICON = 'images/tick.png';
+  public static readonly CLOUD_ICON = 'images/cloud.png';
+  public static readonly FOG_ICON = 'images/fog.png';
+  public static readonly IOT_ICON = 'images/iot.png';
 
   public static readonly SET_APPS_ICON = 'check_circle_outline';
   public static readonly UNSET_APPS_ICON = 'cancel';

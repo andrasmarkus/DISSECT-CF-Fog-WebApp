@@ -97,6 +97,16 @@
   margin-top: 0.5rem;
 }
 
+.node-icon-img{
+  width: 65px;
+  height: 50px;
+}
+
+.status-icon-img{
+  width: 32px;
+  height: 30px;
+}
+
 @media screen and (max-width: 400px) {
   .card{
     margin: 2rem -2rem 0 -2rem;
