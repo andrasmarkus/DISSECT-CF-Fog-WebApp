@@ -9,6 +9,7 @@
 
 .info-panel{
   width: 400px;
+  position: fixed;
 }
 
 @media screen and (max-width: 800px) {
