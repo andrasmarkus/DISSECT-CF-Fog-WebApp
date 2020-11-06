@@ -22,6 +22,9 @@ export class AppComponent implements OnInit {
     this.isBigScreen = window.innerWidth > 1000;
   }
 
+  /**
+   * Listener for window size changing which sets the boolean variable
+   */
   @HostListener('window:resize', ['$event'])
   public onResize(event): void {
     this.isBigScreen = event.target.innerWidth > 1000;

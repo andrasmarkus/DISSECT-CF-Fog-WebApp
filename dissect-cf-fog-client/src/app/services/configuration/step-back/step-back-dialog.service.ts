@@ -6,10 +6,10 @@ import { WindowSizeService } from '../../window-size/window-size.service';
 @Injectable({
   providedIn: 'root'
 })
-export class StepBackServiceService {
+export class StepBackDialogService {
   constructor(private dialog: MatDialog, public windowService: WindowSizeService) {}
 
-  openDialog(): MatDialogRef<StepBackDialogComponent, any> {
+  public openDialog(): MatDialogRef<StepBackDialogComponent, any> {
     return this.dialog.open(StepBackDialogComponent, {
       panelClass: 'applications-dialog-panel',
       disableClose: true,

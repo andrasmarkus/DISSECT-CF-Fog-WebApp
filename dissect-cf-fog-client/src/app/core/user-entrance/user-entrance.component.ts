@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { distinctUntilChanged, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { TokenStorageService } from 'src/app/services/token-storage/token-storage.service';
 
@@ -22,6 +22,9 @@ export class UserEntranceComponent implements OnInit {
   public isLoginSucessful = false;
   public isLoginFailed = false;
   public data: CoverData;
+  /**
+   * This tells that should show login or register content.
+   */
   public isLogin = false;
 
   constructor(
@@ -32,7 +35,7 @@ export class UserEntranceComponent implements OnInit {
     private tokenStorageService: TokenStorageService
   ) {}
 
-  ngOnInit() {
+  public ngOnInit(): void {
     this.isLogin = this.activatedRoute.snapshot.routeConfig.path.includes('login');
     this.data = this.isLogin
       ? { title: 'Login', buttonLabel: 'Login' }
@@ -68,7 +71,6 @@ export class UserEntranceComponent implements OnInit {
     } else {
       this.authService.register(this.entranceForm.value).subscribe(
         data => {
-          console.log(data);
           this.isRegisterSuccessful = true;
           this.isRegisterFailed = false;
         },

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { User } from 'src/app/models/user';
+import { SignInResponse } from 'src/app/models/server-api/server-api';
 
 const TOKEN_KEY = 'auth-token';
 const USER_KEY = 'auth-user';
@@ -24,12 +24,12 @@ export class TokenStorageService {
     this.tokenSubject.next(token);
   }
 
-  public saveUser(user: User): void {
+  public saveUser(user: SignInResponse): void {
     localStorage.removeItem(USER_KEY);
     localStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 
-  public getUser(): { accessToken: string; email: string; id: number } {
+  public getUser(): SignInResponse {
     return JSON.parse(localStorage.getItem(USER_KEY));
   }
 

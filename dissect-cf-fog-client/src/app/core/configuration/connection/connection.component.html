@@ -5,10 +5,12 @@
         <i class="fas fa-info-circle fa-lg"></i>
     </button>
 </h1>
+<!-- Connection paper -->
 <div class="paper-wrapper">
     <div class="clouds"></div>
     <div id="paper" class="joint-paper"></div>
 </div>
+<!-- Paper's actions -->
 <div class="slider-container">
     <mat-slider class="slider" [(value)]="sliderValue" (input)="onInputChange($event)"></mat-slider>
 </div>
@@ -28,7 +30,6 @@
         </div>
     </div>
 </form>
-
 <form [formGroup]="parentConnectionForm">
     <div class="actions space-top">
         <div class="connection-button">

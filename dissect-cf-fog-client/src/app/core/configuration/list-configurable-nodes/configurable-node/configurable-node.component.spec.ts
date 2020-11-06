@@ -10,6 +10,15 @@ import { WindowSizeService } from 'src/app/services/window-size/window-size.serv
 
 import { ConfigurableNodeComponent } from './configurable-node.component';
 
+const mockResourceSelectionService = {
+  getUndividedClouds() {
+    return 0;
+  },
+  getUndividedFogs() {
+    return 0;
+  }
+};
+
 describe('ConfigurableNodeComponent', () => {
   let component: ConfigurableNodeComponent;
   let fixture: ComponentFixture<ConfigurableNodeComponent>;
@@ -23,7 +32,7 @@ describe('ConfigurableNodeComponent', () => {
         FormBuilder,
         { provide: WindowSizeService, useValue: {} },
         { provide: PanelService, useValue: {} },
-        { provide: QuantityCounterService, useValue: {} }
+        { provide: QuantityCounterService, useValue: mockResourceSelectionService }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();

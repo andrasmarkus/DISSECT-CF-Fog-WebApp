@@ -1,10 +1,8 @@
-import { Component, Input, OnChanges, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
 import { Application } from 'src/app/models/application';
 import { Instance } from 'src/app/models/server-api/server-api';
-import { ComputingNodeService } from 'src/app/services/configuration/computing-node/computing-node.service';
+import { ResourceSelectionService } from 'src/app/services/configuration/resource-selection/resource-selection.service';
 import { PanelService } from 'src/app/services/panel/panel.service';
 
 @Component({
@@ -12,9 +10,9 @@ import { PanelService } from 'src/app/services/panel/panel.service';
   templateUrl: './application-card.component.html',
   styleUrls: ['./application-card.component.css']
 })
-export class ApplicationCardComponent implements OnChanges {
-  @Input() application: Application;
-  @Output() removeEmitter = new EventEmitter<string>();
+export class ApplicationCardComponent implements OnInit {
+  @Input() public application: Application;
+  @Output() public removeEmitter = new EventEmitter<string>();
 
   public appFormGroup: FormGroup;
   public canJoin: boolean;
@@ -23,12 +21,11 @@ export class ApplicationCardComponent implements OnChanges {
 
   constructor(
     private formBuilder: FormBuilder,
-    public nodeService: ComputingNodeService,
     public panelService: PanelService,
-    public computingNodeService: ComputingNodeService
+    public resourceSelectionService: ResourceSelectionService
   ) {}
 
-  public ngOnChanges(): void {
+  public ngOnInit(): void {
     this.createForm();
     this.initForm();
   }
@@ -56,7 +53,7 @@ export class ApplicationCardComponent implements OnChanges {
     this.strategy = this.application.strategy ? this.application.strategy : '';
   }
 
-  public getValidApplication() {
+  public getValidApplication(): Application {
     const isConfigured = this.application.isConfigured;
     this.application = this.appFormGroup.value;
     this.application.isConfigured = isConfigured;

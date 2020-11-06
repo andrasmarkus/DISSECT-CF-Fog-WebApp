@@ -1,5 +1,5 @@
 export class StringUtlis {
-  /* Images */
+  /* Images, icons */
   public static readonly NOT_CONFIGURED_ICON = 'images/warning.png';
   public static readonly CONFIGURED_ICON = 'images/tick.png';
   public static readonly CLOUD_ICON = 'images/cloud.png';

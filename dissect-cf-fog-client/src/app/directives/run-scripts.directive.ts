@@ -1,5 +1,8 @@
 import { Directive, ElementRef, OnInit } from '@angular/core';
 
+/**
+ * This directive helps to run injected scripts.
+ */
 @Directive({ selector: '[appRunScripts]' })
 export class RunScriptsDirective implements OnInit {
   constructor(private elementRef: ElementRef) {}
@@ -10,6 +13,9 @@ export class RunScriptsDirective implements OnInit {
     });
   }
 
+  /**
+   * This method create new elements from the used nativeElement script tags to be runnable.
+   */
   private reinsertScripts(): void {
     const scripts = this.elementRef.nativeElement.getElementsByTagName('script') as HTMLScriptElement[];
     const scriptsInitialLength = scripts.length;

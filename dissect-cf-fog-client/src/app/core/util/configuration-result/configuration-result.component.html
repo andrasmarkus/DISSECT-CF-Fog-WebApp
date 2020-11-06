@@ -24,7 +24,7 @@
         <div [innerHTML]="configResult.data | safeHtml" appRunScripts></div>
       </div>
     </mat-tab>
-    <mat-tab label="Files">
+    <mat-tab  [disabled]="configResult.err !== null" label="Files">
       <div class="tab files-container" [style.height.vh]="contentHeight">
         <div class="resource-container">
           <h1 class="configuration-files-header">Configuration files</h1>

@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 
+/**
+ * It helps to calculate dialog's width depending on the window's width.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class WindowSizeService {
-  constructor() {}
-
   public calculateWidthForApplicationDialog(): string {
     const width = window.innerWidth;
     if (width < 700) {
@@ -23,15 +24,6 @@ export class WindowSizeService {
       return '80%';
     } else {
       return '40%';
-    }
-  }
-
-  public calculateHeightForStepBackDialog(): string {
-    const width = window.innerWidth;
-    if (width < 600 || (width >= 600 && width < 1100)) {
-      return '40%';
-    } else {
-      return '30%';
     }
   }
 }

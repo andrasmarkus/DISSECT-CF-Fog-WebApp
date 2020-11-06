@@ -7,6 +7,11 @@ import {
   XmlBaseConfiguration
 } from 'src/app/models/xml-configuration-model';
 
+/**
+ * It converts configuration object to xml base interface, which the server can parse to xml.
+ * @param object - configured object which contains the nesseasry data
+ * @param email - user email which determines which folder to scan
+ */
 export function parseConfigurationObjectToXml(object: ConfigurationObject, email: string): XmlBaseConfiguration {
   const appliances: ApplianceXml[] = [];
   const devices: DeviceXml[] = [];

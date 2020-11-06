@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder, NgForm } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { ComputingNodesQuantityData } from 'src/app/models/computing-nodes-quantity-data';
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
 import { RestartConfigurationService } from 'src/app/services/configuration/restart-configuration/restart-configuration.service';
@@ -22,7 +22,7 @@ export class NodeQuantityFormComponent {
     this.initForm();
   }
 
-  initForm() {
+  private initForm(): void {
     this.numOfComputingNodes = this.formBuilder.group({
       numOfClouds: new FormControl('', [
         Validators.required,
@@ -38,24 +38,25 @@ export class NodeQuantityFormComponent {
     });
   }
 
-  public sendNodesQuantity() {
-    const nodesQuantity = {
-      numberOfClouds: this.numOfComputingNodes.get('numOfClouds').value,
-      numberOfFogs: this.numOfComputingNodes.get('numOfFogs').value
-        ? this.numOfComputingNodes.get('numOfFogs').value
-        : undefined
-    } as ComputingNodesQuantityData;
+  public sendNodesQuantity(): void {
     if (this.numOfComputingNodes.valid) {
+      const nodesQuantity = {
+        numberOfClouds: this.numOfComputingNodes.get('numOfClouds').value,
+        numberOfFogs: this.numOfComputingNodes.get('numOfFogs').value
+          ? this.numOfComputingNodes.get('numOfFogs').value
+          : undefined
+      } as ComputingNodesQuantityData;
+
       this.configurationService.setNodesQuantity(nodesQuantity);
       this.stepperService.stepForward();
     }
   }
 
-  public resetConfiguration() {
+  public resetConfiguration(): void {
     this.numOfComputingNodes.reset();
     this.configurationService.setNodesQuantity(undefined);
     this.configurationService.computingNodes = { clouds: {}, fogs: {} };
     this.configurationService.stationNodes = {};
-    this.restartConfService.restartConfigurationSubject.next();
+    this.restartConfService.restart();
   }
 }

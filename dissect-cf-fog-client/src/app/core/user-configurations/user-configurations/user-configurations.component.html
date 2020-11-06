@@ -1,3 +1,4 @@
+<!-- Configurations template: shows data in table-->
 <div *ngIf="!isConfigSelected" class="configurations-details">
   <table mat-table [dataSource]="userConfigurationsDetails$ | async" matSort class="configuration-table">
     <ng-container matColumnDef="time">
@@ -30,8 +31,10 @@
 
   <mat-paginator [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
 </div>
+<!-- Selected configuration is shown here -->
 <div *ngIf="isConfigSelected && configDirName">
   <app-configuration-overview 
     [directory]="configDirName"
-    (goBack)="showTable()"></app-configuration-overview>
+    (goBack)="showTable()">
+  </app-configuration-overview>
 </div>

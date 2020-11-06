@@ -1,4 +1,5 @@
-<div class="page-container bg-image">
+<div class="page-container">
+  <!-- Register cover-->
   <div class="cover cover-register" *ngIf="!isLogin">
     <div class="cover-content">
       <img alt="profile" class="image" src="../../assets/images/login.png">
@@ -15,6 +16,7 @@
        www.flaticon.com</a>
     </div>
   </div>
+  <!-- Resigter / Login form card-->
   <mat-card class="register-form-containter">
     <form [formGroup]="entranceForm" class="form">
       <div class="title">{{data.title}}</div>
@@ -40,6 +42,7 @@
       </div>
     </form>
   </mat-card>
+  <!-- Login cover-->
   <div class="cover cover-login" *ngIf="isLogin">
     <div class="cover-content">
       <img alt="key" class="image" src="../../assets/images/register.png">

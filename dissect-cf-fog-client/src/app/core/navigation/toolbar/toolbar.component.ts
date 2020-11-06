@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { TokenStorageService } from 'src/app/services/token-storage/token-storage.service';
 
 @Component({

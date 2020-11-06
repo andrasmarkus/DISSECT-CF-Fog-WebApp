@@ -31,6 +31,7 @@ import { UserEntranceComponent } from './core/user-entrance/user-entrance.compon
 import { UserConfigurationsComponent } from './core/user-configurations/user-configurations/user-configurations.component';
 import { ConfigurationOverviewComponent } from './core/user-configurations/configuration-overview/configuration-overview.component';
 import { ConfigurationResultComponent } from './core/util/configuration-result/configuration-result.component';
+import { ResourceSelectionService } from './services/configuration/resource-selection/resource-selection.service';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,7 @@ import { ConfigurationResultComponent } from './core/util/configuration-result/c
     FlexLayoutModule,
     HttpClientModule
   ],
-  providers: [UserConfigurationService, authInterceptorProviders],
+  providers: [UserConfigurationService, ResourceSelectionService, authInterceptorProviders],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

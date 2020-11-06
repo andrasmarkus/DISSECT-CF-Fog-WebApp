@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ConfigurationObject } from '../../../models/configuration';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
 import { TokenStorageService } from '../../token-storage/token-storage.service';
 import { ConfigurationFile, ConfigurationResult, UserConfigurationDetails } from 'src/app/models/server-api/server-api';
@@ -12,28 +12,29 @@ const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
+const BASE_API = 'http://localhost:3000';
+
+/**
+ * API calls for running configuration or get configurations.
+ */
 @Injectable()
 export class UserConfigurationService {
   public configurationResult$: Observable<ConfigurationResult>;
-  public selectedConfigurationResult$: Observable<ConfigurationResult>;
-  public userConfigurationsDetails$: Observable<UserConfigurationDetails[]>;
 
-  constructor(private http: HttpClient, public tokenService: TokenStorageService) {
-    this.userConfigurationsDetails$ = this.getUserConfigurationsDetails();
-  }
+  constructor(private http: HttpClient, public tokenService: TokenStorageService) {}
 
   public sendConfiguration(object: ConfigurationObject): void {
     const xmlBaseConfig = parseConfigurationObjectToXml(object, this.tokenService.getUser().email);
     this.configurationResult$ = this.http
-      .post<ConfigurationResult>('http://localhost:3000/configuration', JSON.stringify(xmlBaseConfig), httpOptions)
+      .post<ConfigurationResult>(BASE_API + '/configuration', JSON.stringify(xmlBaseConfig), httpOptions)
       .pipe(shareReplay(1));
   }
 
-  private getUserConfigurationsDetails(): Observable<UserConfigurationDetails[]> {
+  public getUserConfigurationsDetails(): Observable<UserConfigurationDetails[]> {
     const data = {
       email: this.tokenService.getUser().email
     };
-    return this.http.post<UserConfigurationDetails[]>('http://localhost:3000/user/configurations', data, httpOptions);
+    return this.http.post<UserConfigurationDetails[]>(BASE_API + '/user/configurations', data, httpOptions);
   }
 
   public getselectedConfigurationResult(directory: string): Observable<ConfigurationResult> {
@@ -41,20 +42,21 @@ export class UserConfigurationService {
       email: this.tokenService.getUser().email,
       directory
     };
-    return this.http.post<ConfigurationResult>(
-      'http://localhost:3000/user/configurations/resultfile',
-      data,
-      httpOptions
-    );
+    return this.http.post<ConfigurationResult>(BASE_API + '/user/configurations/resultfile', data, httpOptions);
   }
 
-  public downloadFile(directory: string, file: ConfigurationFile) {
+  /**
+   * This downloads the file with specified extensions.
+   * @param directory - this determines which configuration is
+   * @param file - diagram | appliances | devices
+   */
+  public downloadFile(directory: string, file: ConfigurationFile): void {
     const data = {
       email: this.tokenService.getUser().email,
       directory
     };
     this.http
-      .post('http://localhost:3000/user/configurations/download/' + file, data, {
+      .post(BASE_API + '/user/configurations/download/' + file, data, {
         ...httpOptions.headers,
         responseType: 'blob'
       })

@@ -1,9 +1,19 @@
-import { Component, Input, Output, EventEmitter, OnChanges, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  ChangeDetectionStrategy,
+  SimpleChanges,
+  OnInit,
+  OnDestroy
+} from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Station } from 'src/app/models/station';
-import { ComputingNodeService } from 'src/app/services/configuration/computing-node/computing-node.service';
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
+import { ResourceSelectionService } from 'src/app/services/configuration/resource-selection/resource-selection.service';
 import { PanelService } from 'src/app/services/panel/panel.service';
 
 @Component({
@@ -12,35 +22,37 @@ import { PanelService } from 'src/app/services/panel/panel.service';
   styleUrls: ['./configurable-station.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ConfigurableStationComponent implements OnChanges {
+export class ConfigurableStationComponent implements OnChanges, OnDestroy {
   @Input() public station: Station;
-  @Output() stationEmitter = new EventEmitter<Station>();
-  @Output() removeEmitter = new EventEmitter<string>();
+  @Output() public stationEmitter = new EventEmitter<Station>();
+  @Output() public removeEmitter = new EventEmitter<string>();
 
   public stationFormGroup: FormGroup;
   public quantity = 1;
   public strategy: string;
 
+  private formChangeSub: Subscription;
+
   constructor(
     private formBuilder: FormBuilder,
-    public nodeService: ComputingNodeService,
     public configurationService: ConfigurationStateService,
     public panelService: PanelService,
-    public computingNodeService: ComputingNodeService
+    public resourceSelectionService: ResourceSelectionService
   ) {
     this.createForm();
-    this.stationFormChangeListener();
-  }
-
-  public ngOnChanges(): void {
-    this.initForm();
-    this.stationFormChangeListener();
-  }
-
-  private stationFormChangeListener() {
-    this.stationFormGroup.valueChanges.subscribe(() => {
+    this.formChangeSub = this.stationFormGroup.valueChanges.subscribe(() => {
       this.saveStation();
     });
+  }
+
+  public ngOnDestroy(): void {
+    this.formChangeSub?.unsubscribe();
+  }
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    if (changes.station) {
+      this.updateForm();
+    }
   }
 
   public onStrategyChange(): void {
@@ -57,7 +69,7 @@ export class ConfigurableStationComponent implements OnChanges {
     this.stationEmitter.emit(this.station);
   }
 
-  createForm() {
+  private createForm(): void {
     this.stationFormGroup = this.formBuilder.group({
       starttime: this.createNumberFormControl(),
       stoptime: this.createNumberFormControl(),
@@ -77,9 +89,9 @@ export class ConfigurableStationComponent implements OnChanges {
     return new FormControl('', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.min(1)]);
   }
 
-  private initForm(): void {
+  private updateForm(): void {
     if (this.station) {
-      this.stationFormGroup.patchValue(this.station, { emitEvent: false });
+      this.stationFormGroup?.patchValue(this.station, { emitEvent: false });
     }
     this.quantity = this.station.quantity ? this.station.quantity : 1;
     this.strategy = this.station.strategy ? this.station.strategy : '';

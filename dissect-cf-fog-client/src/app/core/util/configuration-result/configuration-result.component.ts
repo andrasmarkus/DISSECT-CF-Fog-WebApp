@@ -22,7 +22,7 @@ import { PanelService } from 'src/app/services/panel/panel.service';
 export class ConfigurationResultComponent implements OnDestroy, OnInit {
   private resultSub: Subscription;
   public configResult: ConfigurationResult;
-  public showSpinner = true;
+  @Input() public showSpinner = false;
   @Input() public configResult$: Observable<ConfigurationResult>;
   @Input() public contentHeight: number;
   @Output() showActions = new EventEmitter<void>();
@@ -32,9 +32,9 @@ export class ConfigurationResultComponent implements OnDestroy, OnInit {
     public configService: UserConfigurationService,
     private panelService: PanelService
   ) {}
-  ngOnInit(): void {
+
+  public ngOnInit(): void {
     if (this.configResult$) {
-      this.showSpinner = true;
       setTimeout(() => {
         this.showActions.emit();
       }, 3000);

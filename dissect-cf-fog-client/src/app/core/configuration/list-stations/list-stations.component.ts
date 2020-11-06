@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, OnDestroy, Input } from '@angular/core';
+import { Component, OnDestroy, Input } from '@angular/core';
 import { Station } from 'src/app/models/station';
 import { Subscription } from 'rxjs';
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
@@ -21,21 +21,17 @@ export class ListStationsComponent implements OnDestroy {
     private restartConfService: RestartConfigurationService,
     public stepperService: StepperService
   ) {
-    this.initStations();
+    this.createStation();
 
     this.restartSubscription = this.restartConfService.restartConfiguration$.subscribe(() => {
       this.stationIndex = 0;
       this.isValidConfiguration = false;
-      this.initStations();
+      this.createStation();
     });
   }
 
-  private initStations() {
-    this.createStation();
-  }
-
   public ngOnDestroy(): void {
-    this.restartSubscription.unsubscribe();
+    this.restartSubscription?.unsubscribe();
   }
 
   public addStation(): void {
@@ -43,7 +39,7 @@ export class ListStationsComponent implements OnDestroy {
     this.checkIsValidConfiguration();
   }
 
-  private createStation() {
+  private createStation(): void {
     this.stationIndex += 1;
     const stationId = 'station' + this.stationIndex;
     const station = new Station();
@@ -53,13 +49,13 @@ export class ListStationsComponent implements OnDestroy {
   }
 
   public getStationFromEmitter(station: Station): void {
-    this.configurationService.saveStation(station);
+    this.configurationService.stationNodes[station.id] = station;
     this.checkIsValidConfiguration();
   }
 
-  public checkIsReadyToNext(): void {
+  public checkReadyAndNext(): void {
     if (this.isValidConfiguration) {
-      this.configurationService.generateGraphSubject.next();
+      this.configurationService.generateGraph();
       this.stepperService.stepForward();
     }
   }
@@ -71,7 +67,7 @@ export class ListStationsComponent implements OnDestroy {
     this.checkIsValidConfiguration();
   }
 
-  private checkIsValidConfiguration() {
+  private checkIsValidConfiguration(): void {
     this.isValidConfiguration =
       Object.values(this.configurationService.stationNodes).length > 0
         ? !Object.values(this.configurationService.stationNodes).some(node => node.valid === false)

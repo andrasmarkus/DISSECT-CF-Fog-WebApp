@@ -1,4 +1,3 @@
-/* You can add global styles to this file, and also import other style files */
 @import '~@fortawesome/fontawesome-free/css/all.css';
 html,
 body {
@@ -10,6 +9,7 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
+/* For dialogs */
 .applications-dialog-panel .mat-dialog-container{
   padding: 0;
   overflow-y: auto;
@@ -27,4 +27,8 @@ body {
 
 .mat-card{
   border-right: 1px solid #b5b5b599 !important;
+}
+
+.cdk-global-scrollblock{
+  overflow: hidden !important;
 }

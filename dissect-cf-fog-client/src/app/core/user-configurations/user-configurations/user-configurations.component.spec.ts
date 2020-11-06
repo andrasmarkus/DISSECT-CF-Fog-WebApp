@@ -8,16 +8,17 @@ import { UserConfigurationsComponent } from './user-configurations.component';
 describe('UserConfigurationsComponent', () => {
   let component: UserConfigurationsComponent;
   let fixture: ComponentFixture<UserConfigurationsComponent>;
-  let userConfigurationsDetails: Subject<void>;
+
+  const moockUserConfigurationsComponent = {
+    getUserConfigurationsDetails() {
+      return new Subject();
+    }
+  };
 
   beforeEach(async(() => {
-    userConfigurationsDetails = new Subject();
     TestBed.configureTestingModule({
       declarations: [UserConfigurationsComponent],
-      imports: [RouterTestingModule],
-      providers: [
-        { provide: UserConfigurationService, useValue: { userConfigurationsDetails$: userConfigurationsDetails } }
-      ],
+      providers: [{ provide: UserConfigurationService, useValue: moockUserConfigurationsComponent }],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   }));

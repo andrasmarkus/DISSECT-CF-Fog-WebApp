@@ -9,12 +9,14 @@ import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PanelService } from 'src/app/services/panel/panel.service';
-import { StepBackServiceService } from 'src/app/services/configuration/step-back/step-back-service.service';
+import { StepBackDialogService } from 'src/app/services/configuration/step-back/step-back-dialog.service';
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
 import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
 import { UserConfigurationService } from 'src/app/services/configuration/user-configuration/user-configuration.service';
 import { MatSliderChange } from '@angular/material/slider';
 import { StringUtlis } from '../utils/string-utlis';
+import { MatDialogRef } from '@angular/material/dialog';
+import { StepBackDialogComponent } from '../step-back-dialog/step-back-dialog.component';
 
 @Component({
   selector: 'app-connection',
@@ -53,6 +55,13 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   public stationsStartYpos: number;
 
   private generationSubscription: Subscription;
+  private dialogCloseSub: Subscription;
+  private dialogRef: MatDialogRef<StepBackDialogComponent, any>;
+  /**
+   * This queue for storing the selected nodes attributes.
+   * It has max 2 elements. If a new one is selected the first of the queue will be throw away.
+   * So the user can select only 2 elements for adding connection between them.
+   */
   private selectedNodeQueue: Node[] = [];
 
   private readonly ASSESTS_URL = '../../../assets/';
@@ -61,9 +70,17 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   private readonly stationImageSrcURL = this.ASSESTS_URL + StringUtlis.IOT_ICON;
   private readonly circleRangeBackgroundColor = '#00f71b40';
 
+  private readonly MAX_NODE_WIDTH = 75;
+  private readonly MAX_NODE_HEIGHT = 50;
+  /**
+   * The static 24px on left and add +24 for the right
+   */
+  private readonly PAPER_MARGIN_SUM_VALUE = 48;
+  private readonly SIDENAV_HEIGHT = 110;
+
   constructor(
     private formBuilder: FormBuilder,
-    private stepBackDialogService: StepBackServiceService,
+    private stepBackDialogService: StepBackDialogService,
     public configurationService: ConfigurationStateService,
     public stepperService: StepperService,
     private snackBar: MatSnackBar,
@@ -84,8 +101,9 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   }
 
   public stepBack(): void {
-    const dialogRef = this.stepBackDialogService.openDialog();
-    dialogRef.afterClosed().subscribe((result: { okAction: boolean }) => {
+    this.dialogCloseSub?.unsubscribe();
+    this.dialogRef = this.stepBackDialogService.openDialog();
+    this.dialogCloseSub = this.dialogRef.afterClosed().subscribe((result: { okAction: boolean }) => {
       if (result.okAction) {
         this.stepperService.stepBack();
         this.graphScale = 1;
@@ -94,26 +112,26 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     });
   }
 
-  private createGraph() {
-    this.setNodesQuantities();
-    this.setSizes();
-    this.countsSpaces();
-    this.numOfLayers = this.countLayers();
-
+  private createGraph(): void {
+    this.setNodeObjectsWithQuantities();
+    this.setConfigurationRelatedWidthsAndHeights();
+    this.calculateSpaceBetweenNodes();
+    this.numOfLayers = this.countNodeLayers();
     this.verticalSpaceBetweenLayers = (this.paperHeight / this.numOfLayers - this.nodeHeight) / 2;
-    this.countsStartPositions();
-    this.createInitCongifuration();
+
+    this.calculateNodesStarterYPosition();
+    this.initCongifurationStorageObject();
     this.graph = new joint.dia.Graph();
-    this.setConnectionPaper();
+    this.initConnectionPaper();
 
     this.setListenerForPointerClickOnElement();
     this.setListenerForPointerClickOnBlank();
     this.setListenerForPointerMoveOnElement();
     this.setListenerForGraphRemove();
-    this.createCellsForTheGraph();
+    this.createNodeCellsIntoTheGraph();
   }
 
-  private initForm() {
+  private initForm(): void {
     this.simpleConnectionForm = this.formBuilder.group({
       latency: new FormControl('', [Validators.required, Validators.min(1)])
     });
@@ -133,15 +151,15 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     this.sliderValue = event.value;
     this.graph.getCells().forEach(cell => {
       if (!cell.isLink() && !cell.isEmbedded()) {
-        this.writeOutNodeDetails(cell);
+        this.writeOutOnPaperNodeDetails(cell);
       }
     });
   }
 
-  private createCellsForTheGraph(): void {
+  private createNodeCellsIntoTheGraph(): void {
     const graphElements: (joint.dia.Link | joint.shapes.standard.Image | joint.dia.Cell)[] = [];
     graphElements.push(
-      ...this.createNodesInQueue(
+      ...this.createNodesInARow(
         this.clouds,
         this.sapceForClouds,
         this.cloudsStartYpos,
@@ -150,10 +168,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
       )
     );
     graphElements.push(
-      ...this.createNodesInQueue(this.fogs, this.sapceForFogs, this.fogsStartYpos, this.fogImageSrcURL, NODETYPES.FOG)
+      ...this.createNodesInARow(this.fogs, this.sapceForFogs, this.fogsStartYpos, this.fogImageSrcURL, NODETYPES.FOG)
     );
     graphElements.push(
-      ...this.createNodesWithRangeInQueue(
+      ...this.createNodesWithRangeInARow(
         this.multipleStationNodes,
         this.sapceForStations,
         this.stationsStartYpos,
@@ -164,6 +182,12 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     this.graph.addCells(this.inintCells(graphElements));
   }
 
+  /**
+   * Sets a listener for removing elements on paper.
+   * Only links (connections between nodes) are allowed to remove. If the removed link is parent link,
+   * the source node's (always it is fog node) metadata (parent) should be updated to none value
+   * and also the selectedNodeQueue and the nodes's neighbours should be updated.
+   */
   private setListenerForGraphRemove(): void {
     this.graph.on('remove', cell => {
       if (cell.isLink()) {
@@ -190,19 +214,24 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Sets a listener for moving elements.
+   * If the user move an element on the paper, the informations will be updated.
+   * If the user move an embedded element, the parent's information must be updated.
+   */
   private setListenerForPointerMoveOnElement(): void {
     this.paper.on('element:pointermove', (elementView: joint.dia.ElementView) => {
       const currentElement = elementView.model;
       if (!currentElement.isEmbedded()) {
-        this.writeOutNodeDetails(currentElement);
+        this.writeOutOnPaperNodeDetails(currentElement);
       } else {
         const parent = currentElement.getParentCell();
-        this.writeOutNodeDetails(parent);
+        this.writeOutOnPaperNodeDetails(parent);
       }
     });
   }
 
-  private writeOutNodeDetails(currentElement: joint.dia.Element | joint.dia.Cell): void {
+  private writeOutOnPaperNodeDetails(currentElement: joint.dia.Element | joint.dia.Cell): void {
     const xPos = currentElement.attributes.position.x;
     const yPos = currentElement.attributes.position.y;
     const [lon, lat] = this.convertXYCoordToLatLon(xPos, yPos);
@@ -229,6 +258,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     return [roundedLon, roundedLat];
   }
 
+  /**
+   * Sets a listener for "empty" clicks.
+   * If the user clicks somewhere where is no element, all selected nodes will be deselected.
+   */
   private setListenerForPointerClickOnBlank(): void {
     this.paper.on('blank:pointerclick', () => {
       const cells = this.graph.getCells();
@@ -242,6 +275,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Sets a listener for clicks on elements.
+   * If the user clicks on element, which is not an embedded, it will be selected or deselected (if it has been selected before).
+   */
   private setListenerForPointerClickOnElement(): void {
     this.paper.on('element:pointerclick', (elementView: joint.dia.ElementView) => {
       const currentElement = elementView.model;
@@ -255,20 +292,21 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     });
   }
 
-  private setConnectionPaper(): void {
+  private initConnectionPaper(): void {
     this.paper = new joint.dia.Paper({
       el: jQuery('#paper'),
       width: this.paperWidth,
       height: this.paperHeight,
       model: this.graph,
       gridSize: 1,
+      /* It sets that the user can not interact with the embedded elements. */
       interactive: cellView => {
         return !cellView.model.isEmbedded();
       }
     });
   }
 
-  private countsStartPositions(): void {
+  private calculateNodesStarterYPosition(): void {
     if (this.numOfClouds > 0) {
       this.cloudsStartYpos = this.verticalSpaceBetweenLayers;
     }
@@ -287,7 +325,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     }
   }
 
-  private countsSpaces(): void {
+  private calculateSpaceBetweenNodes(): void {
     if (this.numOfClouds > 0) {
       this.sapceForClouds = (this.paperWidth - this.numOfClouds * this.nodeWidth) / (this.numOfClouds + 1);
     }
@@ -299,20 +337,21 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     }
   }
 
-  private setSizes(): void {
-    let paperMargin = 48; /*the static 24 px on left and add +24 for the right*/
+  private setConfigurationRelatedWidthsAndHeights(): void {
+    let paperMargin = this.PAPER_MARGIN_SUM_VALUE;
     if (window.innerWidth >= 1000) {
-      paperMargin += 150; /*sidenav*/
+      paperMargin += this.SIDENAV_HEIGHT;
     }
     this.paperWidth = window.innerWidth - paperMargin;
     this.paperHeight = window.innerHeight;
-    const computedNodeWidth = this.paperWidth / (this.getTheMaxQuantityOfNodes() * 2);
-    const computedNodeHeight = this.paperHeight / (this.getTheMaxQuantityOfNodes() * 2);
-    this.nodeWidth = computedNodeWidth > 75 ? 75 : computedNodeWidth;
-    this.nodeHeight = computedNodeHeight > 50 ? 50 : computedNodeHeight;
+    const largestQuantity = this.getTheMaxQuantityOfNodes();
+    const computedNodeWidth = this.paperWidth / (largestQuantity * 2);
+    const computedNodeHeight = this.paperHeight / (largestQuantity * 2);
+    this.nodeWidth = computedNodeWidth > this.MAX_NODE_WIDTH ? this.MAX_NODE_WIDTH : computedNodeWidth;
+    this.nodeHeight = computedNodeHeight > this.MAX_NODE_HEIGHT ? this.MAX_NODE_HEIGHT : computedNodeHeight;
   }
 
-  private setNodesQuantities(): void {
+  private setNodeObjectsWithQuantities(): void {
     this.clouds = this.getMultipleNodes(this.configurationService.computingNodes.clouds) as CloudNodesObject;
     this.fogs = this.getMultipleNodes(this.configurationService.computingNodes.fogs) as FogNodesObject;
     this.multipleStationNodes = this.getMultipleNodes(this.configurationService.stationNodes) as StationsObject;
@@ -429,6 +468,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Creates removing tool for the given link. It is needed becuase there are more than one type of link.
+   * @param link - connection view between 2 nodes
+   */
   private createLinkTools(link: joint.shapes.standard.Link) {
     const removeAction = (evt: joint.dia.Event, view: joint.dia.LinkView) => {
       view.model.remove({ ui: true });
@@ -463,6 +506,13 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Returns one image shape with the right properties and metadata.
+   * @param nodeId - the id of the node, it will add into the image shape as a metadata
+   * @param x - x position for drawing
+   * @param y - y position for drawing
+   * @param imageSrc - image
+   */
   private createImageNode(
     nodeId: string,
     x: number,
@@ -478,7 +528,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     });
     node.attr('image/xlinkHref', imageSrc);
     const [lon, lat] = this.convertXYCoordToLatLon(x, y);
-    node.attr('label/text', (nodeId as string).replace('station', 'devices') + '\n[' + `${lon}` + ',' + `${lat}` + ']');
+    node.attr('label/text', nodeId.replace('station', 'devices') + '\n[' + `${lon}` + ',' + `${lat}` + ']');
     node.attr('label/fontSize', '11');
     node.attributes.attrs.label.refY = '100%';
     node.attributes.attrs.label.refY2 = '1';
@@ -494,6 +544,11 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     return this.selectedNodeQueue.length === 2;
   }
 
+  /**
+   * It highlights the selected element on the paper and saves the data in the selectedNodeQueue.
+   * If the selectedNodeQueue has 2 elements, the first element will be throw away and will be unhighlighted.
+   * @param elementView - element from the paper, which should be selected
+   */
   private selectNode(elementView: joint.dia.ElementView): void {
     if (this.isQueueFull()) {
       const shiftedNode = this.selectedNodeQueue.shift();
@@ -532,7 +587,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     return cells;
   }
 
-  private countLayers(): number {
+  private countNodeLayers(): number {
     let numOfLayers = 0;
     if (this.numOfClouds && this.numOfClouds > 0) {
       numOfLayers++;
@@ -546,6 +601,9 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     return numOfLayers;
   }
 
+  /**
+   * Returns the number which is the largest quantity of the nodes (clouds, fogs, stations).
+   */
   private getTheMaxQuantityOfNodes(): number {
     const nums = [];
     if (this.numOfClouds) {
@@ -560,6 +618,12 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     return Math.max(...nums);
   }
 
+  /**
+   * It goes through the given object and it will add new elements to it,
+   * if the current node's quantity > 1 (as much as the value is greater than 1),
+   * to each node's quantity to be 1.
+   * @param nodes - Object which stores the nodes
+   */
   private getMultipleNodes(
     nodes: StationsObject | FogNodesObject | CloudNodesObject
   ): StationsObject | FogNodesObject | CloudNodesObject {
@@ -598,7 +662,17 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     return circle;
   }
 
-  private createNodesWithRangeInQueue(
+  /**
+   * Returns image shapes which will be in one row on the paper. It calculates the space between the nodes.
+   * It also adds a circle shape to the node, under the image shape.
+   * The radius value comes from the station object's radius property.
+   * @param items - items which should be shown
+   * @param space - space between the nodes
+   * @param startYpos - Y pos for the nodes
+   * @param imageUrl - node's image
+   * @param nodeType - the type of the nodes
+   */
+  private createNodesWithRangeInARow(
     items: StationsObject,
     space: number,
     startYpos: number,
@@ -629,7 +703,15 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     return nodes;
   }
 
-  private createNodesInQueue(
+  /**
+   * Returns image shapes which will be in one row on the paper. It calculates the space between the nodes.
+   * @param items - items which should be shown
+   * @param space - space between the nodes
+   * @param startYpos - Y pos for the nodes
+   * @param imageUrl - node's image
+   * @param nodeType - the type of the nodes
+   */
+  private createNodesInARow(
     items: CloudNodesObject | FogNodesObject,
     space: number,
     startYpos: number,
@@ -640,17 +722,19 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     const itemsLength = Object.keys(items).length;
     let counter = 0;
     if (itemsLength > 0) {
-      for (const [nodeId, node] of Object.entries(items)) {
+      for (const nodeId of Object.keys(items)) {
         const xPos = space + (counter * this.nodeWidth + space * counter);
         nodes.push(this.createImageNode(nodeId, xPos, startYpos, imageUrl, this.nodeWidth, this.nodeHeight, nodeType));
         counter++;
       }
     }
-
     return nodes;
   }
 
-  private createInitCongifuration(): void {
+  /**
+   * Creates the configuration object, which contains all the clouds, fogs, and stations.
+   */
+  private initCongifurationStorageObject(): void {
     this.configuration.nodes = {};
     for (const [id, node] of Object.entries(this.clouds)) {
       this.configuration.nodes[id] = { ...cloneDeep(node), neighbours: {} };
@@ -661,26 +745,33 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     this.configuration.stations = this.multipleStationNodes;
   }
 
+  /**
+   * It sets each other as a neighbour for the selected nodes
+   * @param latency - given value as distance between the nodes
+   */
   private createNeighbours(latency: number): void {
     const firstSelectedNodeId = this.selectedNodeQueue[0].nodeId;
     const secondSelectedNodeId = this.selectedNodeQueue[1].nodeId;
     if (this.configuration.nodes[firstSelectedNodeId] && this.configuration.nodes[secondSelectedNodeId]) {
-      const firstToSecond = {
+      const firstNodeNeighbour = {
         name: secondSelectedNodeId,
         latency,
         parent: this.selectedNodeQueue[0].parent === secondSelectedNodeId ? true : false
       } as Neighbour;
 
-      const secondToFirst = {
+      const secondNodeNeighbour = {
         name: firstSelectedNodeId,
         latency,
         parent: this.selectedNodeQueue[1].parent === firstSelectedNodeId ? true : false
       } as Neighbour;
-      this.configuration.nodes[firstSelectedNodeId].neighbours[secondSelectedNodeId] = firstToSecond;
-      this.configuration.nodes[secondSelectedNodeId].neighbours[firstSelectedNodeId] = secondToFirst;
+      this.configuration.nodes[firstSelectedNodeId].neighbours[secondSelectedNodeId] = firstNodeNeighbour;
+      this.configuration.nodes[secondSelectedNodeId].neighbours[firstSelectedNodeId] = secondNodeNeighbour;
     }
   }
 
+  /**
+   * Saves the nodes latest positions, sends a configuration request, and moves the stepper.
+   */
   public save(): void {
     this.graph.getCells().forEach(cell => {
       if (!cell.isLink() && cell.attributes.attrs.nodeId) {
@@ -695,7 +786,6 @@ export class ConnectionComponent implements OnInit, OnDestroy {
         }
       }
     });
-    console.log(this.configuration);
     this.userConfigurationService.sendConfiguration(this.configuration);
     this.stepperService.stepForward();
     this.graphScale = 1;

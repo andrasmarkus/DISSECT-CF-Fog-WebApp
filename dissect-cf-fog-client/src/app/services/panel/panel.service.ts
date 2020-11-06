@@ -10,25 +10,29 @@ import {
 } from 'src/app/models/info-panel-data';
 import { BehaviorSubject } from 'rxjs';
 
+/**
+ * This service controls the info panels, it is needed becasue
+ * more than one MatDrawer are used. The app dialog is using an other one.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class PanelService {
+  /**
+   * This Subject contains the actially relevant InfoPanelData which are depends on
+   * which info-icon was activated.
+   */
   public infoData$ = new BehaviorSubject<InfoPanelData>(undefined);
 
-  constructor() {}
-
   private mainDrawer: MatDrawer;
-  private dialogDrawer: MatDrawer;
   private selectedDrawer: MatDrawer;
 
-  public setMainDrawer(drawer: MatDrawer) {
+  public setDrawerAsMainDrawer(drawer: MatDrawer) {
     this.mainDrawer = drawer;
     this.selectedDrawer = drawer;
   }
 
-  public setDialogDrawer(drawer: MatDrawer) {
-    this.dialogDrawer = drawer;
+  public setSelectedDrawer(drawer: MatDrawer) {
     this.selectedDrawer = drawer;
   }
 

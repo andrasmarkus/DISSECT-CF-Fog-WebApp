@@ -7,8 +7,6 @@ import { MatStepper } from '@angular/material/stepper';
 export class StepperService {
   private matStepper: MatStepper;
 
-  constructor() {}
-
   public setStepper(stepper: MatStepper): void {
     this.matStepper = stepper;
   }

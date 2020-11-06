@@ -54,3 +54,13 @@ export interface ConfigurationResult {
 }
 
 export type ConfigurationFile = 'diagram' | 'appliances' | 'devices';
+
+export interface SignInResponse {
+  id: string;
+  email: string;
+  accessToken: string;
+}
+
+export interface SignUpResponse {
+  message: string;
+}

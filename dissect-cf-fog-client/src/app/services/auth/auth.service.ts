@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from 'src/app/models/user';
+import { SignInResponse, SignUpResponse } from 'src/app/models/server-api/server-api';
 
 const AUTH_API = 'http://localhost:3000/auth/';
 
@@ -15,9 +16,8 @@ const httpOptions = {
 export class AuthService {
   constructor(private http: HttpClient) {}
 
-  public login(credentials: User): Observable<any> {
-    //set return value
-    return this.http.post(
+  public login(credentials: User): Observable<SignInResponse> {
+    return this.http.post<SignInResponse>(
       AUTH_API + 'signin',
       {
         email: credentials.email,
@@ -27,9 +27,8 @@ export class AuthService {
     );
   }
 
-  public register(user: User): Observable<any> {
-    //set return value
-    return this.http.post(
+  public register(user: User): Observable<SignUpResponse> {
+    return this.http.post<SignUpResponse>(
       AUTH_API + 'signup',
       {
         email: user.email,

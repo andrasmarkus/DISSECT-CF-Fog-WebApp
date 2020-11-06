@@ -1,5 +1,6 @@
 <div fxLayout="column" fxLayoutAlign="space-around center">
   <form class="form-width">
+    <!-- Configuration of clouds -->
     <div class="node-warn-header">
       <h2 class="node-title">Number of clouds: {{numOfClouds}}</h2>
       <span class="warn-chip" *ngIf="quantityCounterService.getUndividedClouds() && quantityCounterService.getUndividedClouds() > 0">
@@ -9,7 +10,7 @@
     <ng-container *ngFor="let cloud of configurationService.computingNodes.clouds | keyvalue">
       <app-configurable-node
         [node]="cloud.value"
-        [resources]="nodeService.resources$ | async"
+        [resources]="resourceSelectionService.resources$ | async"
         (setComputingNode)="saveComputingNode($event)"
         (removeEmitter)="removeTypeOfNodes($event)"
       ></app-configurable-node>
@@ -22,6 +23,7 @@
       </div>
     </div>
     <mat-divider *ngIf="quantityCounterService.numOfFogs > 0" class="nodeType-divider"></mat-divider>
+    <!-- Configuration of fogs -->
     <div class="node-warn-header">
       <h2 *ngIf="quantityCounterService.numOfFogs > 0">Number of fogs: {{numOfFogs}}</h2>
       <span class="warn-chip"*ngIf="quantityCounterService.getUndividedFogs() && quantityCounterService.getUndividedFogs() > 0">
@@ -31,11 +33,11 @@
     <ng-container *ngFor="let fog of configurationService.computingNodes.fogs | keyvalue">
       <app-configurable-node
         [node]="fog.value"
-        [resources]="nodeService.resources$ | async"
+        [resources]="resourceSelectionService.resources$ | async"
         (setComputingNode)="saveComputingNode($event)"
         (removeEmitter)="removeTypeOfNodes($event)"
       ></app-configurable-node>
-  </ng-container>
+    </ng-container>
     <div class="plus-container">
       <div *ngIf="quantityCounterService.numOfFogs > 0"
         [ngClass]="{'plus-wrapper-disabled': quantityCounterService.getUndividedFogs() ===0}"
@@ -44,9 +46,10 @@
         <i class="fas fa-plus fa-3x plus-icon"></i>
       </div>
     </div>
+    <!-- Actions -->
     <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2%" class="action-toolbar">
       <button mat-raised-button matStepperPrevious color="accent">Back</button>
-      <button [disabled]="!readyToSave" mat-raised-button color="primary" (click)="checkIsReadyToNext()">
+      <button [disabled]="!readyToSave" mat-raised-button color="primary" (click)="checkReadyAndNext()">
         Next
       </button>
     </div>

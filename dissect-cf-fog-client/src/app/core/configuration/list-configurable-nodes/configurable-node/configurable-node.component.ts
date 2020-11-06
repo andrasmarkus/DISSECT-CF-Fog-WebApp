@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroupDirective, ControlContainer, Validators, FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ApplicationsDialogComponent } from './applications-dialog/applications-dialog.component';
 import { ApplicationsObject } from 'src/app/models/application';
 import { ComputingNode } from 'src/app/models/computing-node';
@@ -9,6 +9,7 @@ import { PanelService } from 'src/app/services/panel/panel.service';
 import { WindowSizeService } from 'src/app/services/window-size/window-size.service';
 import { QuantityCounterService } from 'src/app/services/configuration/quantity-counter/quantity-counter.service';
 import { Resource } from 'src/app/models/server-api/server-api';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-configurable-node',
@@ -16,24 +17,39 @@ import { Resource } from 'src/app/models/server-api/server-api';
   styleUrls: ['./configurable-node.component.css'],
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }]
 })
-export class ConfigurableNodeComponent implements OnChanges {
+export class ConfigurableNodeComponent implements OnChanges, OnDestroy {
   @Input() public resources: Resource[];
   @Input() public node: ComputingNode;
+  /**
+   *  This emits a node to the parent to save it.
+   */
   @Output() public readonly setComputingNode = new EventEmitter<ComputingNode>();
+  /**
+   *  This emits node id when the user want to remove this node from the list.
+   */
   @Output() public readonly removeEmitter = new EventEmitter<string>();
 
+  /**
+   * This tells that the whole node configuration can be finished.
+   */
   public statusIcon: string;
+  /**
+   * This tells that the node's configured applications can be finished, and saved.
+   */
   public appsStatusIcon: string;
   public selectedResource: Resource;
   public nodeCardForm: FormGroup;
-  public numOfApps = 0;
   public nodeIcon: string;
   public errorTooltip: string;
   public showErrorTooltip = true;
+  public readonly maxTooltipp: string;
 
+  private appsNumberInputSub: Subscription;
+  private formChangeSub: Subscription;
+  private dialogCloseSub: Subscription;
+  private dialogRef: MatDialogRef<ApplicationsDialogComponent, any>;
   private readonly ASSESTS_URL = '../../../../assets/';
   private readonly maxApplicationsQuantity = 10;
-  public readonly maxTooltipp: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -43,15 +59,60 @@ export class ConfigurableNodeComponent implements OnChanges {
     public windowService: WindowSizeService
   ) {
     this.maxTooltipp = StringUtlis.MAX_TOOLTIP.replace('{0}', '' + this.maxApplicationsQuantity);
+    this.initForm();
+    this.appsNumberInputSub = this.nodeCardForm.controls.numOfApplications.valueChanges.subscribe(
+      (newValue: number) => {
+        if (this.node.applications) {
+          const oldValue = this.nodeCardForm.value.numOfApplications;
+          const isNewSmallerThanOldAndNotZero = oldValue > newValue && newValue !== 0;
+          const isTheOldZeroAndThereAreMoreAppsThanTheNew =
+            oldValue === 0 && Object.keys(this.node.applications).length > newValue;
+          if (isNewSmallerThanOldAndNotZero || isTheOldZeroAndThereAreMoreAppsThanTheNew) {
+            this.node.applications = this.updateAppsObject(this.node.applications, newValue);
+          }
+        }
+      }
+    );
+
+    this.formChangeSub = this.nodeCardForm.valueChanges.subscribe(value => {
+      this.saveNodeInParent(value.allAppsConfigured);
+    });
   }
 
-  //needed because the keyvalue pipe always return new value
-  ngOnChanges(): void {
-    this.initNode();
+  public ngOnDestroy(): void {
+    this.appsNumberInputSub?.unsubscribe();
+    this.formChangeSub?.unsubscribe();
+    this.dialogCloseSub?.unsubscribe();
   }
 
-  private initNode() {
-    this.numOfApps = this.node.applications ? Object.keys(this.node.applications).length : 0;
+  public ngOnChanges(changes: SimpleChanges): void {
+    if (changes.node) {
+      this.adjestNodeProperties();
+      if (this.nodeCardForm) {
+        this.updateForm();
+      }
+    }
+  }
+
+  private updateForm(): void {
+    const newValue = {
+      numOfApplications: this.node.applications ? Object.keys(this.node.applications).length : 0,
+      allAppsConfigured: this.checkAllAppsAreConfigured(),
+      quantity: this.node.quantity
+    };
+    this.nodeCardForm.patchValue(newValue);
+  }
+
+  private setNumOfApplications(value: number): void {
+    this.nodeCardForm.get('numOfApplications').setValue(value);
+  }
+
+  private getNumOfApplications(): number {
+    return this.nodeCardForm.get('numOfApplications').value;
+  }
+
+  private adjestNodeProperties() {
+    this.setNumOfApplications(this.node.applications ? Object.keys(this.node.applications).length : 0);
     if (!this.node.applications) {
       this.node.applications = {};
     }
@@ -59,17 +120,13 @@ export class ConfigurableNodeComponent implements OnChanges {
     this.nodeIcon = this.node.isCloud
       ? this.ASSESTS_URL + StringUtlis.CLOUD_ICON
       : this.ASSESTS_URL + StringUtlis.FOG_ICON;
-    this.initForm();
-    this.statusIcon = this.isNodevalid()
+    this.statusIcon = this.isNodeValid()
       ? this.ASSESTS_URL + StringUtlis.CONFIGURED_ICON
       : this.ASSESTS_URL + StringUtlis.NOT_CONFIGURED_ICON;
     this.appsStatusIcon = this.checkAllAppsAreConfigured() ? StringUtlis.SET_APPS_ICON : StringUtlis.UNSET_APPS_ICON;
-
-    this.numOfAppsInputListener();
-    this.nodeFormListener();
   }
 
-  onChange(): void {
+  public onChange(): void {
     if (this.areAppsValidOnInputChange()) {
       this.appsStatusIcon = StringUtlis.SET_APPS_ICON;
       this.node.isConfigured = true;
@@ -80,9 +137,9 @@ export class ConfigurableNodeComponent implements OnChanges {
       this.node.isConfigured = false;
       this.nodeCardForm.controls.allAppsConfigured.setValue(false);
       this.showErrorTooltip = true;
-      if (this.numOfApps > this.maxApplicationsQuantity) {
+      if (this.getNumOfApplications() > this.maxApplicationsQuantity) {
         this.errorTooltip = this.maxTooltipp;
-      } else if (this.numOfApps === 0) {
+      } else if (this.getNumOfApplications() === 0) {
         this.errorTooltip = StringUtlis.INVALID_TOOLTIP;
       } else {
         this.errorTooltip = StringUtlis.UNSET_APPS_TOOLTIP;
@@ -91,49 +148,60 @@ export class ConfigurableNodeComponent implements OnChanges {
   }
 
   private areAppsValidOnInputChange() {
+    const numOfApps = this.getNumOfApplications();
     return (
-      (this.numOfApps === Object.keys(this.node.applications).length ||
-        this.numOfApps < Object.keys(this.node.applications).length) &&
+      (numOfApps === Object.keys(this.node.applications).length ||
+        numOfApps < Object.keys(this.node.applications).length) &&
       this.nodeCardForm.valid &&
       !Object.values(this.node.applications).find(app => !app.isConfigured)
     );
   }
 
-  openDialog(): void {
-    const dialogRef = this.dialog.open(ApplicationsDialogComponent, {
+  public openDialog(): void {
+    this.dialogCloseSub?.unsubscribe();
+    this.dialogRef = this.dialog.open(ApplicationsDialogComponent, {
       panelClass: 'applications-dialog-panel',
       disableClose: true,
       maxWidth: '100%',
       width: this.windowService.calculateWidthForApplicationDialog(),
       height: '90%',
-      data: { nodeId: this.node.id, numOfApps: this.numOfApps, applications: this.node.applications }
+      data: { nodeId: this.node.id, numOfApps: this.getNumOfApplications(), applications: this.node.applications }
     });
+    this.dialogClose();
+  }
 
-    dialogRef.afterClosed().subscribe((result: { applications: ApplicationsObject; valid: boolean }) => {
-      this.panelService.setSelectedDrawerBacktoMainDrawer();
-      if (result) {
-        this.node.applications = result.applications;
-        if (
-          !result.valid ||
-          !this.nodeCardForm.valid ||
-          Object.keys(this.node.applications).length !== this.numOfApps
-        ) {
-          this.nodeCardForm.controls.allAppsConfigured.setValue(false);
-          this.appsStatusIcon = StringUtlis.UNSET_APPS_ICON;
-          this.showErrorTooltip = true;
-        } else {
-          this.nodeCardForm.controls.allAppsConfigured.setValue(true);
-          this.appsStatusIcon = StringUtlis.SET_APPS_ICON;
-          this.showErrorTooltip = false;
+  private dialogClose(): void {
+    this.dialogCloseSub = this.dialogRef
+      ?.afterClosed()
+      .subscribe((result: { applications: ApplicationsObject; valid: boolean }) => {
+        this.panelService.setSelectedDrawerBacktoMainDrawer();
+        if (result) {
+          this.node.applications = result.applications;
+          if (this.allAppsConfiguredAfterDialogClose(result)) {
+            this.nodeCardForm.controls.allAppsConfigured.setValue(false);
+            this.appsStatusIcon = StringUtlis.UNSET_APPS_ICON;
+            this.showErrorTooltip = true;
+          } else {
+            this.nodeCardForm.controls.allAppsConfigured.setValue(true);
+            this.appsStatusIcon = StringUtlis.SET_APPS_ICON;
+            this.showErrorTooltip = false;
+          }
         }
-      }
-    });
+      });
+  }
+
+  private allAppsConfiguredAfterDialogClose(result: { applications: ApplicationsObject; valid: boolean }): boolean {
+    return (
+      !result.valid ||
+      !this.nodeCardForm.valid ||
+      Object.keys(this.node.applications).length !== this.getNumOfApplications()
+    );
   }
 
   private initForm(): void {
     this.nodeCardForm = this.formBuilder.group({
       numOfApplications: [
-        this.node.applications ? Object.keys(this.node.applications).length : 0,
+        0,
         [
           Validators.required,
           Validators.max(this.maxApplicationsQuantity),
@@ -141,58 +209,48 @@ export class ConfigurableNodeComponent implements OnChanges {
           Validators.min(1)
         ]
       ],
-      allAppsConfigured: this.checkAllAppsAreConfigured(),
-      quantity: [this.node.quantity, [Validators.min(1)]]
+      allAppsConfigured: false,
+      quantity: [1, [Validators.min(1)]]
     });
   }
 
   private checkAllAppsAreConfigured(): boolean {
+    const numOfApps = this.getNumOfApplications();
     return (
-      this.node.applications && this.numOfApps > 0 && Object.keys(this.node.applications).length === this.numOfApps
+      this.node.applications &&
+      numOfApps > 0 &&
+      Object.keys(this.node.applications).length === numOfApps &&
+      !Object.values(this.node.applications).some(app => !app.isConfigured)
     );
   }
 
-  private isNodevalid(): boolean {
+  private isNodeValid(): boolean {
     return this.checkAllAppsAreConfigured() && this.node.isConfigured && this.nodeCardForm.valid;
-  }
-
-  private nodeFormListener(): void {
-    this.nodeCardForm.valueChanges.subscribe(value => {
-      this.saveNodeInParent(value.allAppsConfigured);
-    });
   }
 
   private saveNodeInParent(allAppsConfigured: boolean) {
     if (allAppsConfigured && this.selectedResource) {
       this.node.isConfigured = true;
-      this.setNodeProperties();
+      this.node.resource = this.selectedResource;
       this.setComputingNode.emit(this.node);
       this.statusIcon = this.ASSESTS_URL + StringUtlis.CONFIGURED_ICON;
     } else {
       this.node.isConfigured = false;
-      this.setNodeProperties();
+      this.node.resource = this.selectedResource;
       this.setComputingNode.emit(this.node);
       this.statusIcon = this.ASSESTS_URL + StringUtlis.NOT_CONFIGURED_ICON;
     }
-  }
-
-  private numOfAppsInputListener() {
-    this.nodeCardForm.controls.numOfApplications.valueChanges.subscribe((newValue: number) => {
-      const oldValue = this.nodeCardForm.value.numOfApplications;
-      if (oldValue > newValue && newValue !== 0) {
-        this.node.applications = this.updateAppsObject(this.node.applications, newValue);
-      }
-    });
   }
 
   public onResourceChange() {
     this.saveNodeInParent(this.nodeCardForm.controls.allAppsConfigured.value);
   }
 
-  private setNodeProperties(): void {
-    this.node.resource = this.selectedResource;
-  }
-
+  /**
+   * It goes through the object and retains as many apps as the given value.
+   * @param nodes - object which contains apps
+   * @param currentValue - the entered number for apps
+   */
   private updateAppsObject(apps: ApplicationsObject, currentValue: number): ApplicationsObject {
     const restOfTheNodes = {};
     let index = 0;
@@ -208,7 +266,7 @@ export class ConfigurableNodeComponent implements OnChanges {
     return restOfTheNodes;
   }
 
-  decrease() {
+  public decrease(): void {
     if (this.node.isCloud) {
       if (this.quantityCounterService.decreseClouds(this.node.quantity)) {
         this.node.quantity--;
@@ -221,7 +279,8 @@ export class ConfigurableNodeComponent implements OnChanges {
       }
     }
   }
-  increase() {
+
+  public increase(): void {
     if (this.node.isCloud) {
       if (this.quantityCounterService.increaseClouds()) {
         this.node.quantity++;

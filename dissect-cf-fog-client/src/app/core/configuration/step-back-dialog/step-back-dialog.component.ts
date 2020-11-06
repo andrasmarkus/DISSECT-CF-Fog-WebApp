@@ -6,18 +6,18 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   templateUrl: './step-back-dialog.component.html',
   styleUrls: ['./step-back-dialog.component.css']
 })
-export class StepBackDialogComponent implements OnInit {
+export class StepBackDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<StepBackDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { okAction: boolean }
   ) {}
 
-  ngOnInit(): void {}
-  closeDialog() {
+  public closeDialog(): void {
     this.data.okAction = false;
     this.dialogRef.close(this.data);
   }
-  dicardChanges() {
+
+  public dicardChanges(): void {
     this.data.okAction = true;
     this.dialogRef.close(this.data);
   }

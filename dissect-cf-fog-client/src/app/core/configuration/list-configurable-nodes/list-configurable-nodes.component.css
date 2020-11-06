@@ -33,11 +33,7 @@
 }
 
 .plus-wrapper-disabled{
-  background-color: white;
-}
-
-.plus-wrapper-disabled:hover{
-  background-color: white;
+  display: none;
 }
 
 .plus-icon{

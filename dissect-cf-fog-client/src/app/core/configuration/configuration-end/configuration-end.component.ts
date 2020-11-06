@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
 import { PanelService } from 'src/app/services/panel/panel.service';
@@ -14,13 +14,12 @@ import { ConfigurationResult } from 'src/app/models/server-api/server-api';
 export class ConfigurationEndComponent {
   @Input() public showSpinner = false;
   public configResult: ConfigurationResult;
-  private resultSub: Subscription;
   public showActions = false;
+  private resultSub: Subscription;
 
   constructor(
     public configService: UserConfigurationService,
     public stepperService: StepperService,
-    private changeDetectorRef: ChangeDetectorRef,
     private panelService: PanelService
   ) {}
 
@@ -29,7 +28,7 @@ export class ConfigurationEndComponent {
     this.stepperService.stepBack();
   }
 
-  public openPanelInfoForConfigurationError() {
+  public openPanelInfoForConfigurationError(): void {
     this.panelService.getConfigurationErrorData();
     this.panelService.toogle();
   }

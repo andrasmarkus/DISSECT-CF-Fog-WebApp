@@ -10,24 +10,24 @@ import { StationsObject, Station } from 'src/app/models/station';
 export class ConfigurationStateService {
   public maxNumOfNodes = 10;
 
-  public generateGraphSubject: Subject<any> = new Subject();
+  private generateGraphSubject = new Subject();
   public generateGraph$ = this.generateGraphSubject.asObservable();
 
-  public passStationSubject: Subject<any> = new Subject();
-  public passStation$ = this.passStationSubject.asObservable();
+  private stationChangedSubject = new Subject();
+  public stationsChanged$ = this.stationChangedSubject.asObservable();
 
   public nodesQuantity$ = new BehaviorSubject<ComputingNodesQuantityData>(undefined);
+  /**
+   * This contains the computing nodes (clouds, fogs) which is actially configured.
+   */
   public computingNodes: ComputingNodesObject = { clouds: {}, fogs: {} };
+  /**
+   * This contains the stations which is actially configured.
+   */
   public stationNodes: StationsObject = {};
-
-  constructor() {}
 
   public setNodesQuantity(quantity: ComputingNodesQuantityData) {
     this.nodesQuantity$.next(quantity);
-  }
-
-  public saveStation(station: Station): void {
-    this.stationNodes[station.id] = station;
   }
 
   public getStationArray(): Station[] {
@@ -36,5 +36,13 @@ export class ConfigurationStateService {
       stations.push(stat);
     }
     return stations;
+  }
+
+  public generateGraph(): void {
+    this.generateGraphSubject.next();
+  }
+
+  public changeStations(): void {
+    this.stationChangedSubject.next();
   }
 }

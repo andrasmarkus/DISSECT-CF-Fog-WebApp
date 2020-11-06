@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -6,7 +6,6 @@ import { Observable } from 'rxjs';
 import { UserConfigurationDetails } from 'src/app/models/server-api/server-api';
 import { UserConfigurationService } from 'src/app/services/configuration/user-configuration/user-configuration.service';
 import { map } from 'rxjs/operators';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-configurations',
@@ -16,15 +15,18 @@ import { Router } from '@angular/router';
 export class UserConfigurationsComponent implements AfterViewInit {
   public displayedColumns: string[] = ['time', 'clouds', 'fogs', 'devices', 'actions'];
   public userConfigurationsDetails$: Observable<MatTableDataSource<UserConfigurationDetails>>;
+  /**
+   * Tells that one of the configuration is selected to watch the result.
+   */
   public isConfigSelected = false;
   public configDirName: string;
   @ViewChild(MatSort) public sort: MatSort;
   @ViewChild(MatPaginator) public paginator: MatPaginator;
 
-  constructor(public userConfigurationService: UserConfigurationService, private router: Router) {}
+  constructor(public userConfigurationService: UserConfigurationService) {}
 
   public ngAfterViewInit(): void {
-    this.userConfigurationsDetails$ = this.userConfigurationService.userConfigurationsDetails$.pipe(
+    this.userConfigurationsDetails$ = this.userConfigurationService.getUserConfigurationsDetails().pipe(
       map(details => new MatTableDataSource(details)),
       map(details => {
         if (details && this.sort && this.paginator) {

@@ -1,6 +1,7 @@
  <mat-card class="card">
   <form [formGroup]="nodeCardForm">
     <div class="container">
+      <!-- Node icon / If the window is too small it will contain the status icon too-->
       <div class="node-icon node-header">
         <img alt="node-icon" class="node-icon-img" [src]="nodeIcon">
         <div class="top-status">
@@ -8,6 +9,7 @@
         </div>
       </div>
       <div class="configuration-tools">
+        <!-- Resource selection with info button-->
         <div class="resource">
           <mat-form-field class="resource-selector">
             <mat-label>Resource file</mat-label>
@@ -22,6 +24,7 @@
             <i class="fas fa-info-circle fa-lg"></i>
           </button>
         </div>
+        <!-- Applications -->
         <div class="configure-apps">
           <div fxLayout="column" fxLayoutAlign="space-around center">
             <label>Applications</label>
@@ -30,7 +33,6 @@
                 class="setText-center"
                 matInput
                 type="number"
-                [(ngModel)]="numOfApps"
                 (keyup)="onChange()"
                 formControlName="numOfApplications"
               />
@@ -47,13 +49,17 @@
             </button>
           </div>
         </div>
+        <!-- Node actions -->
         <div class="quantity-container">
           <mat-divider vertical="true"></mat-divider>
-          <button mat-icon-button (click)="decrease()">
+          <button [disabled]="node.quantity === 1" mat-icon-button (click)="decrease()">
             <i class="fas fa-minus"></i>
           </button>
           <input matInput class="quantity-input" type="number" readonly="true" [value]="node.quantity"/>
-          <button mat-icon-button (click)="increase()">
+          <button
+            [disabled]=" node.isCloud ?
+              quantityCounterService.getUndividedClouds() === 0 : quantityCounterService.getUndividedFogs() === 0"
+            mat-icon-button (click)="increase()">
             <i class="fas fa-plus"></i>
           </button>
           <mat-divider vertical="true"></mat-divider>
@@ -63,6 +69,7 @@
           <mat-divider vertical="true"></mat-divider>
         </div>
       </div>
+      <!-- Status icon in normal way -->
       <div class="bottom-status">
         <img alt="status" class="status-icon-img" [src]="statusIcon">
       </div>

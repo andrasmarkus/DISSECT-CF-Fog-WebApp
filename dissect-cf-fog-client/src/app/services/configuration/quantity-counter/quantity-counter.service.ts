@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
 
+/**
+ * This service keeps track of the current amount of clouds and fogs.
+ * Stores how many nodes are selected for configuration and how many are still missing.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -9,8 +13,6 @@ export class QuantityCounterService {
   public dividedClouds: number;
   public dividedFogs: number;
 
-  constructor() {}
-
   public setNodeQuantities(nOfClouds: number, nOfFogs: number, divClouds: number, divFogs: number) {
     this.numOfClouds = nOfClouds;
     this.numOfFogs = nOfFogs;
@@ -18,10 +20,16 @@ export class QuantityCounterService {
     this.dividedFogs = divFogs;
   }
 
+  /**
+   * Returns how many clouds are left that are not yet selected for configuration.
+   */
   public getUndividedClouds(): number {
     return this.numOfClouds - this.dividedClouds;
   }
 
+  /**
+   * Returns how many fogs are left that are not yet selected for configuration.
+   */
   public getUndividedFogs(): number {
     return this.numOfFogs - this.dividedFogs;
   }

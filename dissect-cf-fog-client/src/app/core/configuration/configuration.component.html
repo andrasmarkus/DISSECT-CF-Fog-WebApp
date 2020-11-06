@@ -1,8 +1,10 @@
 <mat-drawer-container hasBackdrop="false" class="drawer">
+  <!-- Info panel -->
   <mat-drawer #drawer class="info-panel" mode="over" position="end">
     <app-info-panel [infoData]="panelService.infoData$ | async"></app-info-panel>
   </mat-drawer>
   <div>
+    <!-- Configuration stepper -->
     <mat-horizontal-stepper (animationDone)="stepperDone()" [linear]="isLinear" #stepper>
       <mat-step>
         <ng-template matStepLabel><span class="step-title">Quantity</span></ng-template>

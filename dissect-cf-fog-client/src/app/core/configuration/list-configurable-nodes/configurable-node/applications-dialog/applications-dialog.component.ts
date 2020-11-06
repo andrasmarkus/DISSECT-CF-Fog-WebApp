@@ -23,7 +23,7 @@ import { PanelService } from 'src/app/services/panel/panel.service';
 export class ApplicationsDialogComponent implements OnInit, AfterViewChecked, AfterViewInit {
   public appIndex = 0;
 
-  @ViewChildren(ApplicationCardComponent) applicationCards: QueryList<ApplicationCardComponent>;
+  @ViewChildren(ApplicationCardComponent) public applicationCards: QueryList<ApplicationCardComponent>;
   @ViewChild('drawer') public drawer: MatDrawer;
 
   constructor(
@@ -49,7 +49,7 @@ export class ApplicationsDialogComponent implements OnInit, AfterViewChecked, Af
 
   public ngAfterViewInit(): void {
     if (this.drawer) {
-      this.panelService.setDialogDrawer(this.drawer);
+      this.panelService.setSelectedDrawer(this.drawer);
     }
   }
 
