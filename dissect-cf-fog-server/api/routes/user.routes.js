@@ -2,11 +2,13 @@ const authJwt = require("../../middleware").authJwt;
 const controller = require("../../controllers/user.controller");
 const express = require('express');
 const router = express.Router({caseSensitive:true});
-const fs = require('fs');
 const parser = require('fast-xml-parser');
 const { isEmpty } = require('lodash');
 const apiUtils = require('../util');
 
+const BASE_DIR = './configurations/users_configurations/';
+
+/* Sets the response header. */
 router.use((req, res, next)=>{
   res.header(
     "Access-Control-Allow-Headers",
@@ -15,10 +17,12 @@ router.use((req, res, next)=>{
   next();
 });
 
-const BASE_DIR = './configurations/users_configurations/';
-
 router.get("/", [authJwt.verifyToken], controller.getAllUser);
 
+/**
+ * It sends the configuration deatils with 200 status.
+ * If the email is missing, it will send 404 response with message.
+ */
 router.post("/configurations", [authJwt.verifyToken], (req, res , next)=> {
   if(isEmpty(req.body.email)){
     return res.status(404).send({message:'Bad request!'})
@@ -27,7 +31,7 @@ router.post("/configurations", [authJwt.verifyToken], (req, res , next)=> {
   const dirs = apiUtils.readDirSyncWithErrorHandling(BASE_DIR+userEmail, true).filter(dirent => dirent.isDirectory())
     .map(dirent => dirent.name);
 
-  const details = getConfigurationDetails(dirs, userEmail, res);
+  const details = getConfigurationDetails(dirs, userEmail);
   return res.status(200).json(details);
 });
 
@@ -47,18 +51,24 @@ router.post("/configurations/download/diagram", [authJwt.verifyToken], (req, res
   return sendFile(req, res, 'diagram');
 });
 
-
-function getConfigurationDetails(dirs, userEmail, res) {
+/**
+ * Returns configuration details. Finds the user folder by the given email and counts all details in the drectory,
+ * by reading files in sync.
+ * @param {string[]} dirs - user's directories
+ * @param {string} userEmail - it determines, which folder is
+ */
+function getConfigurationDetails(dirs, userEmail) {
   const details = [];
   for (const dirName of dirs) {
     const dateTime = getDateTimeStringFromDirName(dirName);
     const dirPath = BASE_DIR + userEmail + '/' + dirName;
 
     const appliacesData = apiUtils.readFileSyncWithErrorHandling(dirPath + '/appliances.xml');
+    console.log('READ: file: ', dirPath + '/appliances.xml');
     const appliances = parser.parse(appliacesData.toString(), apiUtils.getParserOptions());
     let numOfClouds;
     let numOfFogs;
-    if(appliances.appliances.appliance.length){
+    if(appliances.appliances.appliance instanceof Array){
       numOfClouds = appliances.appliances.appliance.filter(node => node.name.startsWith('cloud')).length;
       numOfFogs = appliances.appliances.appliance.filter(node => node.name.startsWith('fog')).length;
     }else{
@@ -67,7 +77,7 @@ function getConfigurationDetails(dirs, userEmail, res) {
     }
 
     const devicesData = apiUtils.readFileSyncWithErrorHandling(dirPath + '/devices.xml');
-
+    console.log('READ: file: ', dirPath + '/devices.xml');
     const devices = parser.parse(devicesData.toString(), apiUtils.getParserOptions());
 
     details.push({
@@ -75,12 +85,16 @@ function getConfigurationDetails(dirs, userEmail, res) {
       time: dateTime,
       clouds: numOfClouds,
       fogs: numOfFogs,
-      devices: devices.devices.device.length ? devices.devices.device.length : 1
+      devices: devices.devices.device instanceof Array ? devices.devices.device.length : 1
     });
   }
   return details;
 }
 
+/**
+ * Parses the dirname to readable time string.
+ * @param {string} dirName
+ */
 function getDateTimeStringFromDirName(dirName) {
   const stamp = dirName.split('_');
   const date = stamp[0];
@@ -89,6 +103,13 @@ function getDateTimeStringFromDirName(dirName) {
   return dateTime;
 }
 
+/**
+ * Sends the specific file by given name, which can be downloaded on client side.
+ * The request should contain the eamil and the directory.
+ * @param {Request} req - request
+ * @param {Response} res - response
+ * @param {string} fileName
+ */
 function sendFile(req, res, fileName) {
   checkResourceRequsetBody(req, res);
   const userEmail = req.body.email;
@@ -100,9 +121,16 @@ function sendFile(req, res, fileName) {
   }else{
     filePath += fileName +'.xml';
   }
+  console.log('DOWNLOAD: ', filePath);
   return res.download(filePath);
 }
 
+/**
+ * Sends the directory's name, the scanned html file in string format and also the error message with 200 status.
+ * The request should contain the eamil and the directory.
+ * @param {Request} req - request
+ * @param {Response} res - response
+ */
 function sendResult(req, res) {
   checkResourceRequsetBody(req, res);
   const userEmail = req.body.email;
@@ -112,10 +140,17 @@ function sendResult(req, res) {
   const htmlFilePath = dirPath + '/' + lastFileName;
   const stdOutPath = dirPath + '/' + 'stdout.txt';
   const htmlFile = apiUtils.readFileSyncWithErrorHandling(htmlFilePath);
+  console.log('READ: file: ', htmlFilePath);
   const stdOut = apiUtils.readFileSyncWithErrorHandling(stdOutPath);
+  console.log('READ: file: ', stdOutPath);
   return res.status(200).json({directory, html: htmlFile.toString(), data: stdOut.toString(), err:null});
 }
 
+/**
+ * Checks the request contain the user's email and the selected directory, if not it will send 404 with a message.
+ * @param {Request} req - request
+ * @param {Response} res - response
+ */
 function checkResourceRequsetBody(req, res){
   if(isEmpty(req.body.email) || isEmpty(req.body.directory)){
     return res.status(404).send({message:'Bad request!'})

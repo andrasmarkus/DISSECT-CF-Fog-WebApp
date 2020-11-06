@@ -11,6 +11,9 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
+/**
+ * It handles the CORS problems.
+ */
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin','*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, X-Access-Token, Content-Type, Accept, Authorization');
@@ -21,24 +24,30 @@ app.use((req, res, next) => {
   next();
 });
 
+/* Adds the API routes */
 app.use('/auth', authorizationRoute);
 app.use('/user', userRoute);
 app.use('/configuration', configRoute);
 app.use('/properties', propertiesRoute);
 
-/* Error message when the response not found */
+/**
+ * Error message when the response not found.
+ */
 app.use((req, res, next) => {
     const error = new Error('The endpoint is not found!');
     next(error);
 });
 
-/* Error message about any other errors */
+/**
+ * Error message about any other errors.
+ * The line property should be commented out in prod mode.
+ */
 app.use((error, req, res, next) => {
     res.status(error.status || 500);
     res.json({
         error: {
             message:error.message,
-            line: error.stack
+            //line: error.stack
         }
     })
 });

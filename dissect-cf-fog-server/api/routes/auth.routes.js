@@ -3,7 +3,7 @@ const controller = require("../../controllers/auth.controller");
 const express = require('express');
 const router = express.Router({caseSensitive:true});
 
-
+/* Sets the response header. */
 router.use((req, res, next)=>{
   res.header(
     "Access-Control-Allow-Headers",

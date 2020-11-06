@@ -2,6 +2,15 @@ const db = require("../models");
 
 const User = db.user;
 
+/**
+ * Checks the user email exicts in database. If it is, it will forward the request.
+ * Responses:
+ * - 400 - email already used!
+ * - 500 - other
+ * @param {Request} req - request
+ * @param {Response} res - response
+ * @param {Function} next - forwards it
+ */
 const checkSignUp = (req, res, next) => {
   User.findOne({
     where: {
@@ -9,7 +18,6 @@ const checkSignUp = (req, res, next) => {
     }
   }).then(user => {
     if (user) {
-      console.log(user);
       res.status(400).send({
         message: "Failed! E-mail is already in use!"
       });

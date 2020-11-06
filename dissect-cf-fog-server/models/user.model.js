@@ -1,10 +1,16 @@
-module.exports = (sequelize, Sequelize) => {
-  const User = sequelize.define("users", {
+
+/**
+ * It creates User schema with Sequelize library with the given configuration options.
+ * @param sequelizeConfig
+ * @param  Sequelize
+ */
+module.exports = (sequelizeConfig, sequelize) => {
+  const User = sequelizeConfig.define("users", {
     email: {
-      type: Sequelize.STRING
+      type: sequelize.STRING
     },
     password: {
-      type: Sequelize.STRING
+      type: sequelize.STRING
     }
   });
 

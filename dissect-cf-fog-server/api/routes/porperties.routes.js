@@ -6,6 +6,7 @@ const parser = require('fast-xml-parser');
 const nodeDir = require('node-dir');
 const apiUtils = require('../util');
 
+/* Sets the response header. */
 router.use((req, res, next)=>{
   res.header(
     "Access-Control-Allow-Headers",
@@ -14,33 +15,48 @@ router.use((req, res, next)=>{
   next();
 });
 
-router.get("/strategies", [authJwt.verifyToken], (req, res , next) => {
-  fs.readFile('configurations/strategies/Strategies.xml', (err,data) =>  {
-    if (err) {
-      throw new Error('Can not read the file!');
-    }
-    const jsonObj = parser.parse(data.toString(),apiUtils.getParserOptions());
-    res.status(200).json(jsonObj.strategies);
-  });
+/**
+ * It sends the strategies from scanned file with 200 status.
+ * Throws error if some error is occured.
+ */
+router.get("/strategies/application", [authJwt.verifyToken], (req, res , next) => {
+  const jsonObj = getResourceByPath('configurations/strategies/Application-strategies.xml');
+  const result = jsonObj.strategies.strategy instanceof Array ?
+    jsonObj.strategies : {strategy: [jsonObj.strategies.strategy]};
+  res.status(200).json(result);
 });
 
+router.get("/strategies/device", [authJwt.verifyToken], (req, res , next) => {
+  const jsonObj = getResourceByPath('configurations/strategies/Device-strategies.xml');
+  const result = jsonObj.strategies.strategy instanceof Array ?
+    jsonObj.strategies : { strategy: [jsonObj.strategies.strategy]};
+  res.status(200).json(result);
+});
+
+/**
+ * It sends the instances from scanned file with 200 status.
+ * Throws error if some error is occured.
+ */
 router.get("/instances", [authJwt.verifyToken], (req, res , next) => {
-  fs.readFile('configurations/instances/Instances.xml', (err,data) =>  {
-    if (err) {
-      throw new Error('Can not read the file!');
-    }
-    const jsonObj = parser.parse(data.toString(),apiUtils.getParserOptions());
-    res.status(200).json(jsonObj.instances);
-  });
+  const jsonObj = getResourceByPath('configurations/instances/Instances.xml');
+  const result = jsonObj.instances.instance instanceof Array ?
+    jsonObj.instances : { instance: [jsonObj.instances.instance]};
+  res.status(200).json(result);
 });
 
+/**
+ * It sends the instances from scanned files with 200 status.
+ * Throws error if some error is occured.
+ */
 router.get("/resources", [authJwt.verifyToken], (req, res , next) => {
   const data = []
   nodeDir.readFiles('configurations/resources/',
   (err, content, filePath, nextFile) => {
     if (err){
+      console.log('ERROR: Failed to get the file: ', filePath);
       throw new Error('Can not read the file!');
     }
+    console.log('READ: file: ', filePath);
     const jsonObj = parser.parse(content.toString(), apiUtils.getParserOptions());
     const resource = {
       name: getFileNameFromFilePath(filePath),
@@ -52,13 +68,29 @@ router.get("/resources", [authJwt.verifyToken], (req, res , next) => {
   },
   (err, files)=>{
       if (err){
-        throw new Error('Can not read the file!');
+        console.log('ERROR: Failed to get the files: ', files);
+        throw new Error('Can not read the files!');
       }
       return res.status(200).json(data);
   });
 });
 
 module.exports = router;
+
+/**
+ * Returns parsed scanned file.
+ * @param {sring} path 
+ */
+function getResourceByPath(path) {
+  const resultBuffer = fs.readFileSync(path, (err, data) => {
+    if (err) {
+      console.log('ERROR: Failed to get the file: ', path);
+      throw new Error('Can not read the file!');
+    }
+  });
+  console.log('READ: file: ', path);
+  return parser.parse(resultBuffer.toString(), apiUtils.getParserOptions());
+}
 
 function getFileNameFromFilePath(filePath) {
   const paths = filePath.split('\\');
