@@ -122,6 +122,4 @@ dist
 .vscode
 
 ### Configuration ###
-configurations/
-dissect-cf/
 test.js
