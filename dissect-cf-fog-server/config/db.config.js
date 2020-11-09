@@ -1,7 +1,7 @@
 const config = {
   HOST: "localhost",
   USER: "root",
-  PASSWORD: "",
+  PASSWORD: "root-pw",
   DB: "dissect",
   dialect: "mysql",
   pool: {
