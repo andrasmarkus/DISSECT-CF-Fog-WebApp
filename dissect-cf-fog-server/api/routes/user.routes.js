@@ -138,12 +138,13 @@ function sendResult(req, res) {
   const dirPath = BASE_DIR + userEmail + '/' + directory;
   const lastFileName = apiUtils.getLastCreatedHtmlFile(dirPath);
   const htmlFilePath = dirPath + '/' + lastFileName;
-  const stdOutPath = dirPath + '/' + 'stdout.txt';
+  const stdOutPath = dirPath + '/' + 'run-log.txt';
   const htmlFile = apiUtils.readFileSyncWithErrorHandling(htmlFilePath);
   console.log('READ: file: ', htmlFilePath);
-  const stdOut = apiUtils.readFileSyncWithErrorHandling(stdOutPath);
+  const stdOut = apiUtils.readFileSyncWithErrorHandling(stdOutPath).toString();
+  const finalStdout = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'));
   console.log('READ: file: ', stdOutPath);
-  return res.status(200).json({directory, html: htmlFile.toString(), data: stdOut.toString(), err:null});
+  return res.status(200).json({directory, html: htmlFile.toString(), data: finalStdout, err:null});
 }
 
 /**

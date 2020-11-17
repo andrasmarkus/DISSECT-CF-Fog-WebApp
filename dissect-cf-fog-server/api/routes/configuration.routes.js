@@ -6,6 +6,7 @@ const path = require('path');
 const cmd =require('node-cmd');
 const fse = require('fs-extra');
 const apiUtils = require('../util');
+const promise = require('bluebird');
 
 /**
  * It parses the appliacnes and devices to xml and writes out into files. The path consists of the email and and the time.
@@ -31,14 +32,14 @@ router.post('/', (req, res , next)=> {
   'hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation .'+ baseDirPath + '/appliances.xml '+
   '.'+ baseDirPath + '/devices.xml .'+ baseDirPath + '/' + ' > .'+ baseDirPath + '/run-log.txt  2>&1';
 
-  cmd.get(
-    command,
-    (err, data, stderr) =>{
-        if(err || stderr){
-          return sendExecutionError(stderr, baseDirPath, res);
-        }
-        sendResponseWithSavingStdOut(baseDirPath, data, res, configTime);
-    });
+  const getAsync = promise.promisify(cmd.get, {
+    multiArgs: true,
+    context: cmd
+  });
+
+  getAsync(command)
+    .then(() => sendResponseWithSavingStdOut(baseDirPath, res, configTime))
+    .catch( err => sendExecutionError(err, baseDirPath, res));
 
 });
 
@@ -50,20 +51,15 @@ router.post('/', (req, res , next)=> {
  * @param {Response} res
  * @param {string} directory
  */
-function sendResponseWithSavingStdOut(baseDirPath, data, res, directory) {
+function sendResponseWithSavingStdOut(baseDirPath, res, directory) {
   console.log('**** Configuration succeed! ****');
   const fileName = apiUtils.getLastCreatedHtmlFile(baseDirPath);
   const html = apiUtils.readFileSyncWithErrorHandling(baseDirPath + '/' + fileName);
   console.log('READ: file: ', baseDirPath + '/' + fileName);
-  const stdOut = data.toString();
+  const log = apiUtils.readFileSyncWithErrorHandling(baseDirPath + '/run-log.txt');
+  const stdOut = log.toString();
   const finalstdOut = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'));
-  fse.outputFile(baseDirPath + '/stdout.txt', finalstdOut, (writeErr) => {
-    if (writeErr){
-      return console.log('ERROR: write file: ', baseDirPath + '/stdout.txt', '/n MSG: ', writeErr);
-    }
-    console.log('WRITE: stdout > ', baseDirPath + '/stdout.xml');
-    return res.status(201).json({directory, html: html.toString(), data: finalstdOut, err: null });
-  });
+  return res.status(201).json({directory, html: html.toString(), data: finalstdOut, err: null });
 }
 
 /**
