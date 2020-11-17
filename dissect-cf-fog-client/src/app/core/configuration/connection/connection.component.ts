@@ -243,17 +243,25 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   }
 
   private convertXYCoordToLatLon(x: number, y: number) {
-    const yPos = y + this.nodeHeight / 2;
+    const contentWidth = this.paperWidth / this.graphScale;
+    const pixelsPerLon = contentWidth / 180;
     const xPos = x + this.nodeWidth / 2;
-    const lat = (yPos / (this.paperHeight / 180) - 90) * -1;
-    const lon = xPos / (this.paperWidth / 360) - 180;
-    let roundedLat = Math.round(lat * this.graphScale);
-    let roundedLon = Math.round(lon * this.graphScale);
-    if (Math.abs(roundedLat) > 90) {
-      roundedLat -= roundedLat - 90;
+    let roundedLon = Math.round(xPos / pixelsPerLon) - 90;
+    const contentHeight = this.paperHeight / this.graphScale;
+    const pixelsPerLat = contentHeight / 180;
+    const yPos = y + this.nodeHeight / 2;
+    let roundedLat = Math.round(yPos / pixelsPerLat) - 90;
+    if (roundedLon > 90) {
+      roundedLon = 90;
     }
-    if (Math.abs(roundedLon) > 180) {
-      roundedLon -= roundedLon - 180;
+    if (roundedLon < -90) {
+      roundedLon = -90;
+    }
+    if (roundedLat > 90) {
+      roundedLat = 90;
+    }
+    if (roundedLat < -90) {
+      roundedLat = -90;
     }
     return [roundedLon, roundedLat];
   }
@@ -650,10 +658,16 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   ): joint.shapes.standard.Circle {
     const nodeXCenter = nodeStartX + this.nodeWidth / 2;
     const nodeYCenter = nodeStartY + this.nodeHeight / 2;
-    const circleXCenter = nodeXCenter - radius;
-    const circleYCenter = nodeYCenter - radius;
+
+    const contentWidth = this.paperWidth / this.graphScale;
+    const pixelsPerLon = contentWidth / 180;
+    const contentHeight = this.paperHeight / this.graphScale;
+    const pixelsPerLat = contentHeight / 180;
+
+    const circleXCenter = nodeXCenter - radius * pixelsPerLon;
+    const circleYCenter = nodeYCenter - radius * pixelsPerLat;
     const circle = new joint.shapes.standard.Circle();
-    circle.resize(radius * 2, radius * 2);
+    circle.resize(pixelsPerLon * radius * 2, pixelsPerLat * radius * 2);
     circle.position(circleXCenter, circleYCenter);
     circle.attr('root/title', 'joint.shapes.standard.Circle');
     circle.attr('body/fill', this.circleRangeBackgroundColor);
