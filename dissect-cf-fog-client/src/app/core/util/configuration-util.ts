@@ -59,23 +59,30 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
   }
 
   for (const station of Object.values(object.stations)) {
-    const device = {
-      $starttime: station.starttime,
-      $stoptime: station.stoptime,
-      $number: station.number,
-      $filesize: station.filesize,
-      name: station.id,
-      freq: station.freq,
-      sensor: station.sensor,
-      maxinbw: station.maxinbw,
-      maxoutbw: station.maxoutbw,
-      diskbw: station.diskbw,
-      reposize: station.reposize,
-      strategy: station.strategy,
-      xCoord: station.xCoord,
-      yCoord: station.yCoord
-    } as DeviceXml;
-    devices.push(device);
+    for (let i = 0; i < station.number; i++) {
+      const randomX = Math.random() * station.radius * 2;
+      const randomY = Math.random() * station.radius * 2;
+      const x = randomX > station.radius ? randomX - station.radius : randomX;
+      const y = randomY > station.radius ? randomX - station.radius : randomY;
+
+      const device = {
+        $starttime: station.starttime,
+        $stoptime: station.stoptime,
+        $number: 1,
+        $filesize: station.filesize,
+        name: station.id,
+        freq: station.freq,
+        sensor: station.sensor,
+        maxinbw: station.maxinbw,
+        maxoutbw: station.maxoutbw,
+        diskbw: station.diskbw,
+        reposize: station.reposize,
+        strategy: station.strategy,
+        xCoord: round(x, 1),
+        yCoord: round(y, 1)
+      } as DeviceXml;
+      devices.push(device);
+    }
   }
 
   return {
@@ -93,4 +100,9 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
       }
     }
   } as XmlBaseConfiguration;
+}
+
+function round(value: number, precision: number): number {
+  const multiplier = Math.pow(10, precision || 0);
+  return Math.round(value * multiplier) / multiplier;
 }
