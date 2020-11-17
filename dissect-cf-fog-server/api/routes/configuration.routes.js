@@ -29,10 +29,7 @@ router.post('/', (req, res , next)=> {
 
   const command =  'cd dissect-cf && java -cp target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar '+
   'hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation .'+ baseDirPath + '/appliances.xml '+
-  '.'+ baseDirPath + '/devices.xml .'+ baseDirPath + '/';
-  const commandDemo =  'cd dissect-cf && java -cp target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar '+
-  'hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation ../configurations/appliances_demo.xml '+
-  '../configurations/devices_demo.xml .'+ baseDirPath + '/' ;
+  '.'+ baseDirPath + '/devices.xml .'+ baseDirPath + '/' + ' > .'+ baseDirPath + '/run-log.txt  2>&1';
 
   cmd.get(
     command,
