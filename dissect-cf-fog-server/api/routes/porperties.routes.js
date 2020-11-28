@@ -93,7 +93,7 @@ function getResourceByPath(path) {
 }
 
 function getFileNameFromFilePath(filePath) {
-  const paths = filePath.split('\\');
+  const paths = filePath.split(/\\\\|\\|\/\/|\//g);
   const file = paths[paths.length - 1];
   const fileFullName = file.split('.');
   const filename = fileFullName[0];
