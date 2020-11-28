@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 export interface StrategysResponse {
   strategy: string[];
 }
@@ -64,3 +65,5 @@ export interface SignInResponse {
 export interface SignUpResponse {
   message: string;
 }
+
+export const SERVER_URL = environment.SERVER_URL;

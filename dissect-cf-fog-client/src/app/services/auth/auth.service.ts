@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { SERVER_URL, SignInResponse, SignUpResponse } from 'src/app/models/server-api/server-api';
 import { User } from 'src/app/models/user';
-import { SignInResponse, SignUpResponse } from 'src/app/models/server-api/server-api';
 
-const AUTH_API = 'http://localhost:3000/auth/';
+const AUTH_API = SERVER_URL + 'auth/';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })

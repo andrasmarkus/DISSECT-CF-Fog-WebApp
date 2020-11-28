@@ -4,15 +4,18 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
 import { TokenStorageService } from '../../token-storage/token-storage.service';
-import { ConfigurationFile, ConfigurationResult, UserConfigurationDetails } from 'src/app/models/server-api/server-api';
+import {
+  ConfigurationFile,
+  ConfigurationResult,
+  SERVER_URL,
+  UserConfigurationDetails
+} from 'src/app/models/server-api/server-api';
 import { saveAs } from 'file-saver';
 import { parseConfigurationObjectToXml } from 'src/app/core/util/configuration-util';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
-
-const BASE_API = 'http://localhost:3000';
 
 /**
  * API calls for running configuration or get configurations.
@@ -26,7 +29,7 @@ export class UserConfigurationService {
   public sendConfiguration(object: ConfigurationObject): void {
     const xmlBaseConfig = parseConfigurationObjectToXml(object, this.tokenService.getUser().email);
     this.configurationResult$ = this.http
-      .post<ConfigurationResult>(BASE_API + '/configuration', JSON.stringify(xmlBaseConfig), httpOptions)
+      .post<ConfigurationResult>(SERVER_URL + 'configuration', JSON.stringify(xmlBaseConfig), httpOptions)
       .pipe(shareReplay(1));
   }
 
@@ -34,7 +37,7 @@ export class UserConfigurationService {
     const data = {
       email: this.tokenService.getUser().email
     };
-    return this.http.post<UserConfigurationDetails[]>(BASE_API + '/user/configurations', data, httpOptions);
+    return this.http.post<UserConfigurationDetails[]>(SERVER_URL + 'user/configurations', data, httpOptions);
   }
 
   public getselectedConfigurationResult(directory: string): Observable<ConfigurationResult> {
@@ -42,7 +45,7 @@ export class UserConfigurationService {
       email: this.tokenService.getUser().email,
       directory
     };
-    return this.http.post<ConfigurationResult>(BASE_API + '/user/configurations/resultfile', data, httpOptions);
+    return this.http.post<ConfigurationResult>(SERVER_URL + 'user/configurations/resultfile', data, httpOptions);
   }
 
   /**
@@ -56,7 +59,7 @@ export class UserConfigurationService {
       directory
     };
     this.http
-      .post(BASE_API + '/user/configurations/download/' + file, data, {
+      .post(SERVER_URL + 'user/configurations/download/' + file, data, {
         ...httpOptions.headers,
         responseType: 'blob'
       })

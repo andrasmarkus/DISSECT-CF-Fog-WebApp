@@ -6,6 +6,7 @@ import {
   Instance,
   InstancesResponse,
   Resource,
+  SERVER_URL,
   StrategysResponse as StrategiesResponse
 } from 'src/app/models/server-api/server-api';
 
@@ -14,7 +15,7 @@ import {
  */
 @Injectable()
 export class ResourceSelectionService {
-  private readonly PROPERTIES_API = 'http://localhost:3000/properties';
+  private readonly PROPERTIES_API = SERVER_URL + 'properties';
 
   public instances$: Observable<Instance[]>;
   public strategiesForApplications$: Observable<string[]>;
