@@ -2,11 +2,10 @@ const express = require('express');
 const router = express.Router({caseSensitive:true});
 const { isEmpty } = require('lodash');
 const Parser = require("fast-xml-parser").j2xParser;
-const path = require('path'); 
-const cmd =require('node-cmd');
 const fse = require('fs-extra');
 const apiUtils = require('../util');
-const promise = require('bluebird');
+const child = require('child_process');
+
 
 /**
  * It parses the appliacnes and devices to xml and writes out into files. The path consists of the email and and the time.
@@ -18,28 +17,23 @@ router.post('/', (req, res , next)=> {
     console.log('ERROR: Bad req body: ', req.body);
     throw new Error('Bad request!');
   }
-  const parser = new Parser(apiUtils.getParserOptions('$'));
-  
   const userEmail = req.body.configuration.email;
   const tzoffset = (new Date()).getTimezoneOffset() * 60000;
   const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
   const configTime = localISOTime.replace('T', '_').replace(/\..+/, '').replace(/:/g, '-');
-  const baseDirPath= './configurations/users_configurations/'+ userEmail +'/'+ configTime;
+  const baseDirPath= `./configurations/users_configurations/${userEmail}/${configTime}`;
+  saveResourceFiles(req, baseDirPath);
 
-  saveResourceFiles(req, parser, baseDirPath);
+  const command =  `cd dissect-cf && java -cp `+
+  `target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar `+
+  `hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation .${baseDirPath}/appliances.xml ` +
+  `.${baseDirPath}/devices.xml .${baseDirPath}/ `;
 
-  const command =  'cd dissect-cf && java -cp target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar '+
-  'hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation .'+ baseDirPath + '/appliances.xml '+
-  '.'+ baseDirPath + '/devices.xml .'+ baseDirPath + '/' + ' > .'+ baseDirPath + '/run-log.txt  2>&1';
-
-  const getAsync = promise.promisify(cmd.get, {
-    multiArgs: true,
-    context: cmd
-  });
-
-  getAsync(command)
-    .then(() => sendResponseWithSavingStdOut(baseDirPath, res, configTime))
-    .catch( err => sendExecutionError(err, baseDirPath, res));
+  const process = child.spawnSync(command, {shell: true, maxBuffer: 1024 * 32});
+  if(process.stderr.length > 0){
+    return sendExecutionError(process.stderr, baseDirPath, res);
+  }
+  return sendResponseWithSavingStdOut(baseDirPath, process.stdout, res, configTime);
 
 });
 
@@ -51,15 +45,21 @@ router.post('/', (req, res , next)=> {
  * @param {Response} res
  * @param {string} directory
  */
-function sendResponseWithSavingStdOut(baseDirPath, res, directory) {
+function sendResponseWithSavingStdOut(baseDirPath,data, res, directory) {
   console.log('**** Configuration succeed! ****');
   const fileName = apiUtils.getLastCreatedHtmlFile(baseDirPath);
   const html = apiUtils.readFileSyncWithErrorHandling(baseDirPath + '/' + fileName);
   console.log('READ: file: ', baseDirPath + '/' + fileName);
-  const log = apiUtils.readFileSyncWithErrorHandling(baseDirPath + '/run-log.txt');
-  const stdOut = log.toString();
+  const stdOut = data.toString();
   const finalstdOut = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'));
-  return res.status(201).json({directory, html: html.toString(), data: finalstdOut, err: null });
+  fse.outputFile(baseDirPath + '/run-log.txt', finalstdOut, (writeErr) => {
+    if (writeErr){
+      return console.log('ERROR: write file: ', baseDirPath + '/run-log.txt', '/n MSG: ', writeErr);
+    }
+    console.log('WRITE: run-log > ', baseDirPath + '/run-log.txt');
+    const finalstdOut = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'));
+    return res.status(201).json({directory, html: html.toString(), data: finalstdOut, err: null });
+  });
 }
 
 /**
@@ -75,7 +75,7 @@ function sendExecutionError(stderr, baseDirPath, res) {
   try {
     fse.removeSync(baseDirPath);
     console.log('REMOVED: dir: ', baseDirPath);
-  } catch {
+  } catch(e) {
     console.log('ERROR: Can not delete the dir: ', baseDirPath);
     throw new Error('Can not delete created folder, and can not create configuration files!');
   }
@@ -88,7 +88,8 @@ function sendExecutionError(stderr, baseDirPath, res) {
  * @param {Parser} parser
  * @param {string} baseDirPath
  */
-function saveResourceFiles(req, parser, baseDirPath) {
+function saveResourceFiles(req, baseDirPath) {
+  const parser = new Parser(apiUtils.getParserOptions('$'));
   const pureAppliances = req.body.configuration.appliances;
   const pureDevices = req.body.configuration.devices;
   const appliances = parser.parse(pureAppliances);

@@ -11,8 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
+    "child-process": "^1.0.2",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "fast-xml-parser": "^3.17.4",
@@ -22,7 +22,6 @@
     "lodash": "^4.17.20",
     "morgan": "^1.10.0",
     "mysql2": "^2.2.5",
-    "node-cmd": "^3.0.0",
     "node-dir": "^0.1.17",
     "path": "^0.12.7",
     "sequelize": "^6.3.5"
