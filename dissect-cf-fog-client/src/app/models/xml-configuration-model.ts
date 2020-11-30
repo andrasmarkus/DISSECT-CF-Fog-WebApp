@@ -1,6 +1,7 @@
 export interface XmlBaseConfiguration {
   configuration: {
     email: string;
+    tzOffsetInSec?: number;
     appliances: AppliancesContainerXml;
     devices: StationContainerXml;
   };

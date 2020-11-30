@@ -20,6 +20,7 @@
 
 .register-form-containter{
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-width: 300px;
@@ -113,6 +114,12 @@
   justify-content: center;
   display: flex;
   align-items: center;
+}
+
+.redirect-text{
+  text-decoration: none;
+  cursor: pointer;
+  color:rgb(0, 192, 16);
 }
 
 @media screen and (max-width: 650px) {

@@ -84,10 +84,12 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
       devices.push(device);
     }
   }
-
+  const tzOffsetInMin = new Date().getTimezoneOffset();
+  const tzOffset = (tzOffsetInMin !== 0 ? tzOffsetInMin / 60 : 0) * -1;
   return {
     configuration: {
       email,
+      tzOffset,
       appliances: {
         appliances: {
           appliance: appliances

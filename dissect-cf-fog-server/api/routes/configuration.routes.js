@@ -1,4 +1,5 @@
 const express = require('express');
+const authJwt = require("../../middleware").authJwt;
 const router = express.Router({caseSensitive:true});
 const { isEmpty } = require('lodash');
 const Parser = require("fast-xml-parser").j2xParser;
@@ -12,14 +13,23 @@ const child = require('child_process');
  * It runs the dissect application, and sends the directory's name, the html file in string format, stdout and an error property,
  * if it is failed somehow, it will try to delete the created folder and it will send an error response.
  */
-router.post('/', (req, res , next)=> {
+router.post('/', /* [authJwt.verifyToken],  */(req, res , next)=> {
   if(!checkConfigurationRequestBody(req)){
     console.log('ERROR: Bad req body: ', req.body);
     throw new Error('Bad request!');
   }
   const userEmail = req.body.configuration.email;
-  const tzoffset = (new Date()).getTimezoneOffset() * 60000;
-  const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
+
+  let tzoffset;
+  if(req.body.configuration.tzOffset !== undefined){
+    tzoffset = req.body.configuration.tzOffset;
+  }else{
+    const tzOffsetInMin = new Date().getTimezoneOffset();
+    tzoffset = tzOffsetInMin !== 0 ? tzOffsetInMin / 60 : 0;
+    tzoffset *= -1;
+  }
+  tzoffset *= 3600000;
+  const localISOTime = (new Date(Date.now() + tzoffset)).toISOString().slice(0, -1);
   const configTime = localISOTime.replace('T', '_').replace(/\..+/, '').replace(/:/g, '-');
   const baseDirPath= `./configurations/users_configurations/${userEmail}/${configTime}`;
   saveResourceFiles(req, baseDirPath);
@@ -29,12 +39,11 @@ router.post('/', (req, res , next)=> {
   `hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation .${baseDirPath}/appliances.xml ` +
   `.${baseDirPath}/devices.xml .${baseDirPath}/ `;
 
-  const process = child.spawnSync(command, {shell: true, maxBuffer: 1024 * 32});
+  const process = child.spawnSync(command, {shell: true, maxBuffer: 1024 * 512});
   if(process.stderr.length > 0){
     return sendExecutionError(process.stderr, baseDirPath, res);
   }
   return sendResponseWithSavingStdOut(baseDirPath, process.stdout, res, configTime);
-
 });
 
 /**

@@ -41,6 +41,12 @@
         Your registration is successful!
       </div>
     </form>
+    <ng-container  *ngIf="isLogin; else registerText">
+      <div>You can register <span  class="redirect-text" routerLink="/register">here</span>!</div>
+    </ng-container>
+    <ng-template #registerText>
+      <div>You can login <span  class="redirect-text" routerLink="/login">here</span>!</div>
+    </ng-template>
   </mat-card>
   <!-- Login cover-->
   <div class="cover cover-login" *ngIf="isLogin">
