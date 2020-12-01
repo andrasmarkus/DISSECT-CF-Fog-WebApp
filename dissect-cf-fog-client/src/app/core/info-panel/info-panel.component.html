@@ -7,7 +7,5 @@
       <i class="fas fa-times"></i>
     </button>
   </div>
-  <div class="content">
-    <span>{{infoData?.text}}</span>
-  </div>
+  <div class="content" [innerHTML]="infoData?.text | safeHtml"></div>
 </div>
