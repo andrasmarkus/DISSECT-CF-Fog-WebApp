@@ -18,7 +18,17 @@ export function getApplicationInfoData(): InfoPanelData {
   return {
     title: 'Application settings',
     text:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus dignissimos, odit natus dolorem unde quo quis! Fugit praesentium reprehenderit debitis enim voluptas officia ullam adipisci id minima. Amet, obcaecati delectus.'
+      'The task size attribute tells the highest amount of unprocessed data that can packaged in one compute task to be executed by virtual machines.' +
+      'We defined a daemon service frequency to regularly check the repository forunprocessed data.' +
+      'The number of instruction defines the maximum value which one task can represent.' +
+      'The threshold determines how many unprocessed task can be hold in the actual application, the the further tasks are forwarded according to the strategy of the application.' +
+      'The can join allows IoT devices to send unprocessed data directly into the application.' +
+      'the VM flavor to be used for executing the compute tasks can be specified in the instance tag' +
+      'The Random strategy always chooses one from the connected nodes randomly.' +
+      'The Push Up strategy always chooses the connected  parent node (i.e. a node from a higher layer), if available.' +
+      'The Hold Down aims to keep application data as close to the end-user as possible.'+
+      'Finally, the Runtime-aware strategy ranks the available parent nodes, and all neighbour nodes (from its own layer) by network latency and by the ratio of the available CPU capacity and the total CPU capacity. The algorithm picks the node with the highest rank' +
+      'Pliant strategy is based on Fuzzy logic, thus load, cost and unprocessed data of a node are considered.'
   } as InfoPanelData;
 }
 
@@ -26,7 +36,13 @@ export function getStationInfoData(): InfoPanelData {
   return {
     title: 'Stations',
     text:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus dignissimos, odit natus dolorem unde quo quis! Fugit praesentium reprehenderit debitis enim voluptas officia ullam adipisci id minima. Amet, obcaecati delectus.'
+    'We can configure the life time of the device (starttime, stoptime), the number of sensors it has (sensor), the size of the generated data (filesize) and the generation and sending frequency.' +
+    'The network  settings  of  the  local  repository  are defined by the maxinbw, maxoutbw and diskbw tags, and the size of the repository is determined by the reposize field.' +
+    'The radius defines a range where a set of IoT devices are randomly placed, the number of the devices located at the range is defined by the number attribute.'+
+    'The random strategy chooses one from the available applications randomly.' +
+    'The cost-aware strategy looks for the cheapest available application running in any fog/cloud node.'+
+    'The runtime-aware strategy takes into accountthe actual load of the available clouds' +
+    'The Fuzzy-based startegy takes in consideration many parameters, such as cost, workload, number of VMs and connected devices, etc.'
   } as InfoPanelData;
 }
 
@@ -34,7 +50,8 @@ export function getConectionInfoData(): InfoPanelData {
   return {
     title: 'Connections',
     text:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus dignissimos, odit natus dolorem unde quo quis! Fugit praesentium reprehenderit debitis enim voluptas officia ullam adipisci id minima. Amet, obcaecati delectus.'
+      'Parent connection can be made betwen a fog and a cloud node.'+
+      'Anyways you can use the simple connection to create a route among the fog nodes.'
   } as InfoPanelData;
 }
 
@@ -42,6 +59,6 @@ export function getConfigurationErrorData(): InfoPanelData {
   return {
     title: 'Configuration errors',
     text:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus dignissimos, odit natus dolorem unde quo quis! Fugit praesentium reprehenderit debitis enim voluptas officia ullam adipisci id minima. Amet, obcaecati delectus.'
+      'Various exceptions can appear in the system, the most common problem is the badly chosen parameters. We suggest to check those or look into the console application for further details.'
   } as InfoPanelData;
 }
