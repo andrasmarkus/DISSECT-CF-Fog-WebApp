@@ -109,6 +109,10 @@
   padding: 1.5rem 5rem;
 }
 
+.output-text{
+  white-space: pre-wrap;
+}
+
 ::ng-deep .mat-tab-label-active{
   color: #ff5722 !important;
 }

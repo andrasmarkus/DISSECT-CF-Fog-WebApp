@@ -21,7 +21,7 @@
     </mat-tab>
     <mat-tab [disabled]="configResult.err !== null" label="Output">
       <div class="tab stdout" [style.height.vh]="contentHeight">
-        <div [innerHTML]="configResult.data | safeHtml" appRunScripts></div>
+        <div  class="output-text" [innerHTML]="configResult.data | safeHtml" appRunScripts></div>
       </div>
     </mat-tab>
     <mat-tab  [disabled]="configResult.err !== null" label="Files">

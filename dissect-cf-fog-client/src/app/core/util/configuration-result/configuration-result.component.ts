@@ -39,7 +39,7 @@ export class ConfigurationResultComponent implements OnDestroy, OnInit {
         this.showActions.emit();
       }, 3000);
       this.resultSub = this.configResult$.subscribe(res => {
-        const data = res.data.replace(/\r\n/g, '<br>').replace(/\\n/g, '<br>');
+        const data = res.data.replace(/\r\n/g, '<br>');
         this.configResult = { ...res, data };
         this.showSpinner = false;
         this.showActions.emit();
