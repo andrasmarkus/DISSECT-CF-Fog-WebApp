@@ -6,6 +6,7 @@ const Parser = require("fast-xml-parser").j2xParser;
 const fse = require('fs-extra');
 const apiUtils = require('../util');
 const child = require('child_process');
+const os = require('os');
 
 
 /**
@@ -39,11 +40,12 @@ router.post('/', /* [authJwt.verifyToken],  */(req, res , next)=> {
   `hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation .${baseDirPath}/appliances.xml ` +
   `.${baseDirPath}/devices.xml .${baseDirPath}/ `;
 
-  const process = child.spawnSync(command, {shell: true, maxBuffer: 1024 * 512});
-  if(process.stderr.length > 0){
-    return sendExecutionError(process.stderr, baseDirPath, res);
+  const proc = child.spawnSync(command, {shell: true, maxBuffer: 1024 * 512});
+  if(proc.stderr.length > 0){
+    killProcess(proc);
+    return sendExecutionError(proc.stderr, baseDirPath, res);
   }
-  return sendResponseWithSavingStdOut(baseDirPath, process.stdout, res, configTime);
+  return sendResponseWithSavingStdOut(baseDirPath, proc.stdout, res, configTime, proc);
 });
 
 /**
@@ -54,21 +56,34 @@ router.post('/', /* [authJwt.verifyToken],  */(req, res , next)=> {
  * @param {Response} res
  * @param {string} directory
  */
-function sendResponseWithSavingStdOut(baseDirPath,data, res, directory) {
+function sendResponseWithSavingStdOut(baseDirPath,data, res, directory, proc) {
   console.log('**** Configuration succeed! ****');
-  const fileName = apiUtils.getLastCreatedHtmlFile(baseDirPath);
-  const html = apiUtils.readFileSyncWithErrorHandling(baseDirPath + '/' + fileName);
-  console.log('READ: file: ', baseDirPath + '/' + fileName);
-  const stdOut = data.toString();
-  const finalstdOut = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'));
-  fse.outputFile(baseDirPath + '/run-log.txt', finalstdOut, (writeErr) => {
-    if (writeErr){
-      return console.log('ERROR: write file: ', baseDirPath + '/run-log.txt', '/n MSG: ', writeErr);
-    }
-    console.log('WRITE: run-log > ', baseDirPath + '/run-log.txt');
+  try {
+    const fileName = apiUtils.getLastCreatedHtmlFile(baseDirPath);
+    const html = apiUtils.readFileSyncWithErrorHandling(baseDirPath + '/' + fileName);
+    console.log('READ: file: ', baseDirPath + '/' + fileName);
+    const stdOut = data.toString();
     const finalstdOut = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'));
-    return res.status(201).json({directory, html: html.toString(), data: finalstdOut, err: null });
-  });
+    fse.outputFile(baseDirPath + '/run-log.txt', finalstdOut, (writeErr) => {
+      if (writeErr){
+        return console.log('ERROR: write file: ', baseDirPath + '/run-log.txt', '/n MSG: ', writeErr);
+      }
+      console.log('WRITE: run-log > ', baseDirPath + '/run-log.txt');
+      const finalstdOut = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'));
+      return res.status(201).json({directory, html: html.toString(), data: finalstdOut, err: null });
+    });
+  } catch(error){
+    killProcess(proc);
+    return res.status(200).json({ html: 'Not created!', data: 'Error!', err: 'Something went wrong!' });
+  }
+}
+
+function killProcess(proc){
+  if(os.platform().startsWith('win')){
+    child.exec('taskkill /pid ' + proc.pid + ' /T /F')
+  }else{
+    proc.kill();
+  }
 }
 
 /**
