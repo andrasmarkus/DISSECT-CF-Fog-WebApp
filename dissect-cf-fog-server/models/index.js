@@ -1,32 +1,13 @@
-const config = require('../config/db.config');
-const Sequelize = require("sequelize");
+const admin = require('firebase-admin');
+const serviceAccount = require('../config/dissect-cf-firebase-adminsdk-8azqh-53aba3f558.json');
 
-const sequelizeConfig = new Sequelize(
-  config.DB,
-  config.USER,
-  config.PASSWORD,
-  {
-    host: config.HOST,
-    dialect: config.dialect,
-    operatorsAliases: 0,
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 
-    pool: {
-      max: config.pool.max,
-      min: config.pool.min,
-      acquire: config.pool.acquire,
-      idle: config.pool.idle
-    }
-  }
-);
-
-const db = {};
-
-db.Sequelize = Sequelize;
-db.sequelize = sequelizeConfig;
-
-db.user = require("../models/user.model.js")(sequelizeConfig, Sequelize);
+const db = admin.firestore();
 
 /**
- * Returns the database with Sequelize.
+ * Returns the database
  */
 module.exports = db;
