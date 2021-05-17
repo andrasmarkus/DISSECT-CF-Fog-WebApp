@@ -15,5 +15,3 @@ services:
         build: dissect-cf-fog-server
         ports:
             - '3000:3000'
-        links:
-            - mysql_db
