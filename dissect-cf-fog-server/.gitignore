@@ -122,6 +122,7 @@ dist
 .vscode
 
 ### Configuration ###
+config/dissect-cf-firebase*
 configurations/
 dissect-cf/
 test.js
