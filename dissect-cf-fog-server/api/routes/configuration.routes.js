@@ -82,7 +82,7 @@ function sendExecutionError(stderr, baseDirPath, res) {
   console.log('---- Configuration fail! ----');
   const errorMsg = stderr.toString().split('\n')[0].split(':')[1];
   try {
-    fse.removeSync(baseDirPath);
+    // fse.removeSync(baseDirPath);
     console.log('REMOVED: dir: ', baseDirPath);
   } catch(e) {
     console.log('ERROR: Can not delete the dir: ', baseDirPath);

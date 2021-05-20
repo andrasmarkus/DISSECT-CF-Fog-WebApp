@@ -1,4 +1,4 @@
-const db = require("../models");
+const { db } = require("../models/firestore");
 const config = require("../config/auth.config");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");

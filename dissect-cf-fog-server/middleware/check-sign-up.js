@@ -1,6 +1,4 @@
-const db = require("../models");
-
-const User = db.user;
+const db = require("../models/firestore");
 
 /**
  * Checks the user email exists in database. If it is, it will forward the request.
@@ -12,7 +10,7 @@ const User = db.user;
  * @param {Function} next - forwards it
  */
 const checkSignUp = (req, res, next) => {
-  User.where('email', '==', req.body.email)
+  db.user.where('email', '==', req.body.email)
     .get()
     .then((user) => {
       if (!user.empty) {
