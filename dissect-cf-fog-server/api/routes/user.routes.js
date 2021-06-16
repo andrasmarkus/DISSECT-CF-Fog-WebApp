@@ -7,7 +7,6 @@ const parser = require('fast-xml-parser');
 const { isEmpty } = require('lodash');
 const apiUtils = require('../util');
 const BASE_DIR = 'configurations/users_configurations/';
-const DELIMITER = '.';
 
 /* Sets the response header. */
 router.use((req, res, next) => {
@@ -29,14 +28,13 @@ router.post("/configurations", [authJwt.verifyToken], (req, res, next) => {
     return res.status(404).send({ message: 'Bad request!' })
   }
   const userEmail = req.body.email;
-  
+
   storage.getFiles({
-    prefix: BASE_DIR + userEmail,
-    delimiter: DELIMITER
+    prefix: BASE_DIR + userEmail
   }, function (err, files, nextQuery, apiResponse) {
 
-    dirs = files.filter(file => file.name.split(userEmail)[1].replace('/', ''))
-      .map(file => file.name)
+    dirs = files.filter(file => file.name.includes('.html'))
+      .map(file => BASE_DIR + userEmail + '/' + file.name.split(userEmail)[1].substring(1, 20) + '/')
 
     getConfigurationDetailsFirestore(dirs, userEmail).then(details => {
       return res.status(200).json(details);
@@ -57,49 +55,23 @@ router.post("/configurations/download/devices", [authJwt.verifyToken], (req, res
 });
 
 router.post("/configurations/download/diagram", [authJwt.verifyToken], (req, res, next) => {
-  return sendFile(req, res, 'diagram');
-});
+  const directory = req.body.directory;
 
-/**
- * Returns configuration details. Finds the user folder by the given email and counts all details in the drectory,
- * by reading files in sync.
- * @param {string[]} dirs - user's directories
- * @param {string} userEmail - it determines, which folder is
- */
-function getConfigurationDetails(dirs, userEmail) {
-  const details = [];
-  for (const dirName of dirs) {
-    const dateTime = getDateTimeStringFromDirName(dirName);
-    const dirPath = BASE_DIR + userEmail + '/' + dirName;
+  console.log(directory)
 
-    const appliacesData = apiUtils.readFileSyncWithErrorHandling(dirPath + '/appliances.xml');
-    console.log('READ: file: ', dirPath + '/appliances.xml');
-    const appliances = parser.parse(appliacesData.toString(), apiUtils.getParserOptions());
-    let numOfClouds;
-    let numOfFogs;
-    if (appliances.appliances.appliance instanceof Array) {
-      numOfClouds = appliances.appliances.appliance.filter(node => node.name.startsWith('cloud')).length;
-      numOfFogs = appliances.appliances.appliance.filter(node => node.name.startsWith('fog')).length;
-    } else {
-      numOfClouds = appliances.appliances.appliance.name.startsWith('cloud') ? 1 : 0;
-      numOfFogs = appliances.appliances.appliance.name.startsWith('fog') ? 1 : 0;
-    }
+  storage.getFiles({
+    prefix: directory,
+    versions: true
+  }, function (err, files, nextQuery, apiResponse) {
 
-    const devicesData = apiUtils.readFileSyncWithErrorHandling(dirPath + '/devices.xml');
-    console.log('READ: file: ', dirPath + '/devices.xml');
-    const devices = parser.parse(devicesData.toString(), apiUtils.getParserOptions());
+    const htmlFilePath = files.filter(file => file.name.includes('.html'))
+      .map(file => file.name)
 
-    details.push({
-      directory: dirName,
-      time: dateTime,
-      clouds: numOfClouds,
-      fogs: numOfFogs,
-      devices: devices.devices.device instanceof Array ? devices.devices.device.length : 1
+    getFile(htmlFilePath).then(contents => {
+      return res.send(contents[0].toString());
     });
-  }
-
-  // return details;
-}
+  });
+});
 
 /**
  * Firestore : Returns configuration details. Finds the user folder by the given email and counts all details in the drectory,
@@ -111,6 +83,7 @@ async function getConfigurationDetailsFirestore(dirs, userEmail) {
   const details = [];
 
   for (const dirName of dirs) {
+    console.log(dirName)
     const dateTime = getDateTimeStringFromDirName(dirName.split(userEmail)[1].replace('/', ''));
 
     const appliancesFile = storage.file(dirName + 'appliances.xml');
@@ -151,6 +124,7 @@ async function getConfigurationDetailsFirestore(dirs, userEmail) {
  * @param {string} dirName
  */
 function getDateTimeStringFromDirName(dirName) {
+  console.log(dirName)
   const stamp = dirName.split('_');
   const date = stamp[0];
   const time = stamp[1].replace(/-/g, ':').slice(0, 5);
@@ -168,39 +142,63 @@ function getDateTimeStringFromDirName(dirName) {
  */
 function sendFile(req, res, fileName) {
   checkResourceRequsetBody(req, res);
-  const userEmail = req.body.email;
   const directory = req.body.directory;
-  const dirPath = BASE_DIR + userEmail + '/' + directory;
-  let filePath = dirPath + '/';
-  if (fileName === 'diagram') {
-    filePath += apiUtils.getLastCreatedHtmlFile(dirPath);
-  } else {
-    filePath += fileName + '.xml';
-  }
+  let filePath = directory + fileName + '.xml';
+
   console.log('DOWNLOAD: ', filePath);
-  return res.download(filePath);
+
+  getFile(filePath).then(contents => {
+    return res.send(contents[0].toString());
+  });
 }
 
 /**
  * Sends the directory's name, the scanned html file in string format and also the error message with 200 status.
- * The request should contain the eamil and the directory.
+ * The request should contain the email and the directory.
  * @param {Request} req - request
  * @param {Response} res - response
  */
-function sendResult(req, res) {
+async function sendResult(req, res) {
   checkResourceRequsetBody(req, res);
-  const userEmail = req.body.email;
   const directory = req.body.directory;
-  const dirPath = BASE_DIR + userEmail + '/' + directory;
-  const lastFileName = apiUtils.getLastCreatedHtmlFile(dirPath);
-  const htmlFilePath = dirPath + '/' + lastFileName;
-  const stdOutPath = dirPath + '/' + 'run-log.txt';
-  const htmlFile = apiUtils.readFileSyncWithErrorHandling(htmlFilePath);
-  console.log('READ: file: ', htmlFilePath);
-  const stdOut = apiUtils.readFileSyncWithErrorHandling(stdOutPath).toString();
-  const finalStdout = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'));
-  console.log('READ: file: ', stdOutPath);
-  return res.status(200).json({ directory, html: htmlFile.toString(), data: finalStdout, err: null });
+  const stdOutPath = directory + 'run-log.txt';
+
+  storage.getFiles({
+    prefix: directory,
+    versions: true
+  }, function (err, files, nextQuery, apiResponse) {
+    const htmlFilePath = files.filter(file => file.name.includes('.html'))
+      .map(file => file.name)
+
+    getFiles(htmlFilePath, stdOutPath).then(contents => {
+
+      const finalStdout = contents[1].toString().slice(contents[1].toString().indexOf('~~Informations about the simulation:~~'));
+
+      return res.status(200).json({ directory, html: contents[0].toString(), data: finalStdout, err: null });
+    }).catch(console.error)
+  })
+}
+
+async function getFiles(htmlFilePath, stdOutPath) {
+  const htmlFile = storage.file(htmlFilePath);
+  const stdOut = storage.file(stdOutPath);
+
+  const htmlFilePromise = htmlFile.download()
+  const stdOutPromise = stdOut.download()
+
+  const contents = await Promise.all([htmlFilePromise, stdOutPromise])
+
+  return contents;
+}
+
+async function getFile(filePath) {
+  const file = storage.file(filePath);
+
+  const filePromise = file.download()
+
+  const contents = await Promise.all([filePromise])
+
+  return contents;
 }
 
 /**

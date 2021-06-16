@@ -1,11 +1,12 @@
 const express = require('express');
 const authJwt = require("../../middleware").authJwt;
 const router = express.Router({caseSensitive:true});
-const { isEmpty } = require('lodash');
+const { isEmpty, filter } = require('lodash');
 const Parser = require("fast-xml-parser").j2xParser;
 const fse = require('fs-extra');
 const apiUtils = require('../util');
 const child = require('child_process');
+const { storage } = require('../../models/firestore')
 
 
 /**
@@ -31,13 +32,14 @@ router.post('/', /* [authJwt.verifyToken],  */(req, res , next)=> {
   tzoffset *= 3600000;
   const localISOTime = (new Date(Date.now() + tzoffset)).toISOString().slice(0, -1);
   const configTime = localISOTime.replace('T', '_').replace(/\..+/, '').replace(/:/g, '-');
-  const baseDirPath= `./configurations/users_configurations/${userEmail}/${configTime}`;
+  // const baseDirPath= `./configurations/users_configurations/${userEmail}/${configTime}`;
+  const baseDirPath= `configurations/users_configurations/${userEmail}/${configTime}`;
   saveResourceFiles(req, baseDirPath);
 
   const command =  `cd dissect-cf && java -cp `+
   `target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar `+
-  `hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation .${baseDirPath}/appliances.xml ` +
-  `.${baseDirPath}/devices.xml .${baseDirPath}/ `;
+  `hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation ../${baseDirPath}/appliances.xml ` +
+  `../${baseDirPath}/devices.xml ../${baseDirPath}/ `;
 
   const process = child.spawnSync(command, {shell: true, maxBuffer: 1024 * 512});
   if(process.stderr.length > 0){
@@ -57,16 +59,23 @@ router.post('/', /* [authJwt.verifyToken],  */(req, res , next)=> {
 function sendResponseWithSavingStdOut(baseDirPath,data, res, directory) {
   console.log('**** Configuration succeed! ****');
   const fileName = apiUtils.getLastCreatedHtmlFile(baseDirPath);
+  console.log(fileName)
   const html = apiUtils.readFileSyncWithErrorHandling(baseDirPath + '/' + fileName);
-  console.log('READ: file: ', baseDirPath + '/' + fileName);
+  writeToFile(baseDirPath + '/' + fileName, html.toString());
+
   const stdOut = data.toString();
   const finalstdOut = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'));
+  writeToFile(baseDirPath + '/run-log.txt', finalstdOut);
+
   fse.outputFile(baseDirPath + '/run-log.txt', finalstdOut, (writeErr) => {
     if (writeErr){
       return console.log('ERROR: write file: ', baseDirPath + '/run-log.txt', '/n MSG: ', writeErr);
     }
     console.log('WRITE: run-log > ', baseDirPath + '/run-log.txt');
     const finalstdOut = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'));
+
+    fse.removeSync(baseDirPath);
+
     return res.status(201).json({directory, html: html.toString(), data: finalstdOut, err: null });
   });
 }
@@ -81,8 +90,9 @@ function sendResponseWithSavingStdOut(baseDirPath,data, res, directory) {
 function sendExecutionError(stderr, baseDirPath, res) {
   console.log('---- Configuration fail! ----');
   const errorMsg = stderr.toString().split('\n')[0].split(':')[1];
+  console.log('errorMsg ' + stderr.toString())
   try {
-    // fse.removeSync(baseDirPath);
+    fse.removeSync(baseDirPath);
     console.log('REMOVED: dir: ', baseDirPath);
   } catch(e) {
     console.log('ERROR: Can not delete the dir: ', baseDirPath);
@@ -117,6 +127,9 @@ function saveResourceFiles(req, baseDirPath) {
  */
 function writeToFile(filePath, data) {
   try{
+    console.log(filePath)
+    const file = storage.file(filePath);
+    file.save(data)
     fse.outputFileSync(filePath, data);
   }catch {
     console.log('ERROR: Can not write to file: ', filePath);
