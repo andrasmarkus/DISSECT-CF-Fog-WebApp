@@ -1,4 +1,6 @@
-FROM node:12-alpine
+FROM node:12
+
+RUN apt-get update && apt-get install -y openjdk-8-jdk
 
 WORKDIR /usr/src/app
 
