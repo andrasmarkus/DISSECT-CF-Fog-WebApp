@@ -22,7 +22,9 @@ const checkSignUp = (req, res, next) => {
         return;
       }
       next();
-    })
+    }).catch(err => {
+      res.status(500).send({ message: err.message });
+    });
 }
 
 module.exports = checkSignUp;
