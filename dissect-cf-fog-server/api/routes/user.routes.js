@@ -57,8 +57,6 @@ router.post("/configurations/download/devices", [authJwt.verifyToken], (req, res
 router.post("/configurations/download/diagram", [authJwt.verifyToken], (req, res, next) => {
   const directory = req.body.directory;
 
-  console.log(directory)
-
   storage.getFiles({
     prefix: directory,
     versions: true
@@ -83,7 +81,6 @@ async function getConfigurationDetailsFirestore(dirs, userEmail) {
   const details = [];
 
   for (const dirName of dirs) {
-    console.log(dirName)
     const dateTime = getDateTimeStringFromDirName(dirName.split(userEmail)[1].replace('/', ''));
 
     const appliancesFile = storage.file(dirName + 'appliances.xml');
@@ -124,7 +121,6 @@ async function getConfigurationDetailsFirestore(dirs, userEmail) {
  * @param {string} dirName
  */
 function getDateTimeStringFromDirName(dirName) {
-  console.log(dirName)
   const stamp = dirName.split('_');
   const date = stamp[0];
   const time = stamp[1].replace(/-/g, ':').slice(0, 5);
