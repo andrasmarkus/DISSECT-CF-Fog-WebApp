@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const configRoute = require('./api/routes/configuration.routes');
 const authorizationRoute = require('./api/routes/auth.routes');
 const userRoute = require('./api/routes/user.routes');
-const propertiesRoute = require('./api/routes/porperties.routes');
+const propertiesRoute = require('./api/routes/properties.routes');
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
