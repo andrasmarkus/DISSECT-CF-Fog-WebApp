@@ -1,5 +1,7 @@
+const { dir } = require('console');
 const fs = require('fs');
 const path = require('path');
+const { storage } = require('../models/firestore')
 
 /**
  * It returns the basic options for the xml/js parser.
@@ -53,7 +55,7 @@ function readFileSyncWithErrorHandling(filePath){
 }
 
 /**
- * Return the directiry sync with error handling.
+ * Return the directory sync with error handling.
  * @param {string} filePath
  */
 function readDirSyncWithErrorHandling(dirPath, withFileTypes = false){
