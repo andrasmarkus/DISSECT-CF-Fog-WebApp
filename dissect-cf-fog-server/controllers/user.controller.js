@@ -1,6 +1,6 @@
-const db = require("../models");
+const { db }= require("../models/firestore");
 
-const User = db.user;
+const User = db.collection('users');
 
 /**
  * Sends all the users from the database with the given response.

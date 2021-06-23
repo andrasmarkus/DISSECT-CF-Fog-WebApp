@@ -1,9 +1,9 @@
-const db = require("../models");
+const { db } = require("../models/firestore");
 const config = require("../config/auth.config");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-const User = db.user;
+const User = db.collection('users');
 
 /**
  * It tries the sign up the new user. If it succeed it will send 201 response with a message,
@@ -11,12 +11,12 @@ const User = db.user;
  * @param {Request} req - request
  * @param {Response} res - response
  */
-const signUp = (req, res) => {
-  User.create({
+const signUp = async (req, res) => {
+  User.add({
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8)
   })
-    .then(user => {
+    .then(() => {
       res.status(201).send({ message: "User was registered successfully!" });
     })
     .catch(err => {
@@ -25,7 +25,7 @@ const signUp = (req, res) => {
 };
 
 /**
- * It tries the sign in the user. If it succeed it will send 200 response with the user id, the eamil and token.
+ * It tries the sign in the user. If it succeed it will send 200 response with the user id, the email and token.
  * Response if something went wrong:
  * - 404 - email is not found
  * - 401 - invalid password
@@ -34,19 +34,19 @@ const signUp = (req, res) => {
  * @param {Response} res - response
  */
 const signIn = (req, res) => {
-  User.findOne({
-    where: {
-      email: req.body.email
-    }
-  })
-    .then(user => {
-      if (!user) {
+  User.where('email', '==', req.body.email)
+    .get()
+    .then((users) => {
+
+      if (users.empty) {
         return res.status(404).send({ message: "User Not found." });
       }
 
+      const user = users.docs[0];
+
       const passwordIsValid = bcrypt.compareSync(
         req.body.password,
-        user.password
+        user.data().password
       );
 
       if (!passwordIsValid) {
@@ -56,13 +56,13 @@ const signIn = (req, res) => {
         });
       }
 
-      const token = jwt.sign({ id: user.id }, config.secret, {
+      const token = jwt.sign({ id: user.data().id }, config.secret, {
         expiresIn: 86400 // 24 hours
       });
 
       res.status(200).send({
-        id: user.id,
-        email: user.email,
+        id: user.data().id,
+        email: user.data().email,
         accessToken: token
       });
     })
