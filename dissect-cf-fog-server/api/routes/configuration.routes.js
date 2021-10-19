@@ -32,14 +32,16 @@ router.post('/', /* [authJwt.verifyToken],  */(req, res , next)=> {
   tzoffset *= 3600000;
   const localISOTime = (new Date(Date.now() + tzoffset)).toISOString().slice(0, -1);
   const configTime = localISOTime.replace('T', '_').replace(/\..+/, '').replace(/:/g, '-');
-  // const baseDirPath= `./configurations/users_configurations/${userEmail}/${configTime}`;
   const baseDirPath= `configurations/users_configurations/${userEmail}/${configTime}`;
   saveResourceFiles(req, baseDirPath);
 
-  const command =  `cd dissect-cf && java -cp `+
-  `target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar `+
-  `hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation ../${baseDirPath}/appliances.xml ` +
-  `../${baseDirPath}/devices.xml ../${baseDirPath}/ `;
+  const command =  `cd dissect-cf && java -cp ` +
+  `target/dissect-cf-fog-1.0.0-SNAPSHOT-jar-with-dependencies.jar ` +
+  `hu.u_szeged.inf.fog.simulator.demo.XMLSimulation ` +
+  `../configurations/instances/Instances.xml ` +
+  `../${baseDirPath}/appliances.xml ` +
+  `../${baseDirPath}/devices.xml ` + 
+  `../${baseDirPath}/ `;
 
   const proc = child.spawnSync(command, {shell: true, maxBuffer: 1024 * 512});
   if(proc.stderr.length > 0){
