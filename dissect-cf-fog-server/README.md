@@ -1,10 +1,10 @@
 # DISSECT-CF-Fog-WebApp: Server
 
-This server is part of DISSECT-CF-Fog-WebApp. It is written in Node.js with Express.js and MySQL.
+This server is part of DISSECT-CF-Fog-WebApp. It is written in Node.js with Express.js using Firabase as database and file storage.
 It uses the [DISSECT-CF-Fog java application](https://github.com/andrasmarkus/dissect-cf), which generates the configuration's result.
 
 ## Setup the server
-Basicly there are the required folders and files for running the server. The basic resource files are provided, and also the DISSET-CF-Fog java application too (from refactor branch with [a49f55e044](https://github.com/andrasmarkus/dissect-cf/commit/a49f55e044e9294ca84d871070a5b3ad1d9de7ce) commit - 26.09.2020) But in few points there are the required settings for the server:
+Basicaly there are the required folders and files for running the server. The basic resource files are provided, and also the DISSET-CF-Fog java application too (from refactor branch with [a49f55e044](https://github.com/andrasmarkus/dissect-cf/commit/a49f55e044e9294ca84d871070a5b3ad1d9de7ce) commit - 26.09.2020) But in few points there are the required settings for the server:
 
 - Create/ modify **dissect-cf** folder for the java application directly into the *dissect-cf-fog-server* folder. The folder's name should be dissect-cf. You can download the app from [here](https://github.com/andrasmarkus/dissect-cf)
 - Create/modify **configurations** folder for configurations and for resources directly into the *dissect-cf-fog-server* folder. The folder's name should be configurations.
@@ -24,6 +24,10 @@ Basicly there are the required folders and files for running the server. The bas
         </strategies>
         ```
   - **user_configurations** - this folder conatins the users folders  
+- Create/use an existing Firebase account and place the projects private key in **config/** folder using the filename **"dissect-cf-firebase-config.json"**
+  - You can generate and save Firebase credentials json file with the private key by visiting https://console.firebase.google.com/ and opening Settings > Service Accounts menu
+  - Note that everytime you generate a new private key the previous one stops working immediately.
+  - Store this private key securely.
 
 The setup should be look like that:  
 ![Alt File explorer](../readme-assets/server-setup-file-explorer.png)
