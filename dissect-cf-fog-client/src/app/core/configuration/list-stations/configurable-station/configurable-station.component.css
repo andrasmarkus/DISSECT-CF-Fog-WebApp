@@ -45,6 +45,11 @@
   display: flex;
   place-content: center center;
   align-items: center;
+  margin: 0.5rem 0;
+}
+
+.double-item-row .mat-form-field {
+  padding: 0 0.5rem;
 }
 
 .centered-input{
