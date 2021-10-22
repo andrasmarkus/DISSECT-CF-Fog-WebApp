@@ -32,6 +32,7 @@ import { UserConfigurationsComponent } from './core/user-configurations/user-con
 import { ConfigurationOverviewComponent } from './core/user-configurations/configuration-overview/configuration-overview.component';
 import { ConfigurationResultComponent } from './core/util/configuration-result/configuration-result.component';
 import { ResourceSelectionService } from './services/configuration/resource-selection/resource-selection.service';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -68,7 +69,12 @@ import { ResourceSelectionService } from './services/configuration/resource-sele
     FlexLayoutModule,
     HttpClientModule
   ],
-  providers: [UserConfigurationService, ResourceSelectionService, authInterceptorProviders],
+  providers: [
+    UserConfigurationService,
+    ResourceSelectionService,
+    authInterceptorProviders,
+    {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {floatLabel: 'always'}}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
