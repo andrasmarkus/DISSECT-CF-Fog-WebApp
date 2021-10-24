@@ -21,8 +21,8 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
     for (const app of Object.values(node.applications)) {
       const applictaion = {
         $name: app.id,
-        tasksize: app.tasksize,
         freq: app.freq,
+        tasksize: app.tasksize,
         instance: app.instance.name,
         countOfInstructions: app.numOfInstruction,
         threshold: app.threshold,
@@ -40,7 +40,7 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
       applications: { application: applications }
     } as ApplianceXml;
 
-    if (node.neighbours) {
+    if (node.neighbours && node.isCloud == false) {
       const neighbours: NeighbourXml[] = [];
       for (const neighbour of Object.values(node.neighbours)) {
         const xmlNeighbour = {
