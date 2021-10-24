@@ -70,17 +70,17 @@ function sendHtmlFile(req, res, fileName) {
   checkResourceRequsetBody(req, res);
 
   const directory = req.body.directory;
-  const email = req.body.email;
-  let filePath = "configurations/users_configurations/" + email + '/' + directory;
+  let filePath = directory;
 
   storage.getFiles({
     prefix: filePath,
     versions: true
   }, function (err, files, nextQuery, apiResponse) {
+
     const htmlFilePath = files.filter(file => file.name.includes(fileName))
       .map(file => file.name);
 
-    console.log('DOWNLOAD: ', htmlFilePath);
+    console.log('DOWNLOAD: ' + htmlFilePath);
 
     getFile(htmlFilePath).then(contents => {
       return res.send(contents[0].toString());
@@ -157,8 +157,7 @@ function sendXmlFile(req, res, fileName) {
   checkResourceRequsetBody(req, res);
 
   const directory = req.body.directory;
-  const email = req.body.email;
-  let filePath = 'configurations/users_configurations/' + email + '/' + directory + '/' + fileName;
+  let filePath = directory + '/' + fileName;
 
   console.log('DOWNLOAD: ', filePath);
 
@@ -182,26 +181,41 @@ async function sendResult(req, res) {
     prefix: directory,
     versions: true
   }, function (err, files, nextQuery, apiResponse) {
-    const htmlFilePath = files.filter(file => file.name.includes('.html'))
+
+    const htmlFilePaths = files.filter(file => file.name.includes('.html'))
       .map(file => file.name)
 
-    getFiles(htmlFilePath, stdOutPath).then(contents => {
+    getResultFiles(htmlFilePaths, stdOutPath).then(contents => {
 
-      const finalStdout = contents[1].toString().slice(contents[1].toString().indexOf('~~Informations about the simulation:~~'));
+      if (contents.length) {
+        const finalHtmlResults = [];
+        const finalStdout = contents[3].toString();
+        
+        finalHtmlResults.push(contents[0].toString());
+        finalHtmlResults.push(contents[1].toString());
+        finalHtmlResults.push(contents[2].toString());
+        
+        return res.status(200).json({ directory, html: finalHtmlResults, data: finalStdout, err: null });
+      } else {
+        return res.status(200).json({ html: 'Not created!', data: 'Error!', err: 'Something went wrong!' });
+      }
 
-      return res.status(200).json({ directory, html: contents[0].toString(), data: finalStdout, err: null });
     }).catch(console.error)
   })
 }
 
-async function getFiles(htmlFilePath, stdOutPath) {
-  const htmlFile = storage.file(htmlFilePath);
-  const stdOut = storage.file(stdOutPath);
+async function getResultFiles(htmlFilePath, stdOutPath) {
+  const resultFilePromises = [];
 
-  const htmlFilePromise = htmlFile.download()
-  const stdOutPromise = stdOut.download()
+  // creating html response file promises
+  htmlFilePath.forEach(file => {
+    resultFilePromises.push(storage.file(file).download())
+  });
 
-  const contents = await Promise.all([htmlFilePromise, stdOutPromise])
+  // creating run-log.txt file promise
+  resultFilePromises.push(storage.file(stdOutPath).download());
+
+  const contents = await Promise.all(resultFilePromises)
 
   return contents;
 }

@@ -81,7 +81,7 @@ function sendResponseWithSavingStdOut(baseDirPath, data, res, directory, proc) {
 
       fse.removeSync(baseDirPath);
 
-      return res.status(201).json({ directory, html: htmlResults, data: stdOut, err: null });
+      return res.status(201).json({ directory: baseDirPath, html: htmlResults, data: stdOut, err: null });
     });
   } catch (error) {
     killProcess(proc);

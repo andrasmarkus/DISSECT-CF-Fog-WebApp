@@ -62,7 +62,7 @@ export class UserConfigurationService {
   public downloadFile(directory: string, file: ConfigurationFile): void {
     const data = {
       email: this.tokenService.getUser().email,
-      directory
+      directory: directory
     };
     this.http
       .post(SERVER_URL + 'user/configurations/download/' + file, data, {
