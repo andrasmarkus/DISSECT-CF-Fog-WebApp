@@ -24,8 +24,8 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
         tasksize: app.tasksize,
         freq: app.freq,
         instance: app.instance.name,
-        countOfInstruction: app.numOfInstruction,
-        thresload: app.threshold,
+        countOfInstructions: app.numOfInstruction,
+        threshold: app.threshold,
         strategy: app.strategy,
         canJoin: app.canJoin
       } as ApplicationXml;
@@ -35,6 +35,7 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
       $name: node.id,
       latitude: node.x,
       longitude: node.y,
+      range: 500, // FIXME
       file: node.resource.name,
       applications: { application: applications }
     } as ApplianceXml;
@@ -59,7 +60,6 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
   }
 
   for (const station of Object.values(object.stations)) {
-    for (let i = 0; i < station.number; i++) {
       const randomX = Math.random() * station.radius * 2;
       const randomY = Math.random() * station.radius * 2;
       const x = randomX > station.radius ? randomX - station.radius : randomX;
@@ -67,9 +67,9 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
 
       const device = {
         $name: station.id,
-        starttime: station.starttime,
-        stoptime: station.stoptime,
-        filesize: station.filesize,
+        startTime: station.starttime,
+        stopTime: station.stoptime,
+        fileSize: station.filesize,
         sensorCount: station.sensorCount,
         strategy: station.strategy,
         freq: station.freq,
@@ -79,20 +79,20 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
         radius: station.radius,
         latency: station.latency,
         capacity: station.capacity,
-        maxinbw: station.maxinbw,
-        maxoutbw: station.maxoutbw,
-        diskbw: station.diskbw,
+        maxInBW: station.maxinbw,
+        maxOutBW: station.maxoutbw,
+        diskBW: station.diskbw,
         cores: station.cores,
-        perCorePocessing: station.perCorePocessing,
+        perCoreProcessing: station.perCoreProcessing,
         ram: station.ram,
-        ond: station.ond,
-        offd: station.offd,
+        onD: 1, // FIXME
+        offD: 1, // FIXME
         minpower: station.minpower,
-        idlepower: station.idlepower, // FIXME
-        maxpower: station.maxpower // FIXME
+        idlepower: station.idlepower, 
+        maxpower: station.maxpower
       } as DeviceXml;
       devices.push(device);
-    }
+    
   }
   const tzOffsetInMin = new Date().getTimezoneOffset();
   const tzOffset = (tzOffsetInMin !== 0 ? tzOffsetInMin / 60 : 0) * -1;

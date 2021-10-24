@@ -75,13 +75,20 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
       stoptime: this.createNumberFormControl(),
       filesize: this.createNumberFormControl(),
       freq: this.createNumberFormControl(),
-      sensor: this.createNumberFormControl(),
+      sensorCount: this.createNumberFormControl(),
       maxinbw: this.createNumberFormControl(),
       maxoutbw: this.createNumberFormControl(),
       diskbw: this.createNumberFormControl(),
-      reposize: this.createNumberFormControl(),
-      number: this.createNumberFormControl(),
-      radius: this.createNumberFormControl()
+      radius: this.createNumberFormControl(),
+      speed: this.createNumberFormControl(),
+      cores: this.createNumberFormControl(),
+      ram: this.createNumberFormControl(),
+      perCoreProcessing: this.createNumberFormControl(),
+      minpower: this.createNumberFormControl(),
+      maxpower: this.createNumberFormControl(),
+      idlepower: this.createNumberFormControl(),
+      capacity: this.createNumberFormControl(),
+      latency: this.createNumberFormControl()
     });
   }
 

@@ -40,8 +40,8 @@ export interface ApplicationXml {
   freq: number;
   tasksize: number;
   instance: string;
-  countOfInstruction: number;
-  thresload: number;
+  countOfInstructions: number;
+  threshold: number;
   strategy: string;
   canJoin: boolean;
 }
@@ -54,9 +54,9 @@ export interface NeighbourXml {
 
 export interface DeviceXml {
   $name: string;
-  starttime: number;
-  stoptime: number;
-  filesize: number;
+  startTime: number;
+  stopTime: number;
+  fileSize: number;
   sensorCount: number;
   strategy: string;
   freq: number;
@@ -66,14 +66,14 @@ export interface DeviceXml {
   radius: number;
   latency: number;
   capacity: number;
-  maxinbw: number;
-  maxoutbw: number;
-  diskbw: number;
+  maxInBW: number;
+  maxOutBW: number;
+  diskBW: number;
   cores: number;
-  perCorePocessing: number;
+  perCoreProcessing: number;
   ram: number;
-  ond: number;
-  offd: number;
+  onD: number;
+  offD: number;
   minpower: number;
   idlepower: number;
   maxpower: number;

@@ -13,14 +13,13 @@ export class Station {
   maxoutbw: number;
   diskbw: number;
   cores: number;
-  perCorePocessing: number;
+  perCoreProcessing: number;
   ram: number;
   ond: number;
   offd: number;
   minpower: number;
   idlepower: number;
   maxpower: number;
-  reposize: number;
   strategy: string;
   number: number;
   xCoord?: number;
