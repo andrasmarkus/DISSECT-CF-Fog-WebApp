@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Instance } from 'src/app/models/instance';
+import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
 
 @Component({
   selector: 'app-list-instances',
@@ -6,10 +8,51 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./list-instances.component.css']
 })
 export class ListInstancesComponent implements OnInit {
+  @Input() public instances: Instance[] = [];
 
-  constructor() { }
+  public instanceIndex = 0;
+  public isValidConfiguration = false;
+
+  constructor(
+    public configurationService: ConfigurationStateService,
+  ) {
+    this.createInstance();
+   }
 
   ngOnInit(): void {
+  }
+
+  private createInstance(): void {
+    this.instanceIndex += 1;
+    const instanceId = 'instance' + this.instanceIndex;
+    const instance = new Instance();
+    instance.id = instanceId;
+    this.configurationService.instanceNodes[instance.id] = instance;
+    this.instances.push(instance);
+  }
+
+  public addInstance(): void {
+    this.createInstance();
+    this.checkIsValidConfiguration();
+  }
+
+  public removeInstance(instanceId: string): void {
+    delete this.configurationService.instanceNodes[instanceId];
+    const arrayIndex = this.instances.findIndex(station => station.id === instanceId);
+    this.instances.splice(arrayIndex, 1);
+    this.checkIsValidConfiguration();
+  }
+
+  public getInstanceFromEmitter(instance: Instance): void {
+    this.configurationService.instanceNodes[instance.id] = instance;
+    this.checkIsValidConfiguration();
+  }
+
+  private checkIsValidConfiguration(): void {
+    this.isValidConfiguration =
+      Object.values(this.configurationService.instanceNodes).length > 0
+        ? !Object.values(this.configurationService.instanceNodes).some(node => node.valid === false)
+        : false;
   }
 
 }

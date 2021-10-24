@@ -4,6 +4,7 @@ export interface XmlBaseConfiguration {
     tzOffsetInSec?: number;
     appliances: AppliancesContainerXml;
     devices: StationContainerXml;
+    instances: InstanceContainerXml;
   };
 }
 

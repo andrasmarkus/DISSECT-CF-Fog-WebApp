@@ -1,1 +1,13 @@
-<p>list-instances works!</p>
+<div class="instance-container">
+    <div *ngFor="let instance of instances">
+        <app-configurable-instance 
+            (instanceEmitter)="getInstanceFromEmitter($event)"
+            (removeEmitter)="removeInstance($event)"
+            [instance]="instance"></app-configurable-instance>
+    </div>
+</div>
+<div class="main-actions">
+    <div class="plus-wrapper" (click)="addInstance()">
+        <i class="fas fa-plus fa-2x plus-icon"></i>
+    </div>
+</div>
