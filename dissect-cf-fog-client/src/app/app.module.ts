@@ -33,6 +33,7 @@ import { ConfigurationOverviewComponent } from './core/user-configurations/confi
 import { ConfigurationResultComponent } from './core/util/configuration-result/configuration-result.component';
 import { ResourceSelectionService } from './services/configuration/resource-selection/resource-selection.service';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { ListInstancesComponent } from './core/configuration/list-configurable-nodes/list-instances/list-instances.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
     UserEntranceComponent,
     UserConfigurationsComponent,
     ConfigurationOverviewComponent,
-    ConfigurationResultComponent
+    ConfigurationResultComponent,
+    ListInstancesComponent
   ],
   imports: [
     BrowserModule,
