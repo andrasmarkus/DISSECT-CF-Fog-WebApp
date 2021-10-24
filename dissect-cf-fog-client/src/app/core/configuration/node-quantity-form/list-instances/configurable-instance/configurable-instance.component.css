@@ -20,11 +20,11 @@
   align-items: center;
 }
 
-.station-card {
+.instance-card {
   margin: 0.5rem;
 }
 
-.station-card.mat-card{
+.instance-card.mat-card {
   padding: 16px 16px 0 16px;
 }
 
@@ -57,15 +57,6 @@
 
 .space-top{
   margin-top: 0.5rem;
-}
-
-.quantity-container{
-  display: flex;
-  justify-content: center;
-}
-.quantity-input{
-  width: 25px;
-  text-align: center;
 }
 
 @media screen and (max-width: 350px) {

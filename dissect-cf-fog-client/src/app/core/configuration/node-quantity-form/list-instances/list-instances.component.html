@@ -1,10 +1,8 @@
-<div class="instance-container">
-    <div *ngFor="let instance of instances">
-        <app-configurable-instance 
-            (instanceEmitter)="getInstanceFromEmitter($event)"
-            (removeEmitter)="removeInstance($event)"
-            [instance]="instance"></app-configurable-instance>
-    </div>
+<div class="instance-container" *ngFor="let instance of instances">
+    <app-configurable-instance 
+        (instanceEmitter)="getInstanceFromEmitter($event)"
+        (removeEmitter)="removeInstance($event)" 
+        [instance]="instance"></app-configurable-instance>
 </div>
 <div class="main-actions">
     <div class="plus-wrapper" (click)="addInstance()">
