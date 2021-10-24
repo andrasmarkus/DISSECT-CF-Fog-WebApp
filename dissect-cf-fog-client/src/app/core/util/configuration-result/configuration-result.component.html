@@ -1,9 +1,9 @@
 <ng-container *ngIf="configResult && !showSpinner; else spinnerTemp" >
   <mat-tab-group color="warn" mat-align-tabs="center" animationDuration="0ms">
-    <mat-tab label="Diagrams">
+    <mat-tab label="Timeline">
       <div class="tab" [style.height.vh]="contentHeight">
         <ng-container *ngIf="configResult.err === null; else failedConfig">
-          <div [innerHTML]="configResult.html | safeHtml" appRunScripts></div>
+          <div [innerHTML]="configResult.html[2] | safeHtml" appRunScripts></div>
         </ng-container>
         <ng-template #failedConfig>
           <div class="fail-content">
@@ -17,6 +17,20 @@
             <h3 *ngIf="configResult.err" class="error">{{configResult.err}}</h3>
           </div>
         </ng-template>
+      </div>
+    </mat-tab>
+    <mat-tab label="Devices Energy">
+      <div class="tab" [style.height.vh]="contentHeight">
+        <ng-container *ngIf="configResult.err === null; else failedConfig">
+          <div [innerHTML]="configResult.html[0] | safeHtml" appRunScripts></div>
+        </ng-container>
+      </div>
+    </mat-tab>
+    <mat-tab label="Nodes Energy">
+      <div class="tab" [style.height.vh]="contentHeight">
+        <ng-container *ngIf="configResult.err === null; else failedConfig">
+          <div [innerHTML]="configResult.html[1] | safeHtml" appRunScripts></div>
+        </ng-container>
       </div>
     </mat-tab>
     <mat-tab [disabled]="configResult.err !== null" label="Output">

@@ -79,12 +79,9 @@
   flex-direction: column;
 }
 
-.file-name{
-  padding: 0.5rem;
-}
-
 .download-btn{
   margin-top: 0.5rem;
+  padding: 0.5rem;
   width: 125px;
 }
 
