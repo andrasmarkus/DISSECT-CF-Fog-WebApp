@@ -113,22 +113,22 @@
       </div>
       <div class="double-item-row">
         <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Max power</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="maxpower" placeholder="> 5000"/>
+          <span matSuffix>watt</span>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Capacity</mat-label>
           <input class="setText-center" matInput type="number" formControlName="capacity" placeholder="> 5000"/>
           <span matSuffix>byte</span>
         </mat-form-field>
+      </div>
+      <div class="double-item-row">
         <mat-form-field appearance="outline" class="input-size-min no-padding">
           <mat-label>Strategy</mat-label>
           <mat-select [(ngModel)]="strategy" [ngModelOptions]="{ standalone: true }" (selectionChange)="onStrategyChange()">
             <mat-option *ngFor="let strategy of resourceSelectionService.strategiesForDevices$ | async" [value]="strategy"> {{ strategy }}</mat-option>
           </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="double-item-row">
-        <mat-form-field appearance="outline" class="input-size-min">
-          <mat-label>Max power</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="maxpower" placeholder="> 5000"/>
-          <span matSuffix>watt</span>
         </mat-form-field>
       </div>
     </form>
