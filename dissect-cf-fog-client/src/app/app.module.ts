@@ -34,6 +34,7 @@ import { ConfigurationResultComponent } from './core/util/configuration-result/c
 import { ResourceSelectionService } from './services/configuration/resource-selection/resource-selection.service';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { ListInstancesComponent } from './core/configuration/node-quantity-form/list-instances/list-instances.component';
+import { ConfigurableInstanceComponent } from './core/configuration/node-quantity-form/list-instances/configurable-instance/configurable-instance.component';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import { ListInstancesComponent } from './core/configuration/node-quantity-form/
     UserConfigurationsComponent,
     ConfigurationOverviewComponent,
     ConfigurationResultComponent,
-    ListInstancesComponent
+    ListInstancesComponent,
+    ConfigurableInstanceComponent
   ],
   imports: [
     BrowserModule,

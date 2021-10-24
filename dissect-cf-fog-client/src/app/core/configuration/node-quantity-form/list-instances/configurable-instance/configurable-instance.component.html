@@ -1,0 +1,69 @@
+<mat-card class="instance-card">
+    <mat-card-header class="header">
+        <button mat-icon-button type="button" class="info-icon" (click)="openInfoPanelForInstances()">
+            <i class="fas fa-info-circle fa-lg"></i>
+        </button>
+        <div class="title">
+            <span class="title-text">Instances</span>
+        </div>
+        <button mat-icon-button (click)="removeEmitter.emit(instance.id)">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    </mat-card-header>
+    <mat-card-content>
+        <form [formGroup]="instanceFormGroup">
+            <div fxLayout="column" fxLayoutAlign="center center">
+                <div class="double-item-row space-top">
+                    <mat-form-field appearance="outline" class="input-size-min">
+                        <mat-label>RAM</mat-label>
+                        <input class="setText-center app-input" matInput type="number" formControlName="ram"
+                            placeholder="> 1" />
+                        <span matSuffix>byte</span>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="input-size-min">
+                        <mat-label>CPU Cores</mat-label>
+                        <input class="setText-center" matInput type="number" formControlName="cpuCores"
+                            placeholder="1000" />
+                        <span matSuffix>unit</span>
+                    </mat-form-field>
+                </div>
+                <div class="double-item-row space-top">
+                    <mat-form-field appearance="outline" class="input-size-min">
+                        <mat-label>CPU Core processing power</mat-label>
+                        <input class="setText-center app-input" matInput type="number"
+                            formControlName="cpuProcessingPower" placeholder="> 1" />
+                        <span matSuffix>ins/sec</span>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="input-size-min">
+                        <mat-label>Startup process</mat-label>
+                        <input class="setText-center" matInput type="number" formControlName="startupProcess"
+                            placeholder="1000" />
+                        <span matSuffix>unit</span>
+                    </mat-form-field>
+                </div>
+                <div class="double-item-row space-top">
+                    <mat-form-field appearance="outline" class="input-size-min">
+                        <mat-label>Newtwork load</mat-label>
+                        <input class="setText-center app-input" matInput type="number" formControlName="networkLoad"
+                            placeholder="> 1" />
+                        <span matSuffix>ins/sec</span>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="input-size-min">
+                        <mat-label>Required disk</mat-label>
+                        <input class="setText-center" matInput type="number" formControlName="reqDisk"
+                            placeholder="1000" />
+                        <span matSuffix>unit</span>
+                    </mat-form-field>
+                </div>
+                <div class="double-item-row space-top">
+                    <mat-form-field appearance="outline" class="input-size-min">
+                        <mat-label>Price per tick</mat-label>
+                        <input class="setText-center app-input" matInput type="number" formControlName="pricePerTick"
+                            placeholder="> 1" />
+                        <span matSuffix>ins/sec</span>
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>
