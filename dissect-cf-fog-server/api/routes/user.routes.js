@@ -47,29 +47,46 @@ router.post("/configurations/resultfile", [authJwt.verifyToken], (req, res, next
 });
 
 router.post("/configurations/download/appliances", [authJwt.verifyToken], (req, res, next) => {
-  return sendFile(req, res, 'appliances');
+  return sendXmlFile(req, res, 'appliances.xml');
 });
 
 router.post("/configurations/download/devices", [authJwt.verifyToken], (req, res, next) => {
-  return sendFile(req, res, 'devices');
+  return sendXmlFile(req, res, 'devices.xml');
 });
 
-router.post("/configurations/download/diagram", [authJwt.verifyToken], (req, res, next) => {
+router.post("/configurations/download/timeline", [authJwt.verifyToken], (req, res, next) => {
+  return sendHtmlFile(req, res, 'Timeline');
+});
+
+router.post("/configurations/download/devicesenergy", [authJwt.verifyToken], (req, res, next) => {
+  return sendHtmlFile(req, res, 'Devices-Energy')
+});
+
+router.post("/configurations/download/nodesenergy", [authJwt.verifyToken], (req, res, next) => {
+  return sendHtmlFile(req, res, 'Nodes-Energy')
+});
+
+function sendHtmlFile(req, res, fileName) {
+  checkResourceRequsetBody(req, res);
+
   const directory = req.body.directory;
+  const email = req.body.email;
+  let filePath = "configurations/users_configurations/" + email + '/' + directory;
 
   storage.getFiles({
-    prefix: directory,
+    prefix: filePath,
     versions: true
   }, function (err, files, nextQuery, apiResponse) {
+    const htmlFilePath = files.filter(file => file.name.includes(fileName))
+      .map(file => file.name);
 
-    const htmlFilePath = files.filter(file => file.name.includes('.html'))
-      .map(file => file.name)
+    console.log('DOWNLOAD: ', htmlFilePath);
 
     getFile(htmlFilePath).then(contents => {
       return res.send(contents[0].toString());
     });
   });
-});
+}
 
 /**
  * Firestore : Returns configuration details. Finds the user folder by the given email and counts all details in the drectory,
@@ -136,10 +153,12 @@ function getDateTimeStringFromDirName(dirName) {
  * @param {Response} res - response
  * @param {string} fileName
  */
-function sendFile(req, res, fileName) {
+function sendXmlFile(req, res, fileName) {
   checkResourceRequsetBody(req, res);
+
   const directory = req.body.directory;
-  let filePath = directory + fileName + '.xml';
+  const email = req.body.email;
+  let filePath = 'configurations/users_configurations/' + email + '/' + directory + '/' + fileName;
 
   console.log('DOWNLOAD: ', filePath);
 
