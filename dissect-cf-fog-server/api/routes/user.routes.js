@@ -33,7 +33,7 @@ router.post("/configurations", [authJwt.verifyToken], (req, res, next) => {
     prefix: BASE_DIR + userEmail
   }, function (err, files, nextQuery, apiResponse) {
 
-    dirs = files.filter(file => file.name.includes('.html'))
+    dirs = files.filter(file => file.name.includes('Timeline.html'))
       .map(file => BASE_DIR + userEmail + '/' + file.name.split(userEmail)[1].substring(1, 20) + '/')
 
     getConfigurationDetailsFirestore(dirs, userEmail).then(details => {
@@ -89,8 +89,8 @@ function sendHtmlFile(req, res, fileName) {
 }
 
 /**
- * Firestore : Returns configuration details. Finds the user folder by the given email and counts all details in the drectory,
- * by reading files in sync.
+ * Firestore : Returns configuration details. Finds the user folder by the given email and counts all details in the directory,
+ * by reading files.
  * @param {string[]} dirs - user's directories
  * @param {string} userEmail - it determines, which folder is
  */
