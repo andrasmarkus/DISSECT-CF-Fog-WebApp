@@ -33,16 +33,16 @@
             <span matSuffix>byte</span>
           </mat-form-field>
           <mat-form-field appearance="outline" class="input-size-min">
-            <mat-label>Frequency</mat-label>
-            <input class="setText-center" matInput type="number" formControlName="freq" placeholder="> 6000"/>
-            <span matSuffix>ms</span>
+            <mat-label>Sensor count</mat-label>
+            <input class="setText-center" matInput type="number" formControlName="sensorCount" placeholder="> 0"/>
+            <span matSuffix>unit</span>
           </mat-form-field>
         </div>
         <div class="double-item-row">
           <mat-form-field appearance="outline" class="input-size-min">
-            <mat-label>Sensor</mat-label>
-            <input class="setText-center" matInput type="number" formControlName="sensor" placeholder="> 0"/>
-            <span matSuffix>unit</span>
+            <mat-label>Frequency</mat-label>
+            <input class="setText-center" matInput type="number" formControlName="freq" placeholder="> 6000"/>
+            <span matSuffix>ms</span>
           </mat-form-field>
           <mat-form-field appearance="outline" class="input-size-min">
             <mat-label>Max in bw</mat-label>
@@ -65,9 +65,9 @@
       </div>
       <div class="double-item-row">
         <mat-form-field appearance="outline" class="input-size-min">
-          <mat-label>Number</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="number" placeholder="> 0"/>
-          <span matSuffix>unit</span>
+          <mat-label>Latency</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="latency" placeholder="> 0"/>
+          <span matSuffix>ms</span>
         </mat-form-field>
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Radius</mat-label>
@@ -77,10 +77,53 @@
       </div>
       <div class="double-item-row">
         <mat-form-field appearance="outline" class="input-size-min">
-          <mat-label>Repo size</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="reposize" placeholder="> 5000"/>
+          <mat-label>Speed</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="speed" placeholder="> 0"/>
+          <span matSuffix>mm/s</span>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Cores</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="cores" placeholder="> 0"/>
+          <span matSuffix>unit</span>
+        </mat-form-field>
+      </div>
+      <div class="double-item-row">
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Processing per core</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="perCoreProcessing" placeholder="> 0"/>
+          <span matSuffix>ins/s</span>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>RAM</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="ram" placeholder="> 0"/>
           <span matSuffix>byte</span>
         </mat-form-field>
+      </div>
+      <div class="double-item-row">
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Min power</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="minpower" placeholder="> 0"/>
+          <span matSuffix>watt</span>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Idle power</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="idlepower" placeholder="> 0"/>
+          <span matSuffix>watt</span>
+        </mat-form-field>
+      </div>
+      <div class="double-item-row">
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Max power</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="maxpower" placeholder="> 5000"/>
+          <span matSuffix>watt</span>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Capacity</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="capacity" placeholder="> 5000"/>
+          <span matSuffix>byte</span>
+        </mat-form-field>
+      </div>
+      <div class="double-item-row">
         <mat-form-field appearance="outline" class="input-size-min no-padding">
           <mat-label>Strategy</mat-label>
           <mat-select [(ngModel)]="strategy" [ngModelOptions]="{ standalone: true }" (selectionChange)="onStrategyChange()">

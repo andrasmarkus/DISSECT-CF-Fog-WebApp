@@ -19,45 +19,73 @@ export interface StationContainerXml {
   };
 }
 
+export interface InstanceContainerXml {
+  instances: {
+    instance : InstanceXml[];
+  };
+}
+
 export interface ApplianceXml {
-  name: string;
-  xcoord: number;
-  ycoord: number;
+  $name: string;
+  latitude: number;
+  longitude: number;
+  range: number;
   file: string;
   applications: { application: ApplicationXml[] };
   neighbours: { neighbour?: NeighbourXml[] };
 }
 
 export interface ApplicationXml {
-  $tasksize: number;
-  name: string;
+  $name: string;
   freq: number;
+  tasksize: number;
   instance: string;
-  numOfInstruction: number;
+  countOfInstructions: number;
   threshold: number;
   strategy: string;
   canJoin: boolean;
 }
 
 export interface NeighbourXml {
-  name: string;
+  $name: string;
   latency: number;
   parent?: boolean;
 }
 
 export interface DeviceXml {
-  $starttime: number;
-  $stoptime: number;
-  $number: number;
-  $filesize: number;
-  name: string;
-  freq: number;
-  sensor: number;
-  maxinbw: number;
-  maxoutbw: number;
-  diskbw: number;
-  reposize: number;
+  $name: string;
+  startTime: number;
+  stopTime: number;
+  fileSize: number;
+  sensorCount: number;
   strategy: string;
-  xCoord: number;
-  yCoord: number;
+  freq: number;
+  latitude: number;
+  longitude: number;
+  speed: number;
+  radius: number;
+  latency: number;
+  capacity: number;
+  maxInBW: number;
+  maxOutBW: number;
+  diskBW: number;
+  cores: number;
+  perCoreProcessing: number;
+  ram: number;
+  onD: number;
+  offD: number;
+  minpower: number;
+  idlepower: number;
+  maxpower: number;
+}
+
+export interface InstanceXml {
+  $name: string;
+  ram: number;
+  cpucores: number;
+  coreprocessingpower: number;
+  startupprocess: number;
+  networkload: number;
+  reqdisk: number;
+  pricepertick: number;
 }

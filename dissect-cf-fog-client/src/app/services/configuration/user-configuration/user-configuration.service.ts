@@ -17,6 +17,12 @@ const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
+const HTML_FILES = [
+  'timeline',
+  'devicesenergy',
+  'nodesenergy'
+]
+
 /**
  * API calls for running configuration or get configurations.
  */
@@ -56,7 +62,7 @@ export class UserConfigurationService {
   public downloadFile(directory: string, file: ConfigurationFile): void {
     const data = {
       email: this.tokenService.getUser().email,
-      directory
+      directory: directory
     };
     this.http
       .post(SERVER_URL + 'user/configurations/download/' + file, data, {
@@ -65,7 +71,7 @@ export class UserConfigurationService {
       })
       .toPromise()
       .then(blob => {
-        saveAs(blob, file === 'diagram' ? `${file}.html` : `${file}.xml`);
+        saveAs(blob, HTML_FILES.includes(file) ? `${file}.html` : `${file}.xml`);
       })
       .catch(err => console.error('download error = ', err));
   }

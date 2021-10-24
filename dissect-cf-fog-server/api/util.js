@@ -7,7 +7,7 @@ const { storage } = require('../models/firestore')
  * It returns the basic options for the xml/js parser.
  * @param {string} attributeNamePrefix - default value is an empty string
  */
-function getParserOptions(attributeNamePrefix = ''){
+function getParserOptions(attributeNamePrefix = '') {
   return {
     attributeNamePrefix,
     ignoreAttributes: false,
@@ -22,32 +22,51 @@ function getParserOptions(attributeNamePrefix = ''){
  * Throws error if can not find the file.
  * @param {string} dirName
  */
-function getLastCreatedHtmlFile(dirName){
+function getLastCreatedHtmlFile(dirName) {
   const dir = readDirSyncWithErrorHandling(dirName);
   console.log('READ: dir: ', dirName);
-  const files= dir.filter(file => path.extname(file) == ".html")
-    .map(file => ({ file, mtime: fs.statSync(dirName + '/'+ file).mtime }))
+  const files = dir.filter(file => path.extname(file) == ".html")
+    .map(file => ({ file, mtime: fs.statSync(dirName + '/' + file).mtime }))
     .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
-    if(files.length){
-      return files[0].file;
-    }else {
-      console.log('ERROR: Can not find the last created file from: ', dirName);
-      throw new Error('Can not find the file!');
-    }
+  if (files.length) {
+    return files[0].file;
+  } else {
+    console.log('ERROR: Can not find the last created file from: ', dirName);
+    throw new Error('Can not find the file!');
+  }
+}
+
+/**
+ * Returns the last created html file in the given directory. This method is sync.
+ * Throws error if can not find the file.
+ * @param {string} dirName
+ */
+function getHtmlFilesInDir(dirName) {
+  console.log('READ: dir: ', dirName);
+  const dir = readDirSyncWithErrorHandling(dirName);
+
+  const files = dir.filter(file => path.extname(file) == ".html");
+  
+    if (files.length) {
+      return files;
+  } else {
+    console.log('ERROR: Can not find the last created file from: ', dirName);
+    throw new Error('Can not find the file!');
+  }
 }
 
 /**
  * Return the file sync with error handling.
  * @param {string} filePath
  */
-function readFileSyncWithErrorHandling(filePath){
-  try{
+function readFileSyncWithErrorHandling(filePath) {
+  try {
     return fs.readFileSync(filePath);
-  }catch(err){
-    if(err.code === 'ENOENT' || err.code === 'EACCES'){
+  } catch (err) {
+    if (err.code === 'ENOENT' || err.code === 'EACCES') {
       console.log('ERROR: Failed to get the file: ', filePath);
       throw new Error('Failed to get the file!');
-    }else{
+    } else {
       console.log('ERROR: Unkonwn error at reading file: ', filePath);
       throw new Error('Unkonwn error occured during reading the file!');
     }
@@ -58,14 +77,14 @@ function readFileSyncWithErrorHandling(filePath){
  * Return the directory sync with error handling.
  * @param {string} filePath
  */
-function readDirSyncWithErrorHandling(dirPath, withFileTypes = false){
-  try{
+function readDirSyncWithErrorHandling(dirPath, withFileTypes = false) {
+  try {
     return fs.readdirSync(dirPath, { withFileTypes: withFileTypes });
-  }catch(err){
-    if(err.code === 'ENOENT' || err.code === 'EACCES'){
+  } catch (err) {
+    if (err.code === 'ENOENT' || err.code === 'EACCES') {
       console.log('ERROR: Failed to read the dir: ', dirPath);
       throw new Error('Failed to read directory!');
-    }else{
+    } else {
       console.log('ERROR: Unkonwn error at reading dir: ', dirPath);
       throw new Error('Unkonwn error occured during reading the directory!');
     }
@@ -74,6 +93,7 @@ function readDirSyncWithErrorHandling(dirPath, withFileTypes = false){
 
 const apiUtils = {
   getLastCreatedHtmlFile,
+  getHtmlFilesInDir,
   readFileSyncWithErrorHandling,
   readDirSyncWithErrorHandling,
   getParserOptions

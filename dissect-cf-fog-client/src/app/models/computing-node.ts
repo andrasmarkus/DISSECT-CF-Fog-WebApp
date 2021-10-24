@@ -5,6 +5,7 @@ export class ComputingNode {
   id: string;
   x: number;
   y: number;
+  range: number;
   resource: Resource;
   applications: ApplicationsObject;
   isCloud: boolean;

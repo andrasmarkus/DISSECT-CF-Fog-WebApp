@@ -57,8 +57,16 @@ export class ConfigurationResultComponent implements OnDestroy, OnInit {
     this.panelService.toogle();
   }
 
-  public downloadDiagram(): void {
-    this.downloadFile('diagram');
+  public downloadTimeline(): void {
+    this.downloadFile('timeline');
+  }
+
+  public downloadDevicesEnergy(): void {
+    this.downloadFile('devicesenergy');
+  }
+
+  public downloadNodesEnergy(): void {
+    this.downloadFile('nodesenergy');
   }
 
   public downloadAppliances(): void {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <strategies>
-	<strategy>load</strategy>
+	<strategy>runtime</strategy>
 	<strategy>random</strategy>
 	<strategy>distance</strategy>
 	<strategy>cost</strategy>

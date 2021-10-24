@@ -54,7 +54,7 @@ export interface ConfigurationResult {
   err: string;
 }
 
-export type ConfigurationFile = 'diagram' | 'appliances' | 'devices';
+export type ConfigurationFile = 'timeline' | 'devicesenergy' | 'nodesenergy' | 'appliances' | 'devices';
 
 export interface SignInResponse {
   id: string;

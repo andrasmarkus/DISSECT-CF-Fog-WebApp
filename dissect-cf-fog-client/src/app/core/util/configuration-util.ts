@@ -9,7 +9,7 @@ import {
 
 /**
  * It converts configuration object to xml base interface, which the server can parse to xml.
- * @param object - configured object which contains the nesseasry data
+ * @param object - configured object which contains the necessary data
  * @param email - user email which determines which folder to scan
  */
 export function parseConfigurationObjectToXml(object: ConfigurationObject, email: string): XmlBaseConfiguration {
@@ -20,11 +20,11 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
     const applications: ApplicationXml[] = [];
     for (const app of Object.values(node.applications)) {
       const applictaion = {
-        $tasksize: app.tasksize,
-        name: app.id,
+        $name: app.id,
         freq: app.freq,
+        tasksize: app.tasksize,
         instance: app.instance.name,
-        numOfInstruction: app.numOfInstruction,
+        countOfInstructions: app.numOfInstruction,
         threshold: app.threshold,
         strategy: app.strategy,
         canJoin: app.canJoin
@@ -32,18 +32,19 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
       applications.push(applictaion);
     }
     const appliance = {
-      name: node.id,
-      xcoord: node.x,
-      ycoord: node.y,
+      $name: node.id,
+      latitude: node.x,
+      longitude: node.y,
+      range: 500, // FIXME
       file: node.resource.name,
       applications: { application: applications }
     } as ApplianceXml;
 
-    if (node.neighbours) {
+    if (node.neighbours && node.isCloud == false) {
       const neighbours: NeighbourXml[] = [];
       for (const neighbour of Object.values(node.neighbours)) {
         const xmlNeighbour = {
-          name: neighbour.name,
+          $name: neighbour.name,
           latency: neighbour.latency
         } as NeighbourXml;
         if (neighbour.parent) {
@@ -59,30 +60,39 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
   }
 
   for (const station of Object.values(object.stations)) {
-    for (let i = 0; i < station.number; i++) {
       const randomX = Math.random() * station.radius * 2;
       const randomY = Math.random() * station.radius * 2;
       const x = randomX > station.radius ? randomX - station.radius : randomX;
       const y = randomY > station.radius ? randomX - station.radius : randomY;
 
       const device = {
-        $starttime: station.starttime,
-        $stoptime: station.stoptime,
-        $number: 1,
-        $filesize: station.filesize,
-        name: station.id,
-        freq: station.freq,
-        sensor: station.sensor,
-        maxinbw: station.maxinbw,
-        maxoutbw: station.maxoutbw,
-        diskbw: station.diskbw,
-        reposize: station.reposize,
+        $name: station.id,
+        startTime: station.starttime,
+        stopTime: station.stoptime,
+        fileSize: station.filesize,
+        sensorCount: station.sensorCount,
         strategy: station.strategy,
-        xCoord: round(x, 1),
-        yCoord: round(y, 1)
+        freq: station.freq,
+        latitude: round(y, 1),
+        longitude: round(x, 1),
+        speed: station.speed,
+        radius: station.radius,
+        latency: station.latency,
+        capacity: station.capacity,
+        maxInBW: station.maxinbw,
+        maxOutBW: station.maxoutbw,
+        diskBW: station.diskbw,
+        cores: station.cores,
+        perCoreProcessing: station.perCoreProcessing,
+        ram: station.ram,
+        onD: 1, // FIXME
+        offD: 1, // FIXME
+        minpower: station.minpower,
+        idlepower: station.idlepower, 
+        maxpower: station.maxpower
       } as DeviceXml;
       devices.push(device);
-    }
+    
   }
   const tzOffsetInMin = new Date().getTimezoneOffset();
   const tzOffset = (tzOffsetInMin !== 0 ? tzOffsetInMin / 60 : 0) * -1;
