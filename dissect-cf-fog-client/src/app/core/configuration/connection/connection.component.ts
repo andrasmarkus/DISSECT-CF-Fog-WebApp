@@ -800,6 +800,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
         }
       }
     });
+    this.configuration.instances = this.configurationService.instanceNodes
     this.userConfigurationService.sendConfiguration(this.configuration);
     this.stepperService.stepForward();
     this.graphScale = 1;
