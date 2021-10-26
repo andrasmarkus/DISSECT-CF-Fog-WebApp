@@ -54,6 +54,10 @@ router.post("/configurations/download/devices", [authJwt.verifyToken], (req, res
   return sendXmlFile(req, res, 'devices.xml');
 });
 
+router.post("/configurations/download/instances", [authJwt.verifyToken], (req, res, next) => {
+  return sendXmlFile(req, res, 'Instances.xml');
+});
+
 router.post("/configurations/download/timeline", [authJwt.verifyToken], (req, res, next) => {
   return sendHtmlFile(req, res, 'Timeline');
 });

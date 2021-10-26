@@ -3,11 +3,9 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges
 } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { ConfigurationFile, ConfigurationResult } from 'src/app/models/server-api/server-api';
@@ -75,6 +73,10 @@ export class ConfigurationResultComponent implements OnDestroy, OnInit {
 
   public downloadDevices(): void {
     this.downloadFile('devices');
+  }
+
+  public downloadInstances(): void {
+    this.downloadFile('instances');
   }
 
   private downloadFile(type: ConfigurationFile) {
