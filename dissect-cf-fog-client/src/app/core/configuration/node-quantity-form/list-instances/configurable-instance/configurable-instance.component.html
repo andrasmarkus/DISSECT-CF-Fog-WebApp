@@ -17,27 +17,27 @@
                     <mat-form-field appearance="outline" class="input-size-min">
                         <mat-label>RAM</mat-label>
                         <input class="setText-center app-input" matInput type="number" formControlName="ram"
-                            placeholder="> 1" />
+                            placeholder="4294967296" />
                         <span matSuffix>byte</span>
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="input-size-min">
                         <mat-label>CPU Cores</mat-label>
                         <input class="setText-center" matInput type="number" formControlName="cpuCores"
-                            placeholder="1000" />
-                        <span matSuffix>unit</span>
+                            placeholder="> 1" />
+                        <span matSuffix>core</span>
                     </mat-form-field>
                 </div>
                 <div class="double-item-row space-top">
                     <mat-form-field appearance="outline" class="input-size-min">
                         <mat-label>CPU Core processing power</mat-label>
                         <input class="setText-center app-input" matInput type="number"
-                            formControlName="cpuProcessingPower" placeholder="> 1" />
-                        <span matSuffix>ins/sec</span>
+                            formControlName="cpuProcessingPower" placeholder="0.001" />
+                        <span matSuffix>sec</span>
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="input-size-min">
                         <mat-label>Startup process</mat-label>
                         <input class="setText-center" matInput type="number" formControlName="startupProcess"
-                            placeholder="1000" />
+                            placeholder="100" />
                         <span matSuffix>unit</span>
                     </mat-form-field>
                 </div>
@@ -45,22 +45,27 @@
                     <mat-form-field appearance="outline" class="input-size-min">
                         <mat-label>Newtwork load</mat-label>
                         <input class="setText-center app-input" matInput type="number" formControlName="networkLoad"
-                            placeholder="> 1" />
-                        <span matSuffix>ins/sec</span>
+                            placeholder="0" />
+                        <span matSuffix>unit</span>
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="input-size-min">
                         <mat-label>Required disk</mat-label>
                         <input class="setText-center" matInput type="number" formControlName="reqDisk"
-                            placeholder="1000" />
-                        <span matSuffix>unit</span>
+                            placeholder="1073741824" />
+                        <span matSuffix>byte</span>
                     </mat-form-field>
                 </div>
                 <div class="double-item-row space-top">
                     <mat-form-field appearance="outline" class="input-size-min">
                         <mat-label>Price per tick</mat-label>
                         <input class="setText-center app-input" matInput type="number" formControlName="pricePerTick"
-                            placeholder="> 1" />
+                            placeholder="0.0000000283333333" />
                         <span matSuffix>ins/sec</span>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="input-size-min">
+                        <mat-label>Instance name</mat-label>
+                        <input class="setText-center app-input" matInput type="string" formControlName="name"
+                            placeholder="a1.large" />
                     </mat-form-field>
                 </div>
             </div>

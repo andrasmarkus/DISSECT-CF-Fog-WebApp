@@ -9,6 +9,7 @@ import {
   SERVER_URL,
   StrategysResponse as StrategiesResponse
 } from 'src/app/models/server-api/server-api';
+import { ConfigurationStateService } from '../configuration-state/configuration-state.service';
 
 /**
  * API calls for selections.
@@ -23,7 +24,10 @@ export class ResourceSelectionService {
   public resources$: Observable<Resource[]>;
   private refreshAPIcalls$ = new BehaviorSubject<void>(undefined);
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private configurationStateService: ConfigurationStateService
+    ) {
     this.refreshResources();
     this.instances$ = this.refreshAPIcalls$.pipe(switchMapTo(this.getAppInstances()), shareReplay(1));
     this.strategiesForApplications$ = this.refreshAPIcalls$.pipe(
@@ -56,6 +60,13 @@ export class ResourceSelectionService {
           ) as Instance;
           finalInstances.push(finalInstance);
         }
+
+        Object.values(this.configurationStateService.instanceNodes).forEach( instance => {
+          if(instance.valid && instance.name && instance.name.length > 0) {
+            finalInstances.push(Object.assign(instance) as Instance)
+          }
+        })
+
         return finalInstances;
       })
     );

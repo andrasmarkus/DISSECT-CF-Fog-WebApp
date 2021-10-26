@@ -44,6 +44,7 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
 
   private createForm(): void {
     this.instanceFormGroup = this.formBuilder.group({
+      name: this.createStringFormControl(),
       ram: this.createNumberFormControl(),
       cpuCores: this.createNumberFormControl(),
       cpuProcessingPower: this.createNumberFormControl(),
@@ -84,7 +85,11 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
   }
 
   private createNumberFormControl(): FormControl {
-    return new FormControl('', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.min(1)]);
+    return new FormControl('', [Validators.required, Validators.pattern('^[0-9.]*$')]);
+  }
+
+  private createStringFormControl(): FormControl {
+    return new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z._]*$')]);
   }
 
   private updateForm(): void {

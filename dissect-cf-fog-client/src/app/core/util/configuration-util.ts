@@ -98,14 +98,14 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
 
   for (const instance of Object.values(object.instances)) {
     const tempInstance = {
-      $name: instance.id,
+      $name: instance.name,
       ram: instance.ram,
-      cpucores: instance.cpuCores,
-      coreprocessingpower: instance.cpuProcessingPower,
-      startupprocess: instance.startupProcess,
-      networkload: instance.networkLoad,
-      reqdisk: instance.reqDisk,
-      pricepertick: instance.pricePerTick
+      'cpu-cores': instance.cpuCores,
+      'core-processing-power': instance.cpuProcessingPower,
+      'startup-process': instance.startupProcess,
+      'network-load': instance.networkLoad,
+      'req-disk': instance.reqDisk,
+      'price-per-tick': instance.pricePerTick
     } as InstanceXml;
     instances.push(tempInstance);
 }
