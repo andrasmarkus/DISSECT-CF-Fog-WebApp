@@ -14,7 +14,7 @@ const os = require('os');
  * It runs the dissect application, and sends the directory's name, the html file in string format, stdout and an error property,
  * if it is failed somehow, it will try to delete the created folder and it will send an error response.
  */
-router.post('/', /* [authJwt.verifyToken],  */(req, res , next)=> {
+router.post('/', [authJwt.verifyToken], (req, res , next)=> {
   if(!checkConfigurationRequestBody(req)){
     console.log('ERROR: Bad req body: ', req.body);
     throw new Error('Bad request!');
@@ -32,14 +32,16 @@ router.post('/', /* [authJwt.verifyToken],  */(req, res , next)=> {
   tzoffset *= 3600000;
   const localISOTime = (new Date(Date.now() + tzoffset)).toISOString().slice(0, -1);
   const configTime = localISOTime.replace('T', '_').replace(/\..+/, '').replace(/:/g, '-');
-  // const baseDirPath= `./configurations/users_configurations/${userEmail}/${configTime}`;
   const baseDirPath= `configurations/users_configurations/${userEmail}/${configTime}`;
   saveResourceFiles(req, baseDirPath);
 
-  const command =  `cd dissect-cf && java -cp `+
-  `target/dissect-cf-0.9.7-SNAPSHOT-jar-with-dependencies.jar `+
-  `hu.u_szeged.inf.fog.simulator.demo.CLFogSimulation ../${baseDirPath}/appliances.xml ` +
-  `../${baseDirPath}/devices.xml ../${baseDirPath}/ `;
+  const command =  `cd dissect-cf && java -cp ` +
+  `target/dissect-cf-fog-1.0.0-SNAPSHOT-jar-with-dependencies.jar ` +
+  `hu.u_szeged.inf.fog.simulator.demo.XMLSimulation ` +
+  `../configurations/instances/Instances.xml ` +
+  `../${baseDirPath}/appliances.xml ` +
+  `../${baseDirPath}/devices.xml ` + 
+  `../${baseDirPath}/ `;
 
   const proc = child.spawnSync(command, {shell: true, maxBuffer: 1024 * 512});
   if(proc.stderr.length > 0){
@@ -60,24 +62,26 @@ router.post('/', /* [authJwt.verifyToken],  */(req, res , next)=> {
 function sendResponseWithSavingStdOut(baseDirPath, data, res, directory, proc) {
   console.log('**** Configuration succeed! ****');
   try {
-    const fileName = apiUtils.getLastCreatedHtmlFile(baseDirPath);
-    const html = apiUtils.readFileSyncWithErrorHandling(baseDirPath + '/' + fileName);
-    writeToFile(baseDirPath + '/' + fileName, html.toString());
+    const htmlResults = [];
+    const htmlFileNames = apiUtils.getHtmlFilesInDir(baseDirPath);
+    htmlFileNames.forEach(file => {
+      htmlToSave = apiUtils.readFileSyncWithErrorHandling(baseDirPath + '/' + file);
+      writeToFile(baseDirPath + '/' + file, htmlToSave.toString());
+      htmlResults.push(htmlToSave.toString())
+    })
 
     const stdOut = data.toString();
-    const finalstdOut = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'));
-    writeToFile(baseDirPath + '/run-log.txt', finalstdOut);
+    writeToFile(baseDirPath + '/run-log.txt', stdOut);
 
-    fse.outputFile(baseDirPath + '/run-log.txt', finalstdOut, (writeErr) => {
+    fse.outputFile(baseDirPath + '/run-log.txt', stdOut, (writeErr) => {
       if (writeErr) {
         return console.log('ERROR: write file: ', baseDirPath + '/run-log.txt', '/n MSG: ', writeErr);
       }
       console.log('WRITE: run-log > ', baseDirPath + '/run-log.txt');
-      const finalstdOut = stdOut.slice(stdOut.indexOf('~~Informations about the simulation:~~'));
 
       fse.removeSync(baseDirPath);
 
-      return res.status(201).json({ directory, html: html.toString(), data: finalstdOut, err: null });
+      return res.status(201).json({ directory: baseDirPath, html: htmlResults, data: stdOut, err: null });
     });
   } catch (error) {
     killProcess(proc);
@@ -140,9 +144,11 @@ function saveResourceFiles(req, baseDirPath) {
  */
 function writeToFile(filePath, data) {
   try{
-    console.log(filePath)
+    // Saving into Firabase storage
     const file = storage.file(filePath);
     file.save(data)
+
+    // Saving into local fs
     fse.outputFileSync(filePath, data);
   }catch {
     console.log('ERROR: Can not write to file: ', filePath);
