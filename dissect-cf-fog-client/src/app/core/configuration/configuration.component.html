@@ -11,6 +11,10 @@
         <app-node-quantity-form></app-node-quantity-form>
       </mat-step>
       <mat-step>
+        <ng-template matStepLabel><span class="step-title">Instances</span></ng-template>
+        <app-list-instances></app-list-instances>
+      </mat-step>
+      <mat-step>
         <ng-template matStepLabel><span class="step-title">Nodes</span></ng-template>
         <ng-container ></ng-container>
         <app-list-configurable-nodes

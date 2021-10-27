@@ -1,13 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Instance } from 'src/app/models/instance';
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
+import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
 
 @Component({
   selector: 'app-list-instances',
   templateUrl: './list-instances.component.html',
   styleUrls: ['./list-instances.component.css']
 })
-export class ListInstancesComponent implements OnInit {
+export class ListInstancesComponent {
   @Input() public instances: Instance[] = [];
 
   public instanceIndex = 0;
@@ -15,12 +16,10 @@ export class ListInstancesComponent implements OnInit {
 
   constructor(
     public configurationService: ConfigurationStateService,
+    public stepperService: StepperService
   ) {
     this.createInstance();
    }
-
-  ngOnInit(): void {
-  }
 
   private createInstance(): void {
     this.instanceIndex += 1;
@@ -46,6 +45,12 @@ export class ListInstancesComponent implements OnInit {
   public getInstanceFromEmitter(instance: Instance): void {
     this.configurationService.instanceNodes[instance.id] = instance;
     this.checkIsValidConfiguration();
+  }
+
+  public checkReadyAndNext(): void {
+    if (this.isValidConfiguration) {
+      this.stepperService.stepForward();
+    }
   }
 
   private checkIsValidConfiguration(): void {

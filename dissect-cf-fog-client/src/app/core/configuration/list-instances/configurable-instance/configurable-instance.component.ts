@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { INPUT_VALIDATION_CPU_CORE, INPUT_VALIDATION_NAME, INPUT_VALIDATION_NETWORK_LOAD, INPUT_VALIDATION_POSITIVE_NUMBER, INPUT_VALIDATION_PRICE_PER_TICK } from 'src/app/core/configuration/utils/constants';
 import { Instance } from 'src/app/models/instance';
 
 @Component({
@@ -21,7 +22,7 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder
-  ) { 
+  ) {
     this.createForm();
     this.formChangeSub = this.instanceFormGroup.valueChanges.subscribe(() => {
       this.saveInstance();
@@ -44,14 +45,14 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
 
   private createForm(): void {
     this.instanceFormGroup = this.formBuilder.group({
-      name: this.createStringFormControl(),
-      ram: this.createNumberFormControl(),
-      cpuCores: this.createNumberFormControl(),
-      cpuProcessingPower: this.createNumberFormControl(),
-      startupProcess: this.createNumberFormControl(),
-      networkLoad: this.createNumberFormControl(),
-      reqDisk: this.createNumberFormControl(),
-      pricePerTick: this.createNumberFormControl()
+      name: this.createFormControl(INPUT_VALIDATION_NAME),
+      ram: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      cpuCores: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      cpuProcessingPower: this.createFormControl(INPUT_VALIDATION_CPU_CORE),
+      startupProcess: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      networkLoad: this.createFormControl(INPUT_VALIDATION_NETWORK_LOAD),
+      reqDisk: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      pricePerTick: this.createFormControl(INPUT_VALIDATION_PRICE_PER_TICK)
     });
   }
 
@@ -84,12 +85,8 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
     return this.instance;
   }
 
-  private createNumberFormControl(): FormControl {
-    return new FormControl('', [Validators.required, Validators.pattern('^[0-9.]*$')]);
-  }
-
-  private createStringFormControl(): FormControl {
-    return new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z._]*$')]);
+  private createFormControl(validation: ValidatorFn[]): FormControl {
+    return new FormControl('', validation);
   }
 
   private updateForm(): void {
