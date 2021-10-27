@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   OnDestroy
 } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, Validators, ValidatorFn } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Station } from 'src/app/models/station';
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
