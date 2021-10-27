@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<strategies>
-	<strategy>random</strategy>
-	<strategy>hold</strategy>
-	<strategy>push</strategy>
-	<strategy>load</strategy>
-	<strategy>fuzzy</strategy>
-</strategies>

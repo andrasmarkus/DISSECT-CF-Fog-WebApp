@@ -9,7 +9,6 @@ import {
   SERVER_URL,
   StrategysResponse as StrategiesResponse
 } from 'src/app/models/server-api/server-api';
-import { ConfigurationStateService } from '../configuration-state/configuration-state.service';
 
 /**
  * API calls for selections.
@@ -18,18 +17,15 @@ import { ConfigurationStateService } from '../configuration-state/configuration-
 export class ResourceSelectionService {
   private readonly PROPERTIES_API = SERVER_URL + 'properties';
 
-  public instances$: Observable<Instance[]>;
   public strategiesForApplications$: Observable<string[]>;
   public strategiesForDevices$: Observable<string[]>;
   public resources$: Observable<Resource[]>;
   private refreshAPIcalls$ = new BehaviorSubject<void>(undefined);
 
   constructor(
-    private http: HttpClient,
-    private configurationStateService: ConfigurationStateService
+    private http: HttpClient
     ) {
     this.refreshResources();
-    this.instances$ = this.refreshAPIcalls$.pipe(switchMapTo(this.getAppInstances()), shareReplay(1));
     this.strategiesForApplications$ = this.refreshAPIcalls$.pipe(
       switchMapTo(this.getStrategiesForApplications()),
       shareReplay(1)
@@ -47,29 +43,6 @@ export class ResourceSelectionService {
 
   public getResurceFiles(): Observable<Resource[]> {
     return this.http.get<Resource[]>(this.PROPERTIES_API + '/resources');
-  }
-
-  public getAppInstances(): Observable<Instance[]> {
-    return this.http.get<InstancesResponse>(this.PROPERTIES_API + '/instances').pipe(
-      map(instances => {
-        const finalInstances: Instance[] = [];
-        for (const instance of instances.instance) {
-          const finalInstance = Object.assign(
-            {},
-            ...Object.keys(instance).map(key => ({ [this.parseInstanceKey(key)]: instance[key] }))
-          ) as Instance;
-          finalInstances.push(finalInstance);
-        }
-
-        Object.values(this.configurationStateService.instanceNodes).forEach( instance => {
-          if(instance.valid && instance.name && instance.name.length > 0) {
-            finalInstances.push(Object.assign(instance) as Instance)
-          }
-        })
-
-        return finalInstances;
-      })
-    );
   }
 
   /**
