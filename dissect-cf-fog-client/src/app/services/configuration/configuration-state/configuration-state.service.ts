@@ -9,8 +9,6 @@ import { InstanceObject } from 'src/app/models/instance';
   providedIn: 'root'
 })
 export class ConfigurationStateService {
-  public maxNumOfNodes = 10;
-
   private generateGraphSubject = new Subject();
   public generateGraph$ = this.generateGraphSubject.asObservable();
 

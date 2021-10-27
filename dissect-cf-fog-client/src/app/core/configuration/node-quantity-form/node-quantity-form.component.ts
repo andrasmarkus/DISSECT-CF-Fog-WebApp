@@ -4,6 +4,7 @@ import { ComputingNodesQuantityData } from 'src/app/models/computing-nodes-quant
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
 import { RestartConfigurationService } from 'src/app/services/configuration/restart-configuration/restart-configuration.service';
 import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
+import { MAX_NUM_OF_NODES } from '../utils/constants';
 
 @Component({
   selector: 'app-node-quantity-form',
@@ -26,12 +27,12 @@ export class NodeQuantityFormComponent {
     this.numOfComputingNodes = this.formBuilder.group({
       numOfClouds: new FormControl('', [
         Validators.required,
-        Validators.max(this.configurationService.maxNumOfNodes),
+        Validators.max(MAX_NUM_OF_NODES),
         Validators.pattern('^[0-9]*$'),
         Validators.min(1)
       ]),
       numOfFogs: new FormControl('', [
-        Validators.max(this.configurationService.maxNumOfNodes),
+        Validators.max(MAX_NUM_OF_NODES),
         Validators.pattern('^[0-9]*$'),
         Validators.min(1)
       ])
