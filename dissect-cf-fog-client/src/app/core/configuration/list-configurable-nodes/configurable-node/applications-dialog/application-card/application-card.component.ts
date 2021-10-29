@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Application } from 'src/app/models/application';
 import { Instance } from 'src/app/models/server-api/server-api';
+import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
 import { ResourceSelectionService } from 'src/app/services/configuration/resource-selection/resource-selection.service';
 import { PanelService } from 'src/app/services/panel/panel.service';
 
@@ -18,16 +19,19 @@ export class ApplicationCardComponent implements OnInit {
   public canJoin: boolean;
   public instance: Instance;
   public strategy: string;
+  public userInstanceInputs: Instance[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
     public panelService: PanelService,
-    public resourceSelectionService: ResourceSelectionService
+    public resourceSelectionService: ResourceSelectionService,
+    public configurationStateService: ConfigurationStateService
   ) {}
 
   public ngOnInit(): void {
     this.createForm();
     this.initForm();
+    this.getUserInstances();
   }
 
   private createForm(): void {
@@ -63,12 +67,22 @@ export class ApplicationCardComponent implements OnInit {
     return this.application;
   }
 
+  
   public checkValidation(): boolean {
     return this.appFormGroup.valid && this.instance && this.strategy !== '';
   }
-
+  
   public openInfoPanelForApplications(): void {
     this.panelService.getApplicationData();
     this.panelService.toogle();
   }
+
+  private getUserInstances(): void {
+    Object.values(this.configurationStateService.instanceNodes).forEach( instance => {
+      if(instance.valid && instance.name && instance.name.length > 0) {
+        this.userInstanceInputs.push(Object.assign(instance) as Instance)
+      }
+    })
+  }
+
 }

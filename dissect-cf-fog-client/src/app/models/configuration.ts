@@ -1,10 +1,12 @@
 import { ComputingNode } from './computing-node';
 import { StationsObject } from './station';
 import { ConfiguredComputingNodesObject } from './computing-nodes-object';
+import { InstanceObject } from './instance';
 
 export interface ConfigurationObject {
   nodes: ConfiguredComputingNodesObject;
   stations: StationsObject;
+  instances: InstanceObject;
 }
 
 export interface ConfiguredComputingNode extends ComputingNode {

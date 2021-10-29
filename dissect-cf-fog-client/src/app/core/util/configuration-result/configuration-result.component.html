@@ -19,14 +19,14 @@
         </ng-template>
       </div>
     </mat-tab>
-    <mat-tab label="Devices Energy">
+    <mat-tab [disabled]="configResult.err !== null" label="Devices Energy">
       <div class="tab" [style.height.vh]="contentHeight">
         <ng-container *ngIf="configResult.err === null; else failedConfig">
           <div [innerHTML]="configResult.html[0] | safeHtml" appRunScripts></div>
         </ng-container>
       </div>
     </mat-tab>
-    <mat-tab label="Nodes Energy">
+    <mat-tab [disabled]="configResult.err !== null" label="Nodes Energy">
       <div class="tab" [style.height.vh]="contentHeight">
         <ng-container *ngIf="configResult.err === null; else failedConfig">
           <div [innerHTML]="configResult.html[1] | safeHtml" appRunScripts></div>
@@ -38,7 +38,7 @@
         <div  class="output-text" [innerHTML]="configResult.data | safeHtml" appRunScripts></div>
       </div>
     </mat-tab>
-    <mat-tab  [disabled]="configResult.err !== null" label="Files">
+    <mat-tab [disabled]="configResult.err !== null" label="Files">
       <div class="tab files-container" [style.height.vh]="contentHeight">
         <div class="resource-container">
           <h1 class="configuration-files-header">Configuration files</h1>
@@ -64,6 +64,14 @@
               <button type="button" mat-raised-button color="primary" class="download-btn"
                 (click)="downloadNodesEnergy()">
                 <span>Node Energy</span>
+                <i class="fa fa-download download-icon" aria-hidden="true"></i>
+              </button>
+            </div>
+            <div class="file">
+              <i class="far fa-file-code fa-4x" aria-hidden="true"></i>
+              <button type="button" mat-raised-button color="primary" class="download-btn"
+                (click)="downloadInstances()">
+                <span>Instances</span>
                 <i class="fa fa-download download-icon" aria-hidden="true"></i>
               </button>
             </div>

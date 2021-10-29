@@ -45,7 +45,7 @@ function getHtmlFilesInDir(dirName) {
   console.log('READ: dir: ', dirName);
   const dir = readDirSyncWithErrorHandling(dirName);
 
-  const files = dir.filter(file => path.extname(file) == ".html");
+  const files = dir.filter(file => path.extname(file) == ".html").sort();
   
     if (files.length) {
       return files;

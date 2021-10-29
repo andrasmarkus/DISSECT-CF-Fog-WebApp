@@ -4,7 +4,8 @@ import {
   ApplianceXml,
   DeviceXml,
   NeighbourXml,
-  XmlBaseConfiguration
+  XmlBaseConfiguration,
+  InstanceXml
 } from 'src/app/models/xml-configuration-model';
 
 /**
@@ -15,6 +16,7 @@ import {
 export function parseConfigurationObjectToXml(object: ConfigurationObject, email: string): XmlBaseConfiguration {
   const appliances: ApplianceXml[] = [];
   const devices: DeviceXml[] = [];
+  const instances: InstanceXml[] = [];
 
   for (const node of Object.values(object.nodes)) {
     const applications: ApplicationXml[] = [];
@@ -92,8 +94,21 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
         maxpower: station.maxpower
       } as DeviceXml;
       devices.push(device);
-    
   }
+
+  for (const instance of Object.values(object.instances)) {
+    const tempInstance = {
+      $name: instance.name,
+      ram: instance.ram,
+      'cpu-cores': instance.cpuCores,
+      'core-processing-power': instance.cpuProcessingPower,
+      'startup-process': instance.startupProcess,
+      'network-load': instance.networkLoad,
+      'req-disk': instance.reqDisk,
+      'price-per-tick': instance.pricePerTick
+    } as InstanceXml;
+    instances.push(tempInstance);
+}
   const tzOffsetInMin = new Date().getTimezoneOffset();
   const tzOffset = (tzOffsetInMin !== 0 ? tzOffsetInMin / 60 : 0) * -1;
   return {
@@ -108,6 +123,11 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
       devices: {
         devices: {
           device: devices
+        }
+      },
+      instances: {
+        instances: {
+          instance: instances
         }
       }
     }

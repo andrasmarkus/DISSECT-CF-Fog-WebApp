@@ -26,7 +26,7 @@ import { StepBackDialogComponent } from '../step-back-dialog/step-back-dialog.co
 export class ConnectionComponent implements OnInit, OnDestroy {
   public clouds: CloudNodesObject = {};
   public fogs: FogNodesObject = {};
-  public configuration: ConfigurationObject = { nodes: {}, stations: {} };
+  public configuration: ConfigurationObject = { nodes: {}, stations: {}, instances: {} };
   public multipleStationNodes: StationsObject;
 
   public numOfClouds = 1;
@@ -800,6 +800,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
         }
       }
     });
+    this.configuration.instances = this.configurationService.instanceNodes
     this.userConfigurationService.sendConfiguration(this.configuration);
     this.stepperService.stepForward();
     this.graphScale = 1;

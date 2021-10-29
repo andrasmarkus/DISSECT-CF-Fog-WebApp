@@ -6,15 +6,15 @@ import {
   OnChanges,
   ChangeDetectionStrategy,
   SimpleChanges,
-  OnInit,
   OnDestroy
 } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, Validators, ValidatorFn } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Station } from 'src/app/models/station';
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
 import { ResourceSelectionService } from 'src/app/services/configuration/resource-selection/resource-selection.service';
 import { PanelService } from 'src/app/services/panel/panel.service';
+import { INPUT_VALIDATION_CPU_CORE, INPUT_VALIDATION_POSITIVE_FLOAT, INPUT_VALIDATION_POSITIVE_NUMBER } from '../../utils/constants';
 
 @Component({
   selector: 'app-configurable-station',
@@ -71,29 +71,29 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
 
   private createForm(): void {
     this.stationFormGroup = this.formBuilder.group({
-      starttime: this.createNumberFormControl(),
-      stoptime: this.createNumberFormControl(),
-      filesize: this.createNumberFormControl(),
-      freq: this.createNumberFormControl(),
-      sensorCount: this.createNumberFormControl(),
-      maxinbw: this.createNumberFormControl(),
-      maxoutbw: this.createNumberFormControl(),
-      diskbw: this.createNumberFormControl(),
-      radius: this.createNumberFormControl(),
-      speed: this.createNumberFormControl(),
-      cores: this.createNumberFormControl(),
-      ram: this.createNumberFormControl(),
-      perCoreProcessing: this.createNumberFormControl(),
-      minpower: this.createNumberFormControl(),
-      maxpower: this.createNumberFormControl(),
-      idlepower: this.createNumberFormControl(),
-      capacity: this.createNumberFormControl(),
-      latency: this.createNumberFormControl()
+      starttime: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      stoptime: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      filesize: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      freq: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      sensorCount: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      maxinbw: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      maxoutbw: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      diskbw: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      radius: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      speed: this.createFormControl(INPUT_VALIDATION_POSITIVE_FLOAT),
+      cores: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      ram: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      perCoreProcessing: this.createFormControl(INPUT_VALIDATION_CPU_CORE),
+      minpower: this.createFormControl(INPUT_VALIDATION_POSITIVE_FLOAT),
+      maxpower: this.createFormControl(INPUT_VALIDATION_POSITIVE_FLOAT),
+      idlepower: this.createFormControl(INPUT_VALIDATION_POSITIVE_FLOAT),
+      capacity: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      latency: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER)
     });
   }
 
-  private createNumberFormControl(): FormControl {
-    return new FormControl('', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.min(1)]);
+  private createFormControl(validation: ValidatorFn[]): FormControl {
+    return new FormControl('', validation);
   }
 
   private updateForm(): void {

@@ -3,13 +3,12 @@ import { ComputingNodesQuantityData } from 'src/app/models/computing-nodes-quant
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ComputingNodesObject } from 'src/app/models/computing-nodes-object';
 import { StationsObject, Station } from 'src/app/models/station';
+import { InstanceObject } from 'src/app/models/instance';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigurationStateService {
-  public maxNumOfNodes = 10;
-
   private generateGraphSubject = new Subject();
   public generateGraph$ = this.generateGraphSubject.asObservable();
 
@@ -25,6 +24,10 @@ export class ConfigurationStateService {
    * This contains the stations which is actially configured.
    */
   public stationNodes: StationsObject = {};
+    /**
+   * This contains the instances which is actially configured.
+   */
+  public instanceNodes: InstanceObject = {};
 
   public setNodesQuantity(quantity: ComputingNodesQuantityData) {
     this.nodesQuantity$.next(quantity);

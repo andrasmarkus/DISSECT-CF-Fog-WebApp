@@ -38,7 +38,7 @@ router.post('/', [authJwt.verifyToken], (req, res , next)=> {
   const command =  `cd dissect-cf && java -cp ` +
   `target/dissect-cf-fog-1.0.0-SNAPSHOT-jar-with-dependencies.jar ` +
   `hu.u_szeged.inf.fog.simulator.demo.XMLSimulation ` +
-  `../configurations/instances/Instances.xml ` +
+  `../${baseDirPath}/Instances.xml ` +
   `../${baseDirPath}/appliances.xml ` +
   `../${baseDirPath}/devices.xml ` + 
   `../${baseDirPath}/ `;
@@ -126,16 +126,22 @@ function sendExecutionError(stderr, baseDirPath, res) {
  */
 function saveResourceFiles(req, baseDirPath) {
   const parser = new Parser(apiUtils.getParserOptions('$'));
+
   const pureAppliances = req.body.configuration.appliances;
   const pureDevices = req.body.configuration.devices;
+  const pureInstances = req.body.configuration.instances;
+
   const appliances = parser.parse(pureAppliances);
   const devices = parser.parse(pureDevices);
+  const instances = parser.parse(pureInstances);
 
   const xmlFileHeader = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
   writeToFile(baseDirPath + '/appliances.xml', xmlFileHeader + appliances);
   console.log('WRITE: appliances > ', baseDirPath + '/appliances.xml');
   writeToFile(baseDirPath + '/devices.xml', xmlFileHeader + devices);
   console.log('WRITE: devices > ', baseDirPath + '/devices.xml');
+  writeToFile(baseDirPath + '/Instances.xml', xmlFileHeader + instances);
+  console.log('WRITE: instances > ', baseDirPath + '/Instances.xml');
 }
 
 /**

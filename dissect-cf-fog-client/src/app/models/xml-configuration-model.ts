@@ -4,6 +4,7 @@ export interface XmlBaseConfiguration {
     tzOffsetInSec?: number;
     appliances: AppliancesContainerXml;
     devices: StationContainerXml;
+    instances: InstanceContainerXml;
   };
 }
 
@@ -82,10 +83,10 @@ export interface DeviceXml {
 export interface InstanceXml {
   $name: string;
   ram: number;
-  cpucores: number;
-  coreprocessingpower: number;
-  startupprocess: number;
-  networkload: number;
-  reqdisk: number;
-  pricepertick: number;
+  'cpu-cores': number;
+  'core-processing-power': number;
+  'startup-process': number;
+  'network-load': number;
+  'req-disk': number;
+  'price-per-tick': number;
 }

@@ -39,7 +39,7 @@
     <mat-form-field appearance="outline" class="input-size-min">
       <mat-label>Select instances</mat-label>
       <mat-select [(ngModel)]="instance" name="instance.name" [ngModelOptions]="{ standalone: true }">
-        <mat-option *ngFor="let instance of resourceSelectionService.instances$ | async" [value]="instance"> {{ instance.name }}</mat-option>
+        <mat-option *ngFor="let instance of userInstanceInputs" [value]="instance"> {{ instance.name }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="input-size-min">

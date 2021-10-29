@@ -17,15 +17,15 @@ import {
 export class ResourceSelectionService {
   private readonly PROPERTIES_API = SERVER_URL + 'properties';
 
-  public instances$: Observable<Instance[]>;
   public strategiesForApplications$: Observable<string[]>;
   public strategiesForDevices$: Observable<string[]>;
   public resources$: Observable<Resource[]>;
   private refreshAPIcalls$ = new BehaviorSubject<void>(undefined);
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient
+    ) {
     this.refreshResources();
-    this.instances$ = this.refreshAPIcalls$.pipe(switchMapTo(this.getAppInstances()), shareReplay(1));
     this.strategiesForApplications$ = this.refreshAPIcalls$.pipe(
       switchMapTo(this.getStrategiesForApplications()),
       shareReplay(1)
@@ -43,22 +43,6 @@ export class ResourceSelectionService {
 
   public getResurceFiles(): Observable<Resource[]> {
     return this.http.get<Resource[]>(this.PROPERTIES_API + '/resources');
-  }
-
-  public getAppInstances(): Observable<Instance[]> {
-    return this.http.get<InstancesResponse>(this.PROPERTIES_API + '/instances').pipe(
-      map(instances => {
-        const finalInstances: Instance[] = [];
-        for (const instance of instances.instance) {
-          const finalInstance = Object.assign(
-            {},
-            ...Object.keys(instance).map(key => ({ [this.parseInstanceKey(key)]: instance[key] }))
-          ) as Instance;
-          finalInstances.push(finalInstance);
-        }
-        return finalInstances;
-      })
-    );
   }
 
   /**
