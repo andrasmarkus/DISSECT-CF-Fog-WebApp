@@ -4,11 +4,14 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { ComputingNodesObject } from 'src/app/models/computing-nodes-object';
 import { StationsObject, Station } from 'src/app/models/station';
 import { InstanceObject } from 'src/app/models/instance';
+import { MAX_NUM_OF_NODES } from 'src/app/core/configuration/utils/constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigurationStateService {
+  public maxNumOfNodes = MAX_NUM_OF_NODES;
+
   private generateGraphSubject = new Subject();
   public generateGraph$ = this.generateGraphSubject.asObservable();
 

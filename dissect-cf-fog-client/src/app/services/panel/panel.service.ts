@@ -3,9 +3,10 @@ import { MatDrawer } from '@angular/material/sidenav';
 import {
   InfoPanelData,
   getResourceFilesInfoData,
+  getInstanceInfoData,
   getApplicationInfoData,
   getStationInfoData,
-  getConectionInfoData,
+  getConnectionInfoData,
   getConfigurationErrorData
 } from 'src/app/models/info-panel-data';
 import { BehaviorSubject } from 'rxjs';
@@ -62,7 +63,11 @@ export class PanelService {
     this.infoData$.next(getResourceFilesInfoData());
   }
 
-  public getStationeData(): void {
+  public getInstanceData(): void {
+    this.infoData$.next(getInstanceInfoData());
+  }
+
+  public getStationData(): void {
     this.infoData$.next(getStationInfoData());
   }
 
@@ -70,7 +75,7 @@ export class PanelService {
     this.infoData$.next(getApplicationInfoData());
   }
   public getConnectionData(): void {
-    this.infoData$.next(getConectionInfoData());
+    this.infoData$.next(getConnectionInfoData());
   }
 
   public getConfigurationErrorData(): void {

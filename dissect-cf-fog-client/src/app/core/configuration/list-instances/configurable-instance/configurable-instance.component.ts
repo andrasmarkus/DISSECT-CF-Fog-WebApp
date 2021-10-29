@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@a
 import { Subscription } from 'rxjs';
 import { INPUT_VALIDATION_CPU_CORE, INPUT_VALIDATION_NAME, INPUT_VALIDATION_NETWORK_LOAD, INPUT_VALIDATION_POSITIVE_NUMBER, INPUT_VALIDATION_PRICE_PER_TICK } from 'src/app/core/configuration/utils/constants';
 import { Instance } from 'src/app/models/instance';
+import { PanelService } from 'src/app/services/panel/panel.service';
 
 @Component({
   selector: 'app-configurable-instance',
@@ -21,7 +22,8 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
   private formChangeSub: Subscription;
 
   constructor(
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    public panelService: PanelService
   ) {
     this.createForm();
     this.formChangeSub = this.instanceFormGroup.valueChanges.subscribe(() => {
@@ -97,7 +99,7 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
   }
 
   public openInfoPanelForInstances(): void {
-
+    this.panelService.getInstanceData();
+    this.panelService.toogle();
   }
-
 }

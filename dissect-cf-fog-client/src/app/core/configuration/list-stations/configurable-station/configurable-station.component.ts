@@ -128,7 +128,7 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
   }
 
   public openInfoPanelForStations(): void {
-    this.panelService.getStationeData();
+    this.panelService.getStationData();
     this.panelService.toogle();
   }
 }
