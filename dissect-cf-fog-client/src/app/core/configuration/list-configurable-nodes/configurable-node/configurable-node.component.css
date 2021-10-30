@@ -107,6 +107,15 @@
   height: 30px;
 }
 
+.input-size-min {
+  width: 40%;
+  max-width: 200px;
+}
+
+.mat-form-field {
+  padding: 0 0.5rem;
+}
+
 @media screen and (max-width: 400px) {
   .card{
     margin: 2rem -2rem 0 -2rem;

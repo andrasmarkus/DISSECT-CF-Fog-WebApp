@@ -28,7 +28,6 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
   @Output() public removeEmitter = new EventEmitter<string>();
 
   public stationFormGroup: FormGroup;
-  public quantity = 1;
   public strategy: string;
 
   private formChangeSub: Subscription;
@@ -61,7 +60,7 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
 
   private saveStation() {
     this.setStationValues();
-    if (this.stationFormGroup.valid && this.quantity >= 1 && this.strategy !== '') {
+    if (this.stationFormGroup.valid && this.strategy !== '') {
       this.station.valid = true;
     } else {
       this.station.valid = false;
@@ -88,7 +87,11 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
       maxpower: this.createFormControl(INPUT_VALIDATION_POSITIVE_FLOAT),
       idlepower: this.createFormControl(INPUT_VALIDATION_POSITIVE_FLOAT),
       capacity: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
-      latency: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER)
+      latency: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      ond: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      offd: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      quantity: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      range: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER)
     });
   }
 
@@ -100,22 +103,7 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
     if (this.station) {
       this.stationFormGroup?.patchValue(this.station, { emitEvent: false });
     }
-    this.quantity = this.station.quantity ? this.station.quantity : 1;
     this.strategy = this.station.strategy ? this.station.strategy : '';
-  }
-
-  public decrease(): void {
-    if (this.quantity > 1) {
-      this.quantity--;
-      this.station.quantity = this.quantity;
-      this.saveStation();
-    }
-  }
-
-  public increase(): void {
-    this.quantity++;
-    this.station.quantity = this.quantity;
-    this.saveStation();
   }
 
   public setStationValues() {
@@ -123,7 +111,6 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
     this.station = this.stationFormGroup.value;
     this.station.id = id;
     this.station.strategy = this.strategy;
-    this.station.quantity = this.quantity;
     return this.station;
   }
 
