@@ -124,6 +124,26 @@
         </mat-form-field>
       </div>
       <div class="double-item-row">
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>onD</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="ond" placeholder="1"/>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>offD</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="offd" placeholder="1"/>
+        </mat-form-field>
+      </div>
+      <div class="double-item-row">
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Quantity</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="quantity" placeholder="10"/>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Range</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="range" placeholder=" > 10"/>
+        </mat-form-field>
+      </div>
+      <div class="double-item-row">
         <mat-form-field appearance="outline" class="input-size-min no-padding">
           <mat-label>Strategy</mat-label>
           <mat-select [(ngModel)]="strategy" [ngModelOptions]="{ standalone: true }" (selectionChange)="onStrategyChange()">
@@ -132,15 +152,5 @@
         </mat-form-field>
       </div>
     </form>
-    <mat-divider></mat-divider>
-    <div class="quantity-container">
-      <button mat-icon-button (click)="decrease()">
-        <i class="fas fa-minus"></i>
-      </button>
-      <input matInput class="quantity-input" type="number" readonly="true" [ngModel]="quantity"/>
-      <button mat-icon-button (click)="increase()">
-        <i class="fas fa-plus"></i>
-      </button>
-    </div>
   </mat-card-content>
 </mat-card>

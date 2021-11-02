@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroupDirective, ControlContainer, Validators, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroupDirective, ControlContainer, Validators, FormGroup, FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ApplicationsDialogComponent } from './applications-dialog/applications-dialog.component';
 import { ApplicationsObject } from 'src/app/models/application';
@@ -10,6 +10,7 @@ import { WindowSizeService } from 'src/app/services/window-size/window-size.serv
 import { QuantityCounterService } from 'src/app/services/configuration/quantity-counter/quantity-counter.service';
 import { Resource } from 'src/app/models/server-api/server-api';
 import { Subscription } from 'rxjs';
+import { INPUT_VALIDATION_POSITIVE_NUMBER, MAX_NUM_OF_APPLICATIONS } from '../../utils/constants';
 
 @Component({
   selector: 'app-configurable-node',
@@ -49,7 +50,7 @@ export class ConfigurableNodeComponent implements OnChanges, OnDestroy {
   private dialogCloseSub: Subscription;
   private dialogRef: MatDialogRef<ApplicationsDialogComponent, any>;
   private readonly ASSESTS_URL = '../../../../assets/';
-  private readonly maxApplicationsQuantity = 10;
+  private readonly maxApplicationsQuantity = MAX_NUM_OF_APPLICATIONS;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -98,7 +99,8 @@ export class ConfigurableNodeComponent implements OnChanges, OnDestroy {
     const newValue = {
       numOfApplications: this.node.applications ? Object.keys(this.node.applications).length : 0,
       allAppsConfigured: this.checkAllAppsAreConfigured(),
-      quantity: this.node.quantity
+      quantity: this.node.quantity,
+      range: this.node.range
     };
     this.nodeCardForm.patchValue(newValue);
   }
@@ -200,17 +202,10 @@ export class ConfigurableNodeComponent implements OnChanges, OnDestroy {
 
   private initForm(): void {
     this.nodeCardForm = this.formBuilder.group({
-      numOfApplications: [
-        0,
-        [
-          Validators.required,
-          Validators.max(this.maxApplicationsQuantity),
-          Validators.pattern('^[0-9]*$'),
-          Validators.min(1)
-        ]
-      ],
+      numOfApplications: new FormControl(0, INPUT_VALIDATION_POSITIVE_NUMBER),
       allAppsConfigured: false,
-      quantity: [1, [Validators.min(1)]]
+      quantity: [1, [Validators.min(1)]],
+      range: new FormControl('', INPUT_VALIDATION_POSITIVE_NUMBER)
     });
   }
 
@@ -232,11 +227,13 @@ export class ConfigurableNodeComponent implements OnChanges, OnDestroy {
     if (allAppsConfigured && this.selectedResource) {
       this.node.isConfigured = true;
       this.node.resource = this.selectedResource;
+      this.node.range = this.nodeCardForm.value.range;
       this.setComputingNode.emit(this.node);
       this.statusIcon = this.ASSESTS_URL + StringUtlis.CONFIGURED_ICON;
     } else {
       this.node.isConfigured = false;
       this.node.resource = this.selectedResource;
+      this.node.range = this.nodeCardForm.value.range;
       this.setComputingNode.emit(this.node);
       this.statusIcon = this.ASSESTS_URL + StringUtlis.NOT_CONFIGURED_ICON;
     }

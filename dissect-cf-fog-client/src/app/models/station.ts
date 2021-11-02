@@ -24,6 +24,7 @@ export class Station {
   number: number;
   xCoord?: number;
   yCoord?: number;
+  range: number;
   quantity: number;
   valid = false;
   focusedInputName?: string;

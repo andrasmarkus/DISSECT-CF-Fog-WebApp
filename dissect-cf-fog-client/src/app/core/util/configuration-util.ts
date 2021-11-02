@@ -37,7 +37,7 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
       $name: node.id,
       latitude: node.x,
       longitude: node.y,
-      range: 500, // FIXME
+      range: node.range,
       file: node.resource.name,
       applications: { application: applications }
     } as ApplianceXml;
@@ -62,13 +62,14 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
   }
 
   for (const station of Object.values(object.stations)) {
-      const randomX = Math.random() * station.radius * 2;
-      const randomY = Math.random() * station.radius * 2;
-      const x = randomX > station.radius ? randomX - station.radius : randomX;
-      const y = randomY > station.radius ? randomX - station.radius : randomY;
-
+    for(let i = 0; i < station.quantity; i++) {
+      const randomX = station.xCoord + (Math.random() * station.range * 2);
+      const randomY = station.yCoord + (Math.random() * station.range * 2);
+      const x = randomX > station.range ? randomX - station.range : randomX;
+      const y = randomY > station.range ? randomX - station.range : randomY;
+      
       const device = {
-        $name: station.id,
+        $name: station.id + '.' + (i+1),
         startTime: station.starttime,
         stopTime: station.stoptime,
         fileSize: station.filesize,
@@ -87,13 +88,14 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
         cores: station.cores,
         perCoreProcessing: station.perCoreProcessing,
         ram: station.ram,
-        onD: 1, // FIXME
-        offD: 1, // FIXME
+        onD: station.ond,
+        offD: station.offd,
         minpower: station.minpower,
         idlepower: station.idlepower, 
         maxpower: station.maxpower
       } as DeviceXml;
       devices.push(device);
+    }
   }
 
   for (const instance of Object.values(object.instances)) {

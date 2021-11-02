@@ -17,6 +17,7 @@ import { MatSliderChange } from '@angular/material/slider';
 import { StringUtlis } from '../utils/string-utlis';
 import { MatDialogRef } from '@angular/material/dialog';
 import { StepBackDialogComponent } from '../step-back-dialog/step-back-dialog.component';
+import { CIRCLE_RANGE_COLOR_CLOUD, CIRCLE_RANGE_COLOR_FOG, CIRCLE_RANGE_COLOR_STATION } from '../utils/constants';
 
 @Component({
   selector: 'app-connection',
@@ -68,7 +69,6 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   private readonly cloudImageSrcURL = this.ASSESTS_URL + StringUtlis.CLOUD_ICON;
   private readonly fogImageSrcURL = this.ASSESTS_URL + StringUtlis.FOG_ICON;
   private readonly stationImageSrcURL = this.ASSESTS_URL + StringUtlis.IOT_ICON;
-  private readonly circleRangeBackgroundColor = '#00f71b40';
 
   private readonly MAX_NODE_WIDTH = 75;
   private readonly MAX_NODE_HEIGHT = 50;
@@ -168,7 +168,12 @@ export class ConnectionComponent implements OnInit, OnDestroy {
       )
     );
     graphElements.push(
-      ...this.createNodesInARow(this.fogs, this.sapceForFogs, this.fogsStartYpos, this.fogImageSrcURL, NODETYPES.FOG)
+      ...this.createNodesInARow(
+        this.fogs,
+        this.sapceForFogs,
+        this.fogsStartYpos,
+        this.fogImageSrcURL,
+        NODETYPES.FOG)
     );
     graphElements.push(
       ...this.createNodesWithRangeInARow(
@@ -360,9 +365,9 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   }
 
   private setNodeObjectsWithQuantities(): void {
-    this.clouds = this.getMultipleNodes(this.configurationService.computingNodes.clouds) as CloudNodesObject;
-    this.fogs = this.getMultipleNodes(this.configurationService.computingNodes.fogs) as FogNodesObject;
-    this.multipleStationNodes = this.getMultipleNodes(this.configurationService.stationNodes) as StationsObject;
+    this.clouds = this.getMultipleNodes(this.configurationService.computingNodes.clouds, NODETYPES.CLOUD) as CloudNodesObject;
+    this.fogs = this.getMultipleNodes(this.configurationService.computingNodes.fogs, NODETYPES.FOG) as FogNodesObject;
+    this.multipleStationNodes = this.getMultipleNodes(this.configurationService.stationNodes, NODETYPES.STATION) as StationsObject;
     this.numOfClouds = Object.keys(this.clouds).length;
     this.numOfFogs = Object.keys(this.fogs).length;
     this.numOfStations = Object.keys(this.multipleStationNodes).length;
@@ -633,11 +638,12 @@ export class ConnectionComponent implements OnInit, OnDestroy {
    * @param nodes - Object which stores the nodes
    */
   private getMultipleNodes(
-    nodes: StationsObject | FogNodesObject | CloudNodesObject
+    nodes: StationsObject | FogNodesObject | CloudNodesObject,
+    nodeType: string
   ): StationsObject | FogNodesObject | CloudNodesObject {
     const resultObject = {};
     for (const [id, node] of Object.entries(nodes)) {
-      if (node.quantity > 1) {
+      if (node.quantity > 1 && nodeType != NODETYPES.STATION) {
         for (let i = 1; i <= node.quantity; i++) {
           const subNodeKey = id + '.' + i;
           resultObject[subNodeKey] = { ...cloneDeep(node), id: subNodeKey };
@@ -654,7 +660,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     node: joint.shapes.standard.Image,
     nodeStartX: number,
     nodeStartY: number,
-    radius: number
+    radius: number,
+    color: string
   ): joint.shapes.standard.Circle {
     const nodeXCenter = nodeStartX + this.nodeWidth / 2;
     const nodeYCenter = nodeStartY + this.nodeHeight / 2;
@@ -670,7 +677,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     circle.resize(pixelsPerLon * radius * 2, pixelsPerLat * radius * 2);
     circle.position(circleXCenter, circleYCenter);
     circle.attr('root/title', 'joint.shapes.standard.Circle');
-    circle.attr('body/fill', this.circleRangeBackgroundColor);
+    circle.attr('body/fill', color);
     circle.attr('body/strokeWidth', '0');
     node.embed(circle);
     return circle;
@@ -707,7 +714,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
         nodeType
       );
       if (station.radius > 0) {
-        const nodeRange = this.getCircleRangeForNode(node, xPos, startYpos, station.radius);
+        const nodeRange = this.getCircleRangeForNode(node, xPos, startYpos, station.radius, CIRCLE_RANGE_COLOR_STATION);
         nodes.push(...[nodeRange, node]);
       } else {
         nodes.push(node);
@@ -734,11 +741,14 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   ): joint.shapes.standard.Image[] {
     const nodes: joint.shapes.standard.Image[] = [];
     const itemsLength = Object.keys(items).length;
+    const color = nodeType === NODETYPES.CLOUD ? CIRCLE_RANGE_COLOR_CLOUD : CIRCLE_RANGE_COLOR_FOG;
     let counter = 0;
     if (itemsLength > 0) {
-      for (const nodeId of Object.keys(items)) {
+      for (const [nodeId, node] of Object.entries(items)) {
         const xPos = space + (counter * this.nodeWidth + space * counter);
-        nodes.push(this.createImageNode(nodeId, xPos, startYpos, imageUrl, this.nodeWidth, this.nodeHeight, nodeType));
+        const curentNode = this.createImageNode(nodeId, xPos, startYpos, imageUrl, this.nodeWidth, this.nodeHeight, nodeType);
+        const nodeRange = this.getCircleRangeForNode(curentNode, xPos, startYpos, node.range, color);
+        nodes.push(...[nodeRange, curentNode]);
         counter++;
       }
     }
@@ -800,7 +810,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
         }
       }
     });
-    this.configuration.instances = this.configurationService.instanceNodes
+    this.configuration.instances = this.configurationService.instanceNodes;
     this.userConfigurationService.sendConfiguration(this.configuration);
     this.stepperService.stepForward();
     this.graphScale = 1;
