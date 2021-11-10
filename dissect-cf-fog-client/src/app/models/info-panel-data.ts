@@ -8,10 +8,25 @@ export function getResourceFilesInfoData(): InfoPanelData {
     title: 'Resource files',
     text:
       'A resource file defines how many CPUs and RAMs the actual cloud/fog node deals with. <br/>' +
-      'A node considered to be in the lowest fog layer typically utilises the least resources, thus the <b>LPDS_T2</b> consists of 12 CPU cores and 24 GB RAMs <br/>' +
-      '<b>LPDS_T1</b> file is set to contain resources with 24 CPU cores and 48 GB RAMs and finally <b>LPDS_original</b> deals with 48 CPU cores and 96 GB RAMs <br/>' +
+      'A node considered to be in the lowest fog layer typically utilises the least resource. <br/>' +
+      '<ul>' + 
+        '<li><b>LPDS_T2</b>: 12 CPU cores and 24 GB RAMs</li>' + 
+        '<li><b>LPDS_16</b>: 16 CPU cores and 64 GB RAMs</li>' + 
+        '<li><b>LPDS_T1</b>: 24 CPU cores and 48 GB RAMs</li>' + 
+        '<li><b>LPDS_32</b>: 32 CPU cores and 64 GB RAMs</li>' + 
+        '<li><b>LPDS_original</b>: 48 CPU cores and 96 GB RAMs</li>' + 
+        '<li><b>LPDS_original</b>: 48 CPU cores and 96 GB RAMs</li>' + 
+      '</ul>' + 
       'The processing power of each CPU core is set to 0.001, which means it processes 0.001 instruction during one tick, which is the'
       + ' smallest unit of the simulation time. In this environment it is considered to measure time in milliseconds. <br/>'
+  } as InfoPanelData;
+}
+
+export function getInstanceInfoData(): InfoPanelData {
+  return {
+    title: 'Instances',
+    text:
+      'Instances info'
   } as InfoPanelData;
 }
 
@@ -56,7 +71,7 @@ export function getStationInfoData(): InfoPanelData {
   } as InfoPanelData;
 }
 
-export function getConectionInfoData(): InfoPanelData {
+export function getConnectionInfoData(): InfoPanelData {
   return {
     title: 'Connections',
     text:

@@ -126,7 +126,7 @@ async function getConfigurationDetailsFirestore(dirs, userEmail) {
     }
 
     details.push({
-      directory: dirName,
+      directory: dirName.slice(0, -1),
       time: dateTime,
       clouds: numOfClouds,
       fogs: numOfFogs,
@@ -179,7 +179,7 @@ function sendXmlFile(req, res, fileName) {
 async function sendResult(req, res) {
   checkResourceRequsetBody(req, res);
   const directory = req.body.directory;
-  const stdOutPath = directory + 'run-log.txt';
+  const stdOutPath = directory + '/run-log.txt';
 
   storage.getFiles({
     prefix: directory,
