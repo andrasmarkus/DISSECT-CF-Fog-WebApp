@@ -22,7 +22,7 @@ For any inquiries please contact us by email to: **markusa (at) inf.u-szeged.hu*
 
 # DISSECT-CF-Fog-WebApp
 
-DISSECT-CF-Fog-WebApp is a full stack web application that will make the DISSECT-CF-Fog application available online. Registered users can run simulations in a more convenient configuration interface. They can view the results of the simulations, including a diagram depicting the task schedule and the logged partial results. The result diagram and configuration files can also be downloaded for further use. It is also possible to view the results of previous simulations.
-The backend part of the application uses the DISSECT-CF-Fog Java application and a MySQL database to serve the client running in the web browser. The client is built in Angular framework, while the server is built using Node.js.
+DISSECT-CF-Fog-WebApp is a full stack web application that will make the DISSECT-CF-Fog application available online. Registered users can run simulations in a more convenient configuration interface. They can view the results of the simulations, including a diagram depicting the task schedule, node and device energy diagrams and the logged partial results. The result diagram and configuration files can also be downloaded for further use. It is also possible to view the results of previous simulations.
+The backend part of the application executes the DISSECT-CF-Fog Java application with the generated XML's that the users have configured on the web application interface.The client is built in Angular framework, while the server is built using Node.js. The server is using Google's Firebase cloud platform, for database purposes it is using Cloud Firestore as a NoSQL database and Cloud Storage to store and serve user-generated contents.
 
 ![Alt webapp](./readme-assets/webapp-diagram.png)
