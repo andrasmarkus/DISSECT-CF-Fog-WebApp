@@ -24,9 +24,16 @@ export function getResourceFilesInfoData(): InfoPanelData {
 
 export function getInstanceInfoData(): InfoPanelData {
   return {
-    title: 'Instances',
+    title: 'Instance settings',
     text:
-      'Instances info'
+      '<b>RAM</b>: memory size of the VM instance (byte) <br/><br/>'+
+      '<b>CPU cores</b>: number of cores of the VM instance (pc.) <br/><br/>'+
+      '<b>Core processing power</b>: processing power of one CPU core (instructions/tick) <br/><br/>'+
+      '<b>Startup process</b>: number of processing instructions on startup <br/><br/>'+
+      '<b>Network load</b>_ background network load while running tasks on a VM that has storage backed by a remote repository<br/><br/>'+
+      '<b>Required disk</b>: the size of the disk image to host the virtual appliance<br/><br/>'+
+      '<b>Price per tick</b>: defines the price of one unit of time. <br/><br/>'+
+      '<b>Instance name</b>: defines the name of the instance. <br/><br/>'
   } as InfoPanelData;
 }
 
