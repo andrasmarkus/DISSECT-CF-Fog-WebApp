@@ -3,9 +3,9 @@ RUN apk --no-cache add git
 
 WORKDIR /usr/src/app
 
-RUN git clone https://github.com/andrasmarkus/DISSECT-CF-Fog-WebApp.git
+RUN git clone -b master https://github.com/andrasmarkus/DISSECT-CF-Fog-WebApp.git /usr/src/app
 
-WORKDIR /usr/src/app/DISSECT-CF-Fog-WebApp/dissect-cf-fog-client
+WORKDIR /usr/src/app/dissect-cf-fog-client
 
 RUN npm install
 
