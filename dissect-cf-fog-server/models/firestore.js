@@ -3,7 +3,7 @@ const serviceAccount = require('../config/dissect-cf-firebase-config.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  storageBucket: 'gs://dissect-cf.appspot.com/'
+  storageBucket: serviceAccount.project_id + '.appspot.com'
 });
 
 const db = admin.firestore();
