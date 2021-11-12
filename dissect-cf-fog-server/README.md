@@ -30,7 +30,7 @@ Basicaly there are the required folders and files for running the server. The ba
         ```
   - **user_configurations** - this folder conatins the users folders
   - The setup should be look like that on Firebase Storage:  
-![Alt File explorer](../readme-assets/firebase-storage-setup-files.png)
+![Alt File explorer](../readme-assets/firebase-storage-setup-files.PNG)
 
 ## Development server
 
