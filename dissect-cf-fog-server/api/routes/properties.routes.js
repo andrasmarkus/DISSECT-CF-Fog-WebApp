@@ -43,7 +43,7 @@ router.get("/resources", [authJwt.verifyToken], async (req, res, next) => {
     prefix: 'configurations/resources/'
   }, function (err, files, nextQuery, apiResponse) {
     if (err) {
-      console.log('ERROR: Failed to get the file: ', filePath);
+      console.log('ERROR: Failed to get the file: ', err);
       throw new Error('Can not read the file!');
     }
 

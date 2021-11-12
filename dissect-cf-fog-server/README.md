@@ -7,9 +7,14 @@ It uses the [DISSECT-CF-Fog java application](https://github.com/andrasmarkus/di
 Basicaly there are the required folders and files for running the server. The basic resource files are provided, and also the DISSET-CF-Fog java application too (from refactor branch with [a49f55e044](https://github.com/andrasmarkus/dissect-cf/commit/a49f55e044e9294ca84d871070a5b3ad1d9de7ce) commit - 26.09.2020) But in few points there are the required settings for the server:
 
 - Create/ modify **dissect-cf** folder for the java application directly into the *dissect-cf-fog-server* folder. The folder's name should be dissect-cf. You can download the app from [here](https://github.com/andrasmarkus/dissect-cf)
-- Create/modify **configurations** folder for configurations and for resources directly into the *dissect-cf-fog-server* folder. The folder's name should be configurations.
+- Create/use an existing Firebase account and place the projects private key in **config/** folder using the filename **"dissect-cf-firebase-config.json"**
+  - You can generate and save Firebase credentials json file with the private key by visiting https://console.firebase.google.com/ and opening Settings > Service Accounts menu
+  - Note that everytime you generate a new private key the previous one stops working immediately.
+  - Store this private key securely.
+  - The setup should be look like that:  
+![Alt File explorer](../readme-assets/server-setup-file-explorer.png)
+- Create/modify **configurations** folder for configurations and for resources directly into the *Firestore bucket*. The folder's name should be configurations.
 - Create/modify another folders for resources inside the configurations folder:
-  - **instances** - and create/modify file **Instances.xml** with the instances.
   - **providers** - and create/modify file **Providers.xml** with the providers.
   - **resources** - and create/modify **xml** files for cloud resources (e.g.: LPDS_Fog_T1.xml, LPDS_Fog_T2.xml)
   - **strategies** - and create/modify xml files like:
@@ -23,14 +28,9 @@ Basicaly there are the required folders and files for running the server. The ba
           <strategy>distance</strategy>
         </strategies>
         ```
-  - **user_configurations** - this folder conatins the users folders  
-- Create/use an existing Firebase account and place the projects private key in **config/** folder using the filename **"dissect-cf-firebase-config.json"**
-  - You can generate and save Firebase credentials json file with the private key by visiting https://console.firebase.google.com/ and opening Settings > Service Accounts menu
-  - Note that everytime you generate a new private key the previous one stops working immediately.
-  - Store this private key securely.
-
-The setup should be look like that:  
-![Alt File explorer](../readme-assets/server-setup-file-explorer.png)
+  - **user_configurations** - this folder conatins the users folders
+  - The setup should be look like that on Firebase Storage:  
+![Alt File explorer](../readme-assets/firebase-storage-setup-files.png)
 
 ## Development server
 
