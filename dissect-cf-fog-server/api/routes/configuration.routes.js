@@ -43,9 +43,12 @@ router.post('/', [authJwt.verifyToken], (req, res , next)=> {
   `../${baseDirPath}/devices.xml ` + 
   `../${baseDirPath}/ `;
 
-  const proc = child.spawnSync(command, {shell: true, maxBuffer: 1024 * 512});
+  //console.log(command);
+
+  const proc = child.spawnSync(command, {shell: true, maxBuffer: 1024 * 1024});
   if(proc.stderr.length > 0){
-    killProcess(proc);
+    // TODO: this call can cause Internel Server Error, further inv. strongly needed!
+    //killProcess(proc);
     return sendExecutionError(proc.stderr, baseDirPath, res);
   }
   return sendResponseWithSavingStdOut(baseDirPath, proc.stdout, res, configTime, proc);
@@ -90,6 +93,7 @@ function sendResponseWithSavingStdOut(baseDirPath, data, res, directory, proc) {
 }
 
 function killProcess(proc) {
+  console.log(proc);
   if (os.platform().startsWith('win')) {
     child.exec('taskkill /pid ' + proc.pid + ' /T /F')
   } else {
