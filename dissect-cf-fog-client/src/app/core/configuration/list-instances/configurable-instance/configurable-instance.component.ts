@@ -102,4 +102,15 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
     this.panelService.getInstanceData();
     this.panelService.toogle();
   }
+
+  defaultConfiguration(): void {
+    this.instanceFormGroup.get('name').setValue("a1.large");
+    this.instanceFormGroup.get('ram').setValue(1000000);
+    this.instanceFormGroup.get('cpuCores').setValue(1);
+    this.instanceFormGroup.get('cpuProcessingPower').setValue(0.001);
+    this.instanceFormGroup.get('startupProcess').setValue(100);
+    this.instanceFormGroup.get('networkLoad').setValue(0);
+    this.instanceFormGroup.get('reqDisk').setValue(1000000);
+    this.instanceFormGroup.get('pricePerTick').setValue(0.0000001);
+  }
 }
