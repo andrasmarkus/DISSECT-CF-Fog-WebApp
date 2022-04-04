@@ -60,4 +60,9 @@ export class NodeQuantityFormComponent {
     this.configurationService.stationNodes = {};
     this.restartConfService.restart();
   }
+
+  defaultConfiguration(): void {
+    this.numOfComputingNodes.get('numOfClouds').setValue(1);
+    this.numOfComputingNodes.get('numOfFogs').setValue(1);
+  }
 }
