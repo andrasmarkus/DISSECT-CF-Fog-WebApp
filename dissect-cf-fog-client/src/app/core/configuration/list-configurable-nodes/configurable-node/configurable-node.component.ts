@@ -295,4 +295,10 @@ export class ConfigurableNodeComponent implements OnChanges, OnDestroy {
     this.panelService.getResourceData();
     this.panelService.toogle();
   }
+
+  defaultConfiguration() {
+    this.nodeCardForm.get('numOfApplications').setValue(1);
+    this.nodeCardForm.get('quantity').setValue(1);
+    this.nodeCardForm.get('range').setValue(100);
+  }
 }

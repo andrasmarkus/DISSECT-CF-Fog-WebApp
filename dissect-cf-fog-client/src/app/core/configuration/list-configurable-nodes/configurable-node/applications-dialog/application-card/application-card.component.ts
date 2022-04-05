@@ -67,11 +67,11 @@ export class ApplicationCardComponent implements OnInit {
     return this.application;
   }
 
-  
+
   public checkValidation(): boolean {
     return this.appFormGroup.valid && this.instance && this.strategy !== '';
   }
-  
+
   public openInfoPanelForApplications(): void {
     this.panelService.getApplicationData();
     this.panelService.toogle();
@@ -83,6 +83,17 @@ export class ApplicationCardComponent implements OnInit {
         this.userInstanceInputs.push(Object.assign(instance) as Instance)
       }
     })
+  }
+
+  defaultConfiguration(): void {
+    this.appFormGroup.get('tasksize').setValue(5000);
+    this.appFormGroup.get('freq').setValue(6000);
+    this.appFormGroup.get('numOfInstruction').setValue(1000);
+    this.appFormGroup.get('threshold').setValue(1);
+    console.log(this.userInstanceInputs);
+    this.canJoin = true;
+    this.instance = {name: 'a1.large', ram: 1000000, cpuCores: 1, coreProcessingPower: 0.001, startupProcess: 100, networkLoad: 0, pricePerTick: 1e-7, reqDisk: 1000000};
+    this.strategy = 'random';
   }
 
 }

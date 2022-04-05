@@ -130,3 +130,7 @@
     justify-content: space-evenly;
   }
 }
+
+#defaultValueBtn {
+  margin-left: 4rem;
+}
