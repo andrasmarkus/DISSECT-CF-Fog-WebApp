@@ -75,3 +75,7 @@
     width: 125px;
   }
 }
+
+#defaultValueBtn {
+  margin-bottom: 1rem;
+}

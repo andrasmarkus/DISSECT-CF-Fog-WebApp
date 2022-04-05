@@ -118,4 +118,30 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
     this.panelService.getStationData();
     this.panelService.toogle();
   }
+
+  defaultConfiguration() {
+    this.stationFormGroup.get('starttime').setValue(1);
+    this.stationFormGroup.get('stoptime').setValue(1000000);
+    this.stationFormGroup.get('filesize').setValue(50);
+    this.stationFormGroup.get('freq').setValue(60000);
+    this.stationFormGroup.get('sensorCount').setValue(1);
+    this.stationFormGroup.get('maxinbw').setValue(1000000);
+    this.stationFormGroup.get('maxoutbw').setValue(1000000);
+    this.stationFormGroup.get('diskbw').setValue(1000000);
+    this.stationFormGroup.get('radius').setValue(10);
+    this.stationFormGroup.get('speed').setValue(0.5);
+    this.stationFormGroup.get('cores').setValue(1);
+    this.stationFormGroup.get('ram').setValue(1000000);
+    this.stationFormGroup.get('perCoreProcessing').setValue(0.001);
+    this.stationFormGroup.get('minpower').setValue(1);
+    this.stationFormGroup.get('maxpower').setValue(1);
+    this.stationFormGroup.get('idlepower').setValue(1);
+    this.stationFormGroup.get('capacity').setValue(1000000);
+    this.stationFormGroup.get('latency').setValue(50);
+    this.stationFormGroup.get('ond').setValue(1);
+    this.stationFormGroup.get('offd').setValue(1);
+    this.stationFormGroup.get('quantity').setValue(10);
+    this.stationFormGroup.get('range').setValue(10);
+    this.strategy = 'random';
+  }
 }

@@ -86,8 +86,8 @@ export class ApplicationCardComponent implements OnInit {
   }
 
   defaultConfiguration(): void {
-    this.appFormGroup.get('tasksize').setValue(5000);
-    this.appFormGroup.get('freq').setValue(6000);
+    this.appFormGroup.get('tasksize').setValue(50000);
+    this.appFormGroup.get('freq').setValue(60000);
     this.appFormGroup.get('numOfInstruction').setValue(1000);
     this.appFormGroup.get('threshold').setValue(1);
     console.log(this.userInstanceInputs);
