@@ -44,7 +44,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" class="input-size-min">
       <mat-label>Strategy</mat-label>
-      <mat-select [(ngModel)]="strategy" [ngModelOptions]="{ standalone: true }">
+      <mat-select [(ngModel)]="strategy" [ngModelOptions]="{ standalone: true }" multiple>
         <mat-option *ngFor="let strategy of resourceSelectionService.strategiesForApplications$ | async" [value]="strategy"> {{ strategy }}</mat-option>
       </mat-select>
     </mat-form-field>

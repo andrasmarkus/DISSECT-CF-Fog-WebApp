@@ -20,7 +20,7 @@ export class Station {
   minpower: number;
   idlepower: number;
   maxpower: number;
-  strategy: string;
+  strategy: string[];
   number: number;
   xCoord?: number;
   yCoord?: number;

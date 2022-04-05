@@ -7,7 +7,7 @@ export class Application {
   instance: Instance;
   numOfInstruction: number;
   threshold: number;
-  strategy: string;
+  strategy: string[];
   canJoin: boolean;
   isConfigured: boolean;
 }

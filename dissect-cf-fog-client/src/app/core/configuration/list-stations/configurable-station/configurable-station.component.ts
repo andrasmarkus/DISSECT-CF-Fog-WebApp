@@ -28,7 +28,7 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
   @Output() public removeEmitter = new EventEmitter<string>();
 
   public stationFormGroup: FormGroup;
-  public strategy: string;
+  public strategy: string[];
 
   private formChangeSub: Subscription;
 
@@ -60,7 +60,7 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
 
   private saveStation() {
     this.setStationValues();
-    if (this.stationFormGroup.valid && this.strategy !== '') {
+    if (this.stationFormGroup.valid && this.strategy.length !== 0) {
       this.station.valid = true;
     } else {
       this.station.valid = false;
@@ -103,7 +103,7 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
     if (this.station) {
       this.stationFormGroup?.patchValue(this.station, { emitEvent: false });
     }
-    this.strategy = this.station.strategy ? this.station.strategy : '';
+    this.strategy = this.station.strategy ? this.station.strategy : [];
   }
 
   public setStationValues() {
@@ -142,6 +142,6 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
     this.stationFormGroup.get('offd').setValue(1);
     this.stationFormGroup.get('quantity').setValue(10);
     this.stationFormGroup.get('range').setValue(10);
-    this.strategy = 'random';
+    this.strategy = ['random'];
   }
 }

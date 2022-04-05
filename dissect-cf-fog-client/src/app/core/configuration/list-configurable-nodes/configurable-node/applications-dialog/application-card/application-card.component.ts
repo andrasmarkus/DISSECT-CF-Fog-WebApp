@@ -18,7 +18,7 @@ export class ApplicationCardComponent implements OnInit {
   public appFormGroup: FormGroup;
   public canJoin: boolean;
   public instance: Instance;
-  public strategy: string;
+  public strategy: string[];
   public userInstanceInputs: Instance[] = [];
 
   constructor(
@@ -54,7 +54,7 @@ export class ApplicationCardComponent implements OnInit {
     }
     this.canJoin = this.application.canJoin ? this.application.canJoin : false;
     this.instance = this.application.instance ? this.application.instance : undefined;
-    this.strategy = this.application.strategy ? this.application.strategy : '';
+    this.strategy = this.application.strategy ? this.application.strategy : [];
   }
 
   public getValidApplication(): Application {
@@ -69,7 +69,7 @@ export class ApplicationCardComponent implements OnInit {
 
 
   public checkValidation(): boolean {
-    return this.appFormGroup.valid && this.instance && this.strategy !== '';
+    return this.appFormGroup.valid && this.instance && this.strategy.length !== 0;
   }
 
   public openInfoPanelForApplications(): void {
@@ -90,10 +90,9 @@ export class ApplicationCardComponent implements OnInit {
     this.appFormGroup.get('freq').setValue(60000);
     this.appFormGroup.get('numOfInstruction').setValue(1000);
     this.appFormGroup.get('threshold').setValue(1);
-    console.log(this.userInstanceInputs);
     this.canJoin = true;
     this.instance = {name: 'a1.large', ram: 1000000, cpuCores: 1, coreProcessingPower: 0.001, startupProcess: 100, networkLoad: 0, pricePerTick: 1e-7, reqDisk: 1000000};
-    this.strategy = 'random';
+    this.strategy = ['random'];
   }
 
 }
