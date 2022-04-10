@@ -91,7 +91,6 @@ export class ApplicationCardComponent implements OnInit {
     this.appFormGroup.get('numOfInstruction').setValue(1000);
     this.appFormGroup.get('threshold').setValue(1);
     this.canJoin = true;
-    this.instance = {name: 'a1.large', ram: 1000000, cpuCores: 1, coreProcessingPower: 0.001, startupProcess: 100, networkLoad: 0, pricePerTick: 1e-7, reqDisk: 1000000};
     this.strategy = ['random'];
   }
 
