@@ -30,7 +30,7 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
         threshold: app.threshold,
         strategy: app.strategy,
         canJoin: app.canJoin
-      } as ApplicationXml;
+      } as unknown as ApplicationXml;
       applications.push(applictaion);
     }
     const appliance = {
@@ -67,9 +67,9 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
       const randomY = station.yCoord + (Math.random() * station.range * 2);
       const x = randomX > station.range ? randomX - station.range : randomX;
       const y = randomY > station.range ? randomX - station.range : randomY;
-      
+
       const device = {
-        $name: station.id + '.' + (i+1),
+        $name: station.id + '.' + (i + 1),
         startTime: station.starttime,
         stopTime: station.stoptime,
         fileSize: station.filesize,
@@ -91,9 +91,9 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
         onD: station.ond,
         offD: station.offd,
         minpower: station.minpower,
-        idlepower: station.idlepower, 
+        idlepower: station.idlepower,
         maxpower: station.maxpower
-      } as DeviceXml;
+      } as unknown as DeviceXml;
       devices.push(device);
     }
   }

@@ -812,12 +812,9 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     });
     this.configuration.instances = this.configurationService.instanceNodes;
 
-    // Send all generated configuration
-    for (const configuration of this.generateAllConfigurations()) {
-      this.userConfigurationService.sendConfiguration(configuration);
-    }
+    const configurations: ConfigurationObject[] = this.generateAllConfigurations();
 
-    // this.userConfigurationService.sendConfiguration(this.configuration);
+    this.userConfigurationService.sendConfiguration(configurations[0]);
     this.stepperService.stepForward();
     this.graphScale = 1;
     this.sliderValue = 50;
@@ -828,6 +825,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     this.panelService.toogle();
   }
 
+  // Generate all configurations based on the strategies
   public generateAllConfigurations(): ConfigurationObject[] {
     const configurations: ConfigurationObject[] = [];
     const appStrategies = [];
@@ -840,40 +838,42 @@ export class ConnectionComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Combine app strategies
-    const appStrategyCombos  = appStrategies.reduce((a, b) => a.flatMap(x => b.map(y => x + '-' + y))).map(z => z.split('-'));
-
     // Retrive all strategies from stations
     for (const station of Object.keys(this.configuration.stations)) {
       stationStrategies.push(this.configuration.stations[station].strategy);
     }
 
+    // Combine application strategies
+    const appStrategyCombos  = appStrategies.reduce((a, b) => a.flatMap(x => b.map(y => x + '-' + y))).map(z => z.split('-'));
+
     // Combine station strategies
     const stationStrategyCombos = stationStrategies.reduce((a, b) => a.flatMap(x => b.map(y => x + '-' + y))).map(z => z.split('-'));
 
     // Combine the combined app and station strategies
-    const appStationStrategyCombos =  [appStrategyCombos, stationStrategyCombos].reduce((a, b) => a.flatMap(x => b.map(y => x.concat(y))));
+    const combinedStrategies =  [appStrategyCombos, stationStrategyCombos].reduce((a, b) => a.flatMap(x => b.map(y => x.concat(y))));
 
-    // Generate configurations for every app and station strategy combination
-    for (const appStationStrategyCombo of appStationStrategyCombos) {
+    // Generate configurations
+    for (const combinedStrategy of combinedStrategies) {
       const newConfig = JSON.parse(JSON.stringify(this.configuration));
 
+      // Set the strategy for every application
       for (const node of Object.keys(newConfig.nodes)) {
         for (const app of Object.keys(newConfig.nodes[node].applications)) {
-          newConfig.nodes[node].applications[app].strategy = appStationStrategyCombo[0];
-          appStationStrategyCombo.shift();
+          newConfig.nodes[node].applications[app].strategy = combinedStrategy[0];
+          combinedStrategy.shift();
         }
       }
 
+      // Set the strategy for every station
       for (const station of Object.keys(newConfig.stations)) {
-        newConfig.stations[station].strategy = appStationStrategyCombo[0];
-        appStationStrategyCombo.shift();
+        newConfig.stations[station].strategy = combinedStrategy[0];
+        combinedStrategy.shift();
       }
 
       configurations.push(newConfig);
     }
 
-    // console.log(configurations);
+    console.log(configurations);
 
     return configurations;
   }

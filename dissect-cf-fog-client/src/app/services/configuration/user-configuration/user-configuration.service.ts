@@ -32,9 +32,9 @@ export class UserConfigurationService {
 
   constructor(private http: HttpClient, public tokenService: TokenStorageService) {}
 
-  public async sendConfiguration(object: ConfigurationObject): Promise<void> {
+  public sendConfiguration(object: ConfigurationObject): void {
     const xmlBaseConfig = parseConfigurationObjectToXml(object, this.tokenService.getUser().email);
-    this.configurationResult$ = await this.http
+    this.configurationResult$ = this.http
       .post<ConfigurationResult>(SERVER_URL + 'configuration', JSON.stringify(xmlBaseConfig), httpOptions)
       .pipe(shareReplay(1));
   }
