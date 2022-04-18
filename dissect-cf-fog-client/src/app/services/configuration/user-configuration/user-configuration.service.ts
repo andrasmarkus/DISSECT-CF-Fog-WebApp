@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ConfigurationObject } from '../../../models/configuration';
+import {ConfigurationObject, ServerSideConfigurationObject} from '../../../models/configuration';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
@@ -32,7 +32,7 @@ export class UserConfigurationService {
 
   constructor(private http: HttpClient, public tokenService: TokenStorageService) {}
 
-  public sendConfiguration(object: ConfigurationObject): void {
+  public sendConfiguration(object: ServerSideConfigurationObject): void {
     const xmlBaseConfig = parseConfigurationObjectToXml(object, this.tokenService.getUser().email);
     this.configurationResult$ = this.http
       .post<ConfigurationResult>(SERVER_URL + 'configuration', JSON.stringify(xmlBaseConfig), httpOptions)

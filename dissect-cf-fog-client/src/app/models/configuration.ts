@@ -1,6 +1,6 @@
-import { ComputingNode } from './computing-node';
-import { StationsObject } from './station';
-import { ConfiguredComputingNodesObject } from './computing-nodes-object';
+import {ComputingNode, ServerSideComputingNode} from './computing-node';
+import {ServerSideStationsObject, StationsObject} from './station';
+import {ConfiguredComputingNodesObject, ConfiguredServerSideComputingNodesObject} from './computing-nodes-object';
 import { InstanceObject } from './instance';
 
 export interface ConfigurationObject {
@@ -9,7 +9,17 @@ export interface ConfigurationObject {
   instances: InstanceObject;
 }
 
+export interface ServerSideConfigurationObject {
+  nodes: ConfiguredServerSideComputingNodesObject;
+  stations: ServerSideStationsObject;
+  instances: InstanceObject;
+}
+
 export interface ConfiguredComputingNode extends ComputingNode {
+  neighbours?: NeighboursObject;
+}
+
+export interface ConfiguredServerSideComputingNode extends ServerSideComputingNode {
   neighbours?: NeighboursObject;
 }
 

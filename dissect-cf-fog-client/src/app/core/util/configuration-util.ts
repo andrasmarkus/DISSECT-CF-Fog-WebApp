@@ -1,4 +1,4 @@
-import { ConfigurationObject } from 'src/app/models/configuration';
+import {ConfigurationObject, ServerSideConfigurationObject} from 'src/app/models/configuration';
 import {
   ApplicationXml,
   ApplianceXml,
@@ -13,7 +13,7 @@ import {
  * @param object - configured object which contains the necessary data
  * @param email - user email which determines which folder to scan
  */
-export function parseConfigurationObjectToXml(object: ConfigurationObject, email: string): XmlBaseConfiguration {
+export function parseConfigurationObjectToXml(object: ServerSideConfigurationObject, email: string): XmlBaseConfiguration {
   const appliances: ApplianceXml[] = [];
   const devices: DeviceXml[] = [];
   const instances: InstanceXml[] = [];
@@ -30,7 +30,7 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
         threshold: app.threshold,
         strategy: app.strategy,
         canJoin: app.canJoin
-      } as unknown as ApplicationXml;
+      } as ApplicationXml;
       applications.push(applictaion);
     }
     const appliance = {
@@ -93,7 +93,7 @@ export function parseConfigurationObjectToXml(object: ConfigurationObject, email
         minpower: station.minpower,
         idlepower: station.idlepower,
         maxpower: station.maxpower
-      } as unknown as DeviceXml;
+      } as DeviceXml;
       devices.push(device);
     }
   }

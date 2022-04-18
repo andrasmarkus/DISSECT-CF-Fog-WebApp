@@ -3,7 +3,13 @@ import * as jQuery from 'jquery';
 import * as joint from 'jointjs';
 import { FogNodesObject, CloudNodesObject } from 'src/app/models/computing-nodes-object';
 import { StationsObject } from 'src/app/models/station';
-import { ConfigurationObject, Neighbour, NODETYPES, Node } from 'src/app/models/configuration';
+import {
+  ConfigurationObject,
+  Neighbour,
+  NODETYPES,
+  Node,
+  ServerSideConfigurationObject
+} from 'src/app/models/configuration';
 import { omit, cloneDeep } from 'lodash';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
@@ -812,9 +818,9 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     });
     this.configuration.instances = this.configurationService.instanceNodes;
 
-    const configurations: ConfigurationObject[] = this.generateAllConfigurations();
+    const serverSideconfigurations: ServerSideConfigurationObject[] = this.generateAllConfigurations();
 
-    this.userConfigurationService.sendConfiguration(configurations[0]);
+    this.userConfigurationService.sendConfiguration(serverSideconfigurations[0]);
     this.stepperService.stepForward();
     this.graphScale = 1;
     this.sliderValue = 50;
@@ -825,9 +831,9 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     this.panelService.toogle();
   }
 
-  // Generate all configurations based on the strategies
-  public generateAllConfigurations(): ConfigurationObject[] {
-    const configurations: ConfigurationObject[] = [];
+  // Generate all serverSideconfigurations based on the strategies
+  public generateAllConfigurations(): ServerSideConfigurationObject[] {
+    const serverSideconfigurations: ServerSideConfigurationObject[] = [];
     const appStrategies = [];
     const stationStrategies = [];
 
@@ -852,29 +858,29 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     // Combine the combined app and station strategies
     const combinedStrategies =  [appStrategyCombos, stationStrategyCombos].reduce((a, b) => a.flatMap(x => b.map(y => x.concat(y))));
 
-    // Generate configurations
+    // Generate server side configurations
     for (const combinedStrategy of combinedStrategies) {
-      const newConfig = JSON.parse(JSON.stringify(this.configuration));
+      const newServerSideConfig: ServerSideConfigurationObject = JSON.parse(JSON.stringify(this.configuration));
 
       // Set the strategy for every application
-      for (const node of Object.keys(newConfig.nodes)) {
-        for (const app of Object.keys(newConfig.nodes[node].applications)) {
-          newConfig.nodes[node].applications[app].strategy = combinedStrategy[0];
+      for (const node of Object.keys(newServerSideConfig.nodes)) {
+        for (const app of Object.keys(newServerSideConfig.nodes[node].applications)) {
+          newServerSideConfig.nodes[node].applications[app].strategy = combinedStrategy[0];
           combinedStrategy.shift();
         }
       }
 
       // Set the strategy for every station
-      for (const station of Object.keys(newConfig.stations)) {
-        newConfig.stations[station].strategy = combinedStrategy[0];
+      for (const station of Object.keys(newServerSideConfig.stations)) {
+        newServerSideConfig.stations[station].strategy = combinedStrategy[0];
         combinedStrategy.shift();
       }
 
-      configurations.push(newConfig);
+      serverSideconfigurations.push(newServerSideConfig);
     }
 
-    console.log(configurations);
+    console.log(serverSideconfigurations);
 
-    return configurations;
+    return serverSideconfigurations;
   }
 }
