@@ -3,13 +3,15 @@ const express = require('express');
 const router = express.Router({ caseSensitive: true });
 const parser = require('fast-xml-parser');
 const apiUtils = require('../util');
-const { storage } = require('../../models/firestore')
+const mongodb = require('../../services/mongodb-service');
 
+
+// TODO remove console.logs
 /* Sets the response header. */
 router.use((req, res, next) => {
   res.header(
-    "Access-Control-Allow-Headers",
-    "x-access-token, Origin, Content-Type, Accept"
+      "Access-Control-Allow-Headers",
+      "x-access-token, Origin, Content-Type, Accept"
   );
   next();
 });
@@ -18,17 +20,45 @@ router.use((req, res, next) => {
  * It sends the strategies from scanned file with 200 status.
  * Throws error if some error is occured.
  */
-router.get("/strategies/application", [authJwt.verifyToken], async (req, res, next) => {
-  const jsonObj = await getResourceByPath('configurations/strategies/Application-strategies.xml');
+router.get("/strategies/application", [authJwt.verifyToken], async (req, res) => {
+  const file = await mongodb.getStrategyFile({
+    filename: 'Application-strategies.xml'
+  })
+
+  const fileContent = await mongodb.getFileById(file.fileId).then(file => {
+    return file.toString();
+  });
+
+  console.log("application file" + fileContent.toString());
+
+  const jsonObj = parser.parse(fileContent.toString(), apiUtils.getParserOptions());
+
+  console.log(jsonObj);
+
   const result = jsonObj.strategies.strategy instanceof Array ?
-    jsonObj.strategies : { strategy: [jsonObj.strategies.strategy] };
+      jsonObj.strategies : { strategy: [jsonObj.strategies.strategy] };
   res.status(200).json(result);
 });
 
-router.get("/strategies/device", [authJwt.verifyToken], async (req, res, next) => {
-  const jsonObj = await getResourceByPath('configurations/strategies/Device-strategies.xml');
+router.get("/strategies/device", [authJwt.verifyToken], async (req, res) => {
+
+  const file = await mongodb.getStrategyFile({
+    filename: 'Device-strategies.xml'
+  })
+
+  const fileContent = await mongodb.getFileById(file.fileId).then(file => {
+    return file.toString();
+  });
+
+  console.log("device file" + fileContent.toString());
+
+  const jsonObj = parser.parse(fileContent.toString(), apiUtils.getParserOptions());
+
+  console.log(jsonObj);
+
+  // const jsonObj = await getResourceByPath('configurations/strategies/Device-strategies.xml');
   const result = jsonObj.strategies.strategy instanceof Array ?
-    jsonObj.strategies : { strategy: [jsonObj.strategies.strategy] };
+      jsonObj.strategies : { strategy: [jsonObj.strategies.strategy] };
   res.status(200).json(result);
 });
 
@@ -36,75 +66,56 @@ router.get("/strategies/device", [authJwt.verifyToken], async (req, res, next) =
  * It sends the instances from scanned files with 200 status.
  * Throws error if some error is occured.
  */
-router.get("/resources", [authJwt.verifyToken], async (req, res, next) => {
+router.get("/resources", [authJwt.verifyToken], async (req, res) => {
   const data = []
+  console.log("properties.routes.js - router.get(/resources) called");
 
-  storage.getFiles({
-    prefix: 'configurations/resources/'
-  }, function (err, files, nextQuery, apiResponse) {
-    if (err) {
-      console.log('ERROR: Failed to get the file: ', err);
-      throw new Error('Can not read the file!');
-    }
+  const resourceFilesList = await mongodb.getResourceFiles();
 
-    var i = 0;
-    const promises = [];
-    const resources = files.filter(file => file.name.includes('.xml'))
+  console.log(resourceFilesList);
 
-    resources.forEach(res => promises.push(res.download()))
+  let contentsOfResourcesFiles = [];
 
-    Promise.all(promises).then(values => {
-      values.forEach(val => {
-        const jsonObj = parser.parse(val.toString(), apiUtils.getParserOptions());
-        const resource = {
-          name: getFileNameFromFilePath(resources[i].name),
-          machines: getResponseMachines(jsonObj),
-          repositories: getResponseRepositories(jsonObj)
-        };
-        data.push(resource);
-        i++;
-      })
+  for (const item of resourceFilesList) {
+    let fileContent = await mongodb.getFileById(item.fileId);
+    console.log(fileContent);
+    contentsOfResourcesFiles.push(fileContent);
+  }
 
-      return res.status(200).json(data);
-    })
+  let i = 0;
+
+  contentsOfResourcesFiles.forEach(content => {
+    const jsonObj = parser.parse(content.toString(), apiUtils.getParserOptions());
+    const resource = {
+      name: resourceFilesList[i].filename.replace(".xml", ""), // getFileNameFromFilePath(resources[i].name),
+      machines: getResponseMachines(jsonObj),
+      repositories: getResponseRepositories(jsonObj)
+    };
+    data.push(resource);
+    i++;
   });
+
+  console.log("properties.routes.js - router.get(/resources) end");
+  return res.status(200).json(data);
 });
 
 module.exports = router;
-
-/**
- * Returns parsed scanned file with firebase.
- * @param {string} path 
- */
-async function getResourceByPath(path) {
-  const result = await getFile(path);
-
-  return parser.parse(result, apiUtils.getParserOptions());
-}
-
-function getFileNameFromFilePath(filePath) {
-  const paths = filePath.split(/\\\\|\\|\/\/|\//g);
-  const file = paths[paths.length - 1];
-  const fileFullName = file.split('.');
-  const filename = fileFullName[0];
-  return filename;
-}
 
 function getResponseRepositories(jsonObj) {
   const result = [];
   if (jsonObj.cloud.repository instanceof Array) {
     jsonObj.cloud.repository.forEach(repo =>
-      result.push({
-        id: repo.id,
-        capacity: repo.capacity,
-        inBW: repo.inBW,
-        outBW: repo.outBW,
-        diskBW: repo.diskBW
-      })
+        result.push({
+          id: repo.id,
+          capacity: repo.capacity,
+          inBW: repo.inBW,
+          outBW: repo.outBW,
+          diskBW: repo.diskBW
+        })
     );
   } else {
     const repo = jsonObj.cloud.repository;
-    
+
     result.push({
       id: repo.id,
       capacity: repo.capacity,
@@ -120,12 +131,12 @@ function getResponseMachines(jsonObj) {
   const result = [];
   if (jsonObj.cloud.machine instanceof Array) {
     jsonObj.cloud.machine.forEach(mach =>
-      result.push({
-        id: mach.id,
-        cores: mach.cores,
-        processing: mach.processing,
-        memory: mach.memory
-      })
+        result.push({
+          id: mach.id,
+          cores: mach.cores,
+          processing: mach.processing,
+          memory: mach.memory
+        })
     );
   } else {
     const mach = jsonObj.cloud.machine;
@@ -138,11 +149,4 @@ function getResponseMachines(jsonObj) {
     })
   }
   return result;
-}
-
-async function getFile(filePath) {
-  const file = storage.file(filePath);
-  const filePromise = await file.download()
-
-  return filePromise.toString();
 }

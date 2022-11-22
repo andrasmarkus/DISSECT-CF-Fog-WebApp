@@ -26,7 +26,8 @@
     "node-dir": "^0.1.17",
     "os": "^0.1.1",
     "path": "^0.12.7",
-    "sequelize": "^6.3.5"
+    "sequelize": "^6.3.5",
+    "mongodb": "3.7.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

@@ -35,6 +35,7 @@ import { ResourceSelectionService } from './services/configuration/resource-sele
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { ListInstancesComponent } from './core/configuration/list-instances/list-instances.component';
 import { ConfigurableInstanceComponent } from './core/configuration/list-instances/configurable-instance/configurable-instance.component';
+import { SimulationComparisonComponent } from './core/util/simulation-comparison/simulation-comparison.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { ConfigurableInstanceComponent } from './core/configuration/list-instanc
     ConfigurationOverviewComponent,
     ConfigurationResultComponent,
     ListInstancesComponent,
-    ConfigurableInstanceComponent
+    ConfigurableInstanceComponent,
+    SimulationComparisonComponent
   ],
   imports: [
     BrowserModule,

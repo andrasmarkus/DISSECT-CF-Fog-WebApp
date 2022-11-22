@@ -13,20 +13,23 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./user-configurations.component.css']
 })
 export class UserConfigurationsComponent implements AfterViewInit {
-  public displayedColumns: string[] = ['time', 'clouds', 'fogs', 'devices', 'actions'];
+  public displayedColumns: string[] = ['time', 'clouds', 'compare', 'results'];
   public userConfigurationsDetails$: Observable<MatTableDataSource<UserConfigurationDetails>>;
   /**
    * Tells that one of the configuration is selected to watch the result.
    */
   public isConfigSelected = false;
+  public isComparisonSelected = false;
   public configDirName: string;
+  public configName: string;
+  public simulations: any;
   @ViewChild(MatSort) public sort: MatSort;
   @ViewChild(MatPaginator) public paginator: MatPaginator;
 
   constructor(public userConfigurationService: UserConfigurationService) {}
 
   public ngAfterViewInit(): void {
-    this.userConfigurationsDetails$ = this.userConfigurationService.getUserConfigurationsDetails().pipe(
+    this.userConfigurationsDetails$ = this.userConfigurationService.getUserConfigurationsDetailsMongo().pipe(
       map(details => new MatTableDataSource(details)),
       map(details => {
         if (details && this.sort && this.paginator) {
@@ -43,7 +46,14 @@ export class UserConfigurationsComponent implements AfterViewInit {
     this.configDirName = directory;
   }
 
+  public compareSimulations(simulations: any){
+    console.log('list simulations=' + simulations);
+    this.isComparisonSelected = true;
+    this.simulations = simulations;
+  }
+
   public showTable() {
     this.isConfigSelected = false;
+    this.isComparisonSelected = false;
   }
 }

@@ -10,6 +10,7 @@ const config = require("../config/auth.config.js");
  * @param {Function} next - forwards it
  */
 const verifyToken = (req, res, next) => {
+  console.log("verifyToken() called");
   const token = req.headers["x-access-token"];
 
   if (!token) {

@@ -1,6 +1,4 @@
-const { db }= require("../models/firestore");
-
-const User = db.collection('users');
+const mongodb = require('../services/mongodb-service');
 
 /**
  * Sends all the users from the database with the given response.
@@ -8,14 +6,15 @@ const User = db.collection('users');
  * @param {Request} req - request
  * @param {Response} res - response
  */
-const getAllUser = (req, res) => {
-  User. User.findAll()
-    .then(users => {
-      res.status(200).send({ users: users });
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
-    });
+const getAllUser = async (req, res) => {
+
+  try {
+    const users = await mongodb.getAllUsers();
+
+    res.status(200).send({users: users})
+  } catch (e) {
+    res.status(500).send({message: e.message});
+  }
 };
 
 const userControls = {

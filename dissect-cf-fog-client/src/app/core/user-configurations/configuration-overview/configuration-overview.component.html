@@ -1,8 +1,9 @@
 <div class="container">
   <div *ngIf="directory">
+    <h4>Basic mat-select</h4>
     <app-configuration-result
     showSpinner="true"
-    [configResult$]="configService.getselectedConfigurationResult(directory)"
+    [configResult$]="configService.getSelectedSimulationResultMongo(directory)"
     contentHeight="72"
     (showActions)="showActionsButtons()">
   </app-configuration-result>

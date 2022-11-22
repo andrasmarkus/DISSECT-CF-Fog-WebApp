@@ -1,4 +1,4 @@
-import {ConfigurationObject, ServerSideConfigurationObject} from 'src/app/models/configuration';
+import {ServerSideConfigurationObject} from 'src/app/models/configuration';
 import {
   ApplicationXml,
   ApplianceXml,

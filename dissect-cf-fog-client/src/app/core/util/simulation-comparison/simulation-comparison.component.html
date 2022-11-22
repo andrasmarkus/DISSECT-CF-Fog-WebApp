@@ -1,0 +1,10 @@
+<div class="container">
+  <div>
+    <canvas id="MyChart" >{{ chart }}</canvas>
+  </div>
+  <div class="actions" *ngIf="showActions">
+    <button mat-raised-button color="accent" (click)="goBack.emit()">Back</button>
+  </div>
+
+</div>
+

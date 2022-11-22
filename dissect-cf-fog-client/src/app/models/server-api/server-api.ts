@@ -48,10 +48,20 @@ export interface UserConfigurationDetails {
 }
 
 export interface ConfigurationResult {
+  configuration_id: any;
   directory: string;
-  html: string;
+  html: string[];
   data: string;
   err: string;
+  job: any;
+  jobs: any;
+}
+
+export interface SimulationResult {
+  _id: any;
+  user: any;
+  time: any;
+  jobs: any;
 }
 
 export type ConfigurationFile = 'timeline' | 'devicesenergy' | 'nodesenergy' | 'appliances' | 'devices' | 'instances';

@@ -1,9 +1,7 @@
-const { db } = require("../models/firestore");
 const config = require("../config/auth.config");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-
-const User = db.collection('users');
+const mongodb = require('../services/mongodb-service');
 
 /**
  * It tries the sign up the new user. If it succeed it will send 201 response with a message,
@@ -12,16 +10,13 @@ const User = db.collection('users');
  * @param {Response} res - response
  */
 const signUp = async (req, res) => {
-  User.add({
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8)
-  })
-    .then(() => {
-      res.status(201).send({ message: "User was registered successfully!" });
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
-    });
+    try {
+        const user = await mongodb.addUser({email: req.body.email, password: bcrypt.hashSync(req.body.password, 8)});
+        console.log((user.insertedId));
+        res.status(201).send({message: "User was registered successfully"});
+    } catch (e) {
+        res.status(500).send({message: "Error"});
+    }
 };
 
 /**
@@ -33,47 +28,47 @@ const signUp = async (req, res) => {
  * @param {Request} req - request
  * @param {Response} res - response
  */
-const signIn = (req, res) => {
-  User.where('email', '==', req.body.email)
-    .get()
-    .then((users) => {
+const signIn = async (req, res) => {
+    try {
+        let user = await mongodb.getUser({
+            email: req.body.email
+        })
 
-      if (users.empty) {
-        return res.status(404).send({ message: "User Not found." });
-      }
+        console.log(user);
 
-      const user = users.docs[0];
+        if (user == null) {
+            return res.status(404).send({message: "User Not found."});
+        } else {
+            const passwordIsValid = bcrypt.compareSync(
+                req.body.password,
+                user.password
+            );
 
-      const passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.data().password
-      );
+            if (!passwordIsValid) {
+                return res.status(401).send({
+                    accessToken: null,
+                    message: "Invalid Password!"
+                });
+            }
 
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Password!"
-        });
-      }
+            const token = jwt.sign({id: user._id}, config.secret, {
+                expiresIn: 86400 // 24 hours
+            });
 
-      const token = jwt.sign({ id: user.data().id }, config.secret, {
-        expiresIn: 86400 // 24 hours
-      });
-
-      res.status(200).send({
-        id: user.data().id,
-        email: user.data().email,
-        accessToken: token
-      });
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
-    });
+            res.status(200).send({
+                id: user._id,
+                email: user.email,
+                accessToken: token
+            });
+        }
+    } catch (e) {
+        res.status(500).send({message: "Error"});
+    }
 };
 
 const authentication = {
-  signUp,
-  signIn
+    signUp,
+    signIn
 };
 
 module.exports = authentication;

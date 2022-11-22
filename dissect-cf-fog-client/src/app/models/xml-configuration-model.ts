@@ -22,7 +22,7 @@ export interface StationContainerXml {
 
 export interface InstanceContainerXml {
   instances: {
-    instance : InstanceXml[];
+    instance: InstanceXml[];
   };
 }
 

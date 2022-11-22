@@ -1,126 +1,88 @@
 const express = require('express');
 const authJwt = require("../../middleware").authJwt;
 const router = express.Router({caseSensitive:true});
-const { isEmpty, filter } = require('lodash');
+const { isEmpty } = require('lodash');
 const Parser = require("fast-xml-parser").j2xParser;
-const fse = require('fs-extra');
 const apiUtils = require('../util');
-const child = require('child_process');
-const { storage } = require('../../models/firestore')
-const os = require('os');
+const mongodb = require('../../services/mongodb-service');
 
+
+// TODO remove console.logs
 /**
  * It parses the appliacnes and devices to xml and writes out into files. The path consists of the email and and the time.
  * It runs the dissect application, and sends the directory's name, the html file in string format, stdout and an error property,
  * if it is failed somehow, it will try to delete the created folder and it will send an error response.
  */
-router.post('/', [authJwt.verifyToken], (req, res , next)=> {
-  if(!checkConfigurationRequestBody(req)){
-    console.log('ERROR: Bad req body: ', req.body);
-    throw new Error('Bad request!');
+router.post('/', [authJwt.verifyToken], async (req, res) => {
+  console.log("--------------------- REQUEST BODY --------------------")
+  console.log(JSON.stringify(req.body));
+  console.log("---------------------- REQUEST BODY END ---------------");
+
+  const jobs = [];
+  const configs = [];
+
+  for (let config of req.body) {
+    console.log(config);
+    configs.push(config.configuration);
   }
-  const userEmail = req.body.configuration.email;
 
-  let tzoffset;
-  if(req.body.configuration.tzOffset !== undefined){
-    tzoffset = req.body.configuration.tzOffset;
-  }else{
-    const tzOffsetInMin = new Date().getTimezoneOffset();
-    tzoffset = tzOffsetInMin !== 0 ? tzOffsetInMin / 60 : 0;
-    tzoffset *= -1;
-  }
-  tzoffset *= 3600000;
-  const localISOTime = (new Date(Date.now() + tzoffset)).toISOString().slice(0, -1);
-  const configTime = localISOTime.replace('T', '_').replace(/\..+/, '').replace(/:/g, '-');
-  const baseDirPath= `configurations/users_configurations/${userEmail}/${configTime}`;
-  saveResourceFiles(req, baseDirPath);
+  for (let config of configs) {
+    console.log("FOR LOOP - actual config: " + config);
+    if (!checkConfigurationRequestBody(config)) {
+      console.log('ERROR: Bad req body: ', config);
+      throw new Error('Bad request!');
+    }
 
-  const command =  `cd dissect-cf && java -cp ` +
-  `target/dissect-cf-fog-1.0.0-SNAPSHOT-jar-with-dependencies.jar ` +
-  `hu.u_szeged.inf.fog.simulator.demo.XMLSimulation ` +
-  `../${baseDirPath}/Instances.xml ` +
-  `../${baseDirPath}/appliances.xml ` +
-  `../${baseDirPath}/devices.xml ` + 
-  `../${baseDirPath}/ `;
+    let obj = await saveResourceFiles(config);
+    console.log(obj);
 
-  //console.log(command);
-
-  const proc = child.spawnSync(command, {shell: true, maxBuffer: 1024 * 1024});
-  if(proc.stderr.length > 0){
-    // TODO: this call can cause Internel Server Error, further inv. strongly needed!
-    //killProcess(proc);
-    return sendExecutionError(proc.stderr, baseDirPath, res);
-  }
-  return sendResponseWithSavingStdOut(baseDirPath, proc.stdout, res, configTime, proc);
-});
-
-/**
- * It sends the response object in json format which contains
- * the directory's name, the html file in string format, stdout and an error property.
- * @param {string} baseDirPath
- * @param {string} data
- * @param {Response} res
- * @param {string} directory
- */
-function sendResponseWithSavingStdOut(baseDirPath, data, res, directory, proc) {
-  console.log('**** Configuration succeed! ****');
-  try {
-    const htmlResults = [];
-    const htmlFileNames = apiUtils.getHtmlFilesInDir(baseDirPath);
-    htmlFileNames.forEach(file => {
-      htmlToSave = apiUtils.readFileSyncWithErrorHandling(baseDirPath + '/' + file);
-      writeToFile(baseDirPath + '/' + file, htmlToSave.toString());
-      htmlResults.push(htmlToSave.toString())
+    const prov = await mongodb.getProvidersFile({
+      filename: "providers.xml"
     })
 
-    const stdOut = data.toString();
-    writeToFile(baseDirPath + '/run-log.txt', stdOut);
+    let configFiles = {};
+    configFiles["APPLIANCES_FILE"] = obj.appliancesId;
+    configFiles["DEVICES_FILE"] = obj.devicesId;
+    configFiles["INSTANCES_FILE"] = obj.instancesId;
+    configFiles["PROVIDERS_FILE"] = prov.fileId;
 
-    fse.outputFile(baseDirPath + '/run-log.txt', stdOut, (writeErr) => {
-      if (writeErr) {
-        return console.log('ERROR: write file: ', baseDirPath + '/run-log.txt', '/n MSG: ', writeErr);
-      }
-      console.log('WRITE: run-log > ', baseDirPath + '/run-log.txt');
+    const resources = await mongodb.getResourceFiles();
 
-      fse.removeSync(baseDirPath);
+    let counter = 0;
 
-      return res.status(201).json({ directory: baseDirPath, html: htmlResults, data: stdOut, err: null });
-    });
-  } catch (error) {
-    killProcess(proc);
-    return res.status(200).json({ html: 'Not created!', data: 'Error!', err: 'Something went wrong!' });
+    for (const item of resources) {
+      configFiles["IAAS_FILE" + counter] = item.fileId;
+      counter += 1;
+    }
+
+    const job = await mongodb.addJob({
+      user: req.userId,
+      priority: "101",
+      numberOfCalculation: 0,
+      simulatorJobStatus: "SUBMITTED",
+      configFiles: configFiles,
+      createdDate: new Date().toISOString()
+    })
+
+    jobs.push(job.insertedId);
+
+    console.log("JOB ID=" + JSON.stringify(job));
+
+    console.log("Req user id: " + req.userId);
   }
-}
+  console.log('jobs=' + jobs);
 
-function killProcess(proc) {
-  console.log(proc);
-  if (os.platform().startsWith('win')) {
-    child.exec('taskkill /pid ' + proc.pid + ' /T /F')
-  } else {
-    proc.kill();
-  }
-}
+  const user_config = await mongodb.addConfiguration({
+    user: req.userId,
+    time: new Date().toISOString(),
+    jobs: jobs
+  })
 
-/**
- * It tries to remove the created directory and sends the error.
- * If it can not remove the direcotry, it will throw an error about it.
- * @param {Error} stderr
- * @param {string} baseDirPath
- * @param {Response} res
- */
-function sendExecutionError(stderr, baseDirPath, res) {
-  console.log('---- Configuration fail! ----');
-  const errorMsg = stderr.toString().split('\n')[0].split(':')[1];
-  console.log('errorMsg ' + stderr.toString())
-  try {
-    fse.removeSync(baseDirPath);
-    console.log('REMOVED: dir: ', baseDirPath);
-  } catch(e) {
-    console.log('ERROR: Can not delete the dir: ', baseDirPath);
-    throw new Error('Can not delete created folder, and can not create configuration files!');
-  }
-  return res.status(200).json({ html: 'Not created!', data: 'Error!', err: errorMsg });
-}
+  console.log('user_config=' + user_config);
+
+  return res.status(201).json({jobs: jobs});
+});
+
 
 /**
  * It wrties the files into the given directory. The data comes from the request' body.
@@ -128,41 +90,36 @@ function sendExecutionError(stderr, baseDirPath, res) {
  * @param {Parser} parser
  * @param {string} baseDirPath
  */
-function saveResourceFiles(req, baseDirPath) {
+async function saveResourceFiles(config) {
   const parser = new Parser(apiUtils.getParserOptions('$'));
 
-  const pureAppliances = req.body.configuration.appliances;
-  const pureDevices = req.body.configuration.devices;
-  const pureInstances = req.body.configuration.instances;
+  const plainAppliances = config.appliances;
+  const plainDevices = config.devices;
+  const plainInstances = config.instances;
 
-  const appliances = parser.parse(pureAppliances);
-  const devices = parser.parse(pureDevices);
-  const instances = parser.parse(pureInstances);
+  console.log("plainAppliances: " + config.appliances);
+  console.log("plainDevices: " + config.devices);
+  console.log("plainInstances: " + config.instances);
+
+  const appliances = parser.parse(plainAppliances);
+  console.log("parsed appliances: " + appliances);
+  const devices = parser.parse(plainDevices);
+  console.log("parsed devices: " + devices);
+  const instances = parser.parse(plainInstances);
+  console.log("parsed instances: " + instances);
 
   const xmlFileHeader = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
-  writeToFile(baseDirPath + '/appliances.xml', xmlFileHeader + appliances);
-  console.log('WRITE: appliances > ', baseDirPath + '/appliances.xml');
-  writeToFile(baseDirPath + '/devices.xml', xmlFileHeader + devices);
-  console.log('WRITE: devices > ', baseDirPath + '/devices.xml');
-  writeToFile(baseDirPath + '/Instances.xml', xmlFileHeader + instances);
-  console.log('WRITE: instances > ', baseDirPath + '/Instances.xml');
-}
 
-/**
- * @param {string} filePath
- * @param {string} data
- */
-function writeToFile(filePath, data) {
-  try{
-    // Saving into Firabase storage
-    const file = storage.file(filePath);
-    file.save(data)
+  const appliancesId = await mongodb.saveFile('appliances.xml',xmlFileHeader + appliances);
 
-    // Saving into local fs
-    fse.outputFileSync(filePath, data);
-  }catch {
-    console.log('ERROR: Can not write to file: ', filePath);
-    throw new Error('Can not write to file!');
+  const devicesId = await mongodb.saveFile('devices.xml', xmlFileHeader + devices);
+
+  const instancesId = await mongodb.saveFile('Instances.xml', xmlFileHeader + instances);
+
+  return {
+    appliancesId: appliancesId,
+    devicesId: devicesId,
+    instancesId: instancesId
   }
 }
 
@@ -170,9 +127,9 @@ function writeToFile(filePath, data) {
  * @param {Request} req
  */
 function checkConfigurationRequestBody(req){
-  return req.body && req.body.configuration && req.body.configuration.appliances
-    && req.body.configuration.devices && !isEmpty(req.body.configuration.appliances)
-    && !isEmpty(req.body.configuration.devices)
+  return req.appliances
+      && req.devices && !isEmpty(req.appliances)
+      && !isEmpty(req.devices)
 }
 
 module.exports = router

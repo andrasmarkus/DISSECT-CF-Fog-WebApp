@@ -3,13 +3,7 @@ import * as jQuery from 'jquery';
 import * as joint from 'jointjs';
 import { FogNodesObject, CloudNodesObject } from 'src/app/models/computing-nodes-object';
 import { StationsObject } from 'src/app/models/station';
-import {
-  ConfigurationObject,
-  Neighbour,
-  NODETYPES,
-  Node,
-  ServerSideConfigurationObject
-} from 'src/app/models/configuration';
+import { ConfigurationObject, Neighbour, NODETYPES, Node, ServerSideConfigurationObject } from 'src/app/models/configuration';
 import { omit, cloneDeep } from 'lodash';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
@@ -820,7 +814,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
 
     const serverSideconfigurations: ServerSideConfigurationObject[] = this.generateAllConfigurations();
 
-    this.userConfigurationService.sendConfiguration(serverSideconfigurations[0]);
+    // this.userConfigurationService.sendConfiguration(serverSideconfigurations[0]);
+    this.userConfigurationService.sendConfiguration(serverSideconfigurations);
     this.stepperService.stepForward();
     this.graphScale = 1;
     this.sliderValue = 50;
@@ -857,6 +852,26 @@ export class ConnectionComponent implements OnInit, OnDestroy {
 
     // Combine the combined app and station strategies
     const combinedStrategies =  [appStrategyCombos, stationStrategyCombos].reduce((a, b) => a.flatMap(x => b.map(y => x.concat(y))));
+
+    console.log('------- App strategies -----------------');
+    console.log(JSON.stringify(appStrategies));
+    console.log('-----------------------------------------');
+
+    console.log('------- Station strategies -----------------');
+    console.log(JSON.stringify(stationStrategies));
+    console.log('-----------------------------------------');
+
+    console.log('------- App strategy combos ------------');
+    console.log(JSON.stringify(appStrategyCombos));
+    console.log('-----------------------------------------');
+
+    console.log('-------- Station strategy combos --------');
+    console.log(JSON.stringify(stationStrategyCombos));
+    console.log('-----------------------------------------');
+
+    console.log('-------- Combined strategies ------------');
+    console.log(JSON.stringify(combinedStrategies));
+    console.log('-----------------------------------------');
 
     // Generate server side configurations
     for (const combinedStrategy of combinedStrategies) {

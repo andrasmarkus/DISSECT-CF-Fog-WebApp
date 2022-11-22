@@ -1,9 +1,17 @@
+<mat-form-field appearance="fill">
+  <mat-label>Job</mat-label>
+  <mat-select [(value)]="defaultJob" (selectionChange)=getConfigurationResult($event.value)>
+    <mat-option *ngFor="let job of jobs; let i = index" [value]="job">
+      {{'Job '}} {{i + 1}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
 <ng-container *ngIf="configResult && !showSpinner; else spinnerTemp" >
   <mat-tab-group color="warn" mat-align-tabs="center" animationDuration="0ms">
     <mat-tab label="Timeline">
       <div class="tab" [style.height.vh]="contentHeight">
         <ng-container *ngIf="configResult.err === null; else failedConfig">
-          <div [innerHTML]="configResult.html[2] | safeHtml" appRunScripts></div>
+          <div [innerHTML]="configResult.html[0] | safeHtml" appRunScripts></div>
         </ng-container>
         <ng-template #failedConfig>
           <div class="fail-content">
@@ -22,14 +30,14 @@
     <mat-tab [disabled]="configResult.err !== null" label="Devices Energy">
       <div class="tab" [style.height.vh]="contentHeight">
         <ng-container *ngIf="configResult.err === null; else failedConfig">
-          <div [innerHTML]="configResult.html[0] | safeHtml" appRunScripts></div>
+          <div [innerHTML]="configResult.html[1] | safeHtml" appRunScripts></div>
         </ng-container>
       </div>
     </mat-tab>
     <mat-tab [disabled]="configResult.err !== null" label="Nodes Energy">
       <div class="tab" [style.height.vh]="contentHeight">
         <ng-container *ngIf="configResult.err === null; else failedConfig">
-          <div [innerHTML]="configResult.html[1] | safeHtml" appRunScripts></div>
+          <div [innerHTML]="configResult.html[2] | safeHtml" appRunScripts></div>
         </ng-container>
       </div>
     </mat-tab>
