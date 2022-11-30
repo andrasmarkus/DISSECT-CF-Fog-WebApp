@@ -1,17 +1,18 @@
-<mat-form-field appearance="fill">
-  <mat-label>Job</mat-label>
-  <mat-select [(value)]="defaultJob" (selectionChange)=getConfigurationResult($event.value)>
-    <mat-option *ngFor="let job of jobs; let i = index" [value]="job">
-      {{'Job '}} {{i + 1}}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-<ng-container *ngIf="configResult && !showSpinner; else spinnerTemp" >
+<br>
+<br>
+<div *ngIf="selectedSimulation && !showSpinner;" id="controls">
+  <button id="prevButton" (click)="stepBackward()" mat-raised-button>Prev</button>
+  <h1 id="simulationName"> {{ 'Simulation' + ' ' + (selectedSimulationNumber + 1)}}</h1>
+  <button id="forwardButton" (click)="stepForward()" mat-raised-button>Next</button>
+</div>
+<br>
+<ng-container *ngIf="selectedSimulation && !showSpinner; else spinnerTemp" >
   <mat-tab-group color="warn" mat-align-tabs="center" animationDuration="0ms">
     <mat-tab label="Timeline">
       <div class="tab" [style.height.vh]="contentHeight">
-        <ng-container *ngIf="configResult.err === null; else failedConfig">
-          <div [innerHTML]="configResult.html[0] | safeHtml" appRunScripts></div>
+        <ng-container *ngIf="simulationError === false; else failedConfig">
+          <div [innerHTML]="
+          this.selectedSimulation.results.TIMELINE.substring(1, this.selectedSimulation.results.TIMELINE.length - 1) | safeHtml" appRunScripts></div>
         </ng-container>
         <ng-template #failedConfig>
           <div class="fail-content">
@@ -22,31 +23,31 @@
                 <i class="fas fa-info-circle fa-lg"></i>
               </button>
             </div>
-            <h3 *ngIf="configResult.err" class="error">{{configResult.err}}</h3>
+            <h3 *ngIf="simulationError" class="error">{{'TODO ERROR'}}</h3>
           </div>
         </ng-template>
       </div>
     </mat-tab>
-    <mat-tab [disabled]="configResult.err !== null" label="Devices Energy">
+    <mat-tab [disabled]="simulationError === true" label="Devices Energy">
       <div class="tab" [style.height.vh]="contentHeight">
-        <ng-container *ngIf="configResult.err === null; else failedConfig">
-          <div [innerHTML]="configResult.html[1] | safeHtml" appRunScripts></div>
+        <ng-container *ngIf="simulationError === false; else failedConfig">
+          <div [innerHTML]="selectedSimulation.results.DEVICES_ENERGY | safeHtml" appRunScripts></div>
         </ng-container>
       </div>
     </mat-tab>
-    <mat-tab [disabled]="configResult.err !== null" label="Nodes Energy">
+    <mat-tab [disabled]="simulationError === true" label="Nodes Energy">
       <div class="tab" [style.height.vh]="contentHeight">
-        <ng-container *ngIf="configResult.err === null; else failedConfig">
-          <div [innerHTML]="configResult.html[2] | safeHtml" appRunScripts></div>
+        <ng-container *ngIf="simulationError === false; else failedConfig">
+          <div [innerHTML]="selectedSimulation.results.NODES_ENERGY | safeHtml" appRunScripts></div>
         </ng-container>
       </div>
     </mat-tab>
-    <mat-tab [disabled]="configResult.err !== null" label="Output">
+    <mat-tab [disabled]="simulationError === true" label="Output">
       <div class="tab stdout" [style.height.vh]="contentHeight">
-        <div  class="output-text" [innerHTML]="configResult.data | safeHtml" appRunScripts></div>
+        <div class="output-text" [innerHTML]="selectedSimulationData | safeHtml" appRunScripts></div>
       </div>
     </mat-tab>
-    <mat-tab [disabled]="configResult.err !== null" label="Files">
+    <mat-tab [disabled]="simulationError === true" label="Files">
       <div class="tab files-container" [style.height.vh]="contentHeight">
         <div class="resource-container">
           <h1 class="configuration-files-header">Configuration files</h1>

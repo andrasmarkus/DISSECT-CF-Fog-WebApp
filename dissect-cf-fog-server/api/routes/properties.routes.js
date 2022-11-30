@@ -6,7 +6,6 @@ const apiUtils = require('../util');
 const mongodb = require('../../services/mongodb-service');
 
 
-// TODO remove console.logs
 /* Sets the response header. */
 router.use((req, res, next) => {
   res.header(
@@ -29,11 +28,9 @@ router.get("/strategies/application", [authJwt.verifyToken], async (req, res) =>
     return file.toString();
   });
 
-  console.log("application file" + fileContent.toString());
 
   const jsonObj = parser.parse(fileContent.toString(), apiUtils.getParserOptions());
 
-  console.log(jsonObj);
 
   const result = jsonObj.strategies.strategy instanceof Array ?
       jsonObj.strategies : { strategy: [jsonObj.strategies.strategy] };
@@ -50,13 +47,8 @@ router.get("/strategies/device", [authJwt.verifyToken], async (req, res) => {
     return file.toString();
   });
 
-  console.log("device file" + fileContent.toString());
-
   const jsonObj = parser.parse(fileContent.toString(), apiUtils.getParserOptions());
 
-  console.log(jsonObj);
-
-  // const jsonObj = await getResourceByPath('configurations/strategies/Device-strategies.xml');
   const result = jsonObj.strategies.strategy instanceof Array ?
       jsonObj.strategies : { strategy: [jsonObj.strategies.strategy] };
   res.status(200).json(result);
@@ -68,17 +60,13 @@ router.get("/strategies/device", [authJwt.verifyToken], async (req, res) => {
  */
 router.get("/resources", [authJwt.verifyToken], async (req, res) => {
   const data = []
-  console.log("properties.routes.js - router.get(/resources) called");
 
   const resourceFilesList = await mongodb.getResourceFiles();
-
-  console.log(resourceFilesList);
 
   let contentsOfResourcesFiles = [];
 
   for (const item of resourceFilesList) {
     let fileContent = await mongodb.getFileById(item.fileId);
-    console.log(fileContent);
     contentsOfResourcesFiles.push(fileContent);
   }
 
@@ -95,7 +83,6 @@ router.get("/resources", [authJwt.verifyToken], async (req, res) => {
     i++;
   });
 
-  console.log("properties.routes.js - router.get(/resources) end");
   return res.status(200).json(data);
 });
 

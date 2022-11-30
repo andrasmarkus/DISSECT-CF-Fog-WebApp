@@ -1,9 +1,9 @@
 <!-- Configurations template: shows data in table-->
-<div *ngIf="!isConfigSelected && !isComparisonSelected" class="configurations-details">
+<div *ngIf="!isConfigResultSelected && !isSimulationComparisonSelected" class="configurations-details">
   <table mat-table [dataSource]="userConfigurationsDetails$ | async" matSort class="configuration-table">
     <ng-container matColumnDef="time">
       <th id="time" mat-header-cell *matHeaderCellDef mat-sort-header> Time </th>
-      <td mat-cell *matCellDef="let row"> {{row.time}} </td>
+      <td mat-cell *matCellDef="let row"> {{row.time.replace('T', ' ').substr(0, 19)}} </td>
     </ng-container>
     <ng-container matColumnDef="clouds">
       <th id="clouds" class="centered-column" mat-header-cell *matHeaderCellDef mat-sort-header> Number of simulations </th>
@@ -12,8 +12,8 @@
     <ng-container matColumnDef="compare">
       <th id="actions" class="centered-column" mat-header-cell *matHeaderCellDef>Compare Simulations</th>
       <td mat-cell class="centered-column" *matCellDef="let row">
-        <button (click)="compareSimulations(row.jobs)" mat-icon-button type="button">
-          <i class="fa fa-eye fa-lg"></i>
+        <button (click)="compareSimulations(row._id)" mat-icon-button type="button">
+          <i class="fas fa-chart-bar fa-lg"></i>
         </button>
       </td>
     </ng-container>
@@ -32,15 +32,15 @@
   <mat-paginator [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
 </div>
 <!-- Selected configuration is shown here -->
-<div *ngIf="isConfigSelected && configDirName">
+<div *ngIf="isConfigResultSelected && configId">
   <app-configuration-overview
-    [directory]="configDirName"
+    [configId]="configId"
     (goBack)="showTable()">
   </app-configuration-overview>
 </div>
-<div *ngIf="isComparisonSelected && simulations">
+<div *ngIf="isSimulationComparisonSelected && configId">
   <app-simulation-comparison
-  [simulations]="simulations"
+  [configId]="configId"
   (goBack)="showTable()">
   </app-simulation-comparison>
 </div>

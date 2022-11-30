@@ -140,3 +140,22 @@
     padding: 1.5rem 0rem;
   }
 }
+
+#controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+#simulationName {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: 0
+}
+
+#forwardButton, #prevButton {
+  margin-left: 1%; margin-right: 1%
+}

@@ -1,4 +1,5 @@
 import { environment } from '../../../environments/environment';
+import {Configuration} from "../configuration-result";
 export interface StrategysResponse {
   strategy: string[];
 }
@@ -48,20 +49,8 @@ export interface UserConfigurationDetails {
 }
 
 export interface ConfigurationResult {
-  configuration_id: any;
-  directory: string;
-  html: string[];
-  data: string;
+  config: Configuration;
   err: string;
-  job: any;
-  jobs: any;
-}
-
-export interface SimulationResult {
-  _id: any;
-  user: any;
-  time: any;
-  jobs: any;
 }
 
 export type ConfigurationFile = 'timeline' | 'devicesenergy' | 'nodesenergy' | 'appliances' | 'devices' | 'instances';

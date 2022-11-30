@@ -3,31 +3,31 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnDestroy,
   OnInit,
   Output,
 } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ConfigurationFile, ConfigurationResult } from 'src/app/models/server-api/server-api';
 import { UserConfigurationService } from 'src/app/services/configuration/user-configuration/user-configuration.service';
 import { PanelService } from 'src/app/services/panel/panel.service';
+import { Simulation } from "../../../models/configuration-result";
 
 @Component({
   selector: 'app-configuration-result',
   templateUrl: './configuration-result.component.html',
   styleUrls: ['./configuration-result.component.css']
 })
-export class ConfigurationResultComponent implements OnDestroy, OnInit {
-  private resultSub: Subscription;
-  public configResult: ConfigurationResult;
-  private configResultTemp: ConfigurationResult;
-  private configId: any;
-  public jobs: any;
-  public defaultJob: any;
-  @Input() public showSpinner = false;
-  @Input() public configResult$: Observable<ConfigurationResult>;
-  @Input() public contentHeight: number;
+export class ConfigurationResultComponent implements OnInit {
   @Output() showActions = new EventEmitter<void>();
+  @Input() public showSpinner = false;
+  @Input() public contentHeight: number;
+  @Input() public configResultObservable: Observable<ConfigurationResult>;
+
+  public configurationResult: ConfigurationResult;
+  public selectedSimulationNumber: number;
+  public selectedSimulation: Simulation;
+  public selectedSimulationData: any;
+  public simulationError: boolean;
 
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
@@ -36,70 +36,42 @@ export class ConfigurationResultComponent implements OnDestroy, OnInit {
   ) {}
 
   public async ngOnInit(): Promise<void> {
-    if (this.configResult$) {
-      // setTimeout(() => {
-      //   this.showActions.emit();
-      // }, 3000);
-      this.resultSub = this.configResult$.subscribe(async res => {
-        console.log(res);
-        console.log(res.jobs);
-        this.jobs = res.jobs;
+    if (this.configResultObservable) {
+      this.showSpinner = true;
 
-        console.log("CONFIG ID before=" + this.jobs[0]);
-        await this.getConfigurationResult(this.jobs[0]);
+      await this.configResultObservable.toPromise().then(
+        res => {
+          this.configurationResult = res;
+        }
+      )
 
-        this.defaultJob = this.jobs[0];
-        console.log(this.configResultTemp);
+      let allSimulationProcessed = this.areAllSimulationProcessed();
+      let numberOfAttempts = 0;
 
-        // while (this.configResultTemp.job.simulatorJobStatus !== "PROCESSED") {
-        //   await new Promise(resolve => setTimeout(resolve, 5000));
-        //   await this.getConfigurationResult(this.jobs[0]);
-        // }
+      while(!allSimulationProcessed) {
+        numberOfAttempts++;
 
-        // // const data = res.data.replace(/\r\n/g, '<br>');
-        // // this.configResult = {...res, data};
-        // console.log('configResult ' + this.configResult);
-        // this.configId = res.configuration_id;
-        // console.log("CONFIG ID=" + this.configId);
-        // // this.showSpinner = false;
-        // // this.showActions.emit();
-        // // this.changeDetectorRef.detectChanges();
-        //
-        // console.log('JOB IN RES' + ('job' in res));
-        // //console.log('PROCESSED' + (res.job.simulatorJobStatus === 'PROCESSED'));
-        // let b1 = 'job' in res;
-        // let b2 = false;
-        // if (b1 === true) {
-        //   b2 = 'simulatorJobStatus' in res.job;
-        // }
-        // let b3 = false;
-        // if (b2 === true) {
-        //   b3 = res.job.simulatorJobStatus === 'PROCESSED';
-        // }
-        //
-        // if (!b3) {
-        //   console.log("CONFIG ID before=" + this.configId);
-        //   await this.getConfigurationResult(this.configId);
-        //   console.log(this.configResultTemp);
-        //
-        //   while (this.configResultTemp.job.simulatorJobStatus !== "PROCESSED") {
-        //     await new Promise(resolve => setTimeout(resolve, 5000));
-        //     await this.getConfigurationResult(this.configId);
-        //   }
-        // } else {
-        //   const data = res.data.replace(/\r\n/g, '<br>');
-        //   this.configResult = {...res, data};
-        // }
-        //
-        // this.showSpinner = false;
-        // this.showActions.emit();
-        // this.changeDetectorRef.detectChanges();
-      });
+        const config = await this.configService.getConfig(this.configurationResult.config._id).toPromise().then(
+          res => {
+
+            this.configurationResult = res;
+
+            return res.config;
+          }
+        );
+
+        allSimulationProcessed = this.areAllSimulationProcessed(config);
+        if (!allSimulationProcessed) {
+          await this.sleep(2000);
+        }
+      }
+
+      this.setSelectedSimulation(this.selectedSimulationNumber = 0);
+
+      this.showSpinner = false;
+      this.showActions.emit();
+      this.changeDetectorRef.detectChanges();
     }
-  }
-
-  public ngOnDestroy(): void {
-    this.resultSub?.unsubscribe();
   }
 
   public openPanelInfoForConfigurationError() {
@@ -108,92 +80,78 @@ export class ConfigurationResultComponent implements OnDestroy, OnInit {
   }
 
   public downloadTimeline(): void {
-    // this.downloadFile('timeline');
-    console.log("downloadTimeline() called");
-    console.log("DOWNLOADABLE TIMELINE ID: " + this.configResult.job.results.TIMELINE);
-    this.downloadFileMongo(this.configResult.job.results.TIMELINE, 'timeline');
+    this.downloadEmbeddedHtmlChart(this.selectedSimulation.results.TIMELINE, 'Timeline.html');
   }
 
   public downloadDevicesEnergy(): void {
-    // this.downloadFile('devicesenergy');
-    console.log("downloadTDevicesEnergy() called");
-    console.log("DOWNLOADABLE DEVICES ENERGY ID: " + this.configResult.job.results.DEVICES_ENERGY);
-    this.downloadFileMongo(this.configResult.job.results.DEVICES_ENERGY, 'devicesenergy');
+    this.downloadEmbeddedHtmlChart(this.selectedSimulation.results.DEVICES_ENERGY, 'Devices Energy.html');
   }
 
   public downloadNodesEnergy(): void {
-    // this.downloadFile('nodesenergy');
-    console.log("downloadTNodesEnergy() called");
-    console.log("DOWNLOADABLE NODES ENERGY ID: " + this.configResult.job.results.NODES_ENERGY);
-    this.downloadFileMongo(this.configResult.job.results.NODES_ENERGY, 'nodesenergy');
+    this.downloadEmbeddedHtmlChart(this.selectedSimulation.results.NODES_ENERGY, 'Nodes Energy.html');
   }
 
   public downloadAppliances(): void {
-    //this.downloadFile('appliances');
-    console.log("downloadAppliances() called");
-    console.log("DOWNLOADABLE APPLIANCES ID: " + this.configResult.job.configFiles.APPLIANCES_FILE);
-    this.downloadFileMongo(this.configResult.job.configFiles.APPLIANCES_FILE, 'appliances');
+    this.downloadFile(this.selectedSimulation.configFiles.APPLIANCES_FILE, 'appliances');
   }
 
   public downloadDevices(): void {
-    // this.downloadFile('devices');
-    console.log("downloadDevices() called");
-    console.log("DOWNLOADABLE DEVICES ID: " + this.configResult.job.configFiles.DEVICES_FILE);
-    this.downloadFileMongo(this.configResult.job.configFiles.DEVICES_FILE, 'devices');
+    this.downloadFile(this.selectedSimulation.configFiles.DEVICES_FILE, 'devices');
   }
 
   public downloadInstances(): void {
-    // this.downloadFile('instances');
-    console.log("downloadInstances() called");
-    console.log("DOWNLOADABLE INSTANCES ID: " + this.configResult.job.configFiles.INSTANCES);
-    this.downloadFileMongo(this.configResult.job.configFiles.INSTANCES_FILE, 'instances');
+    this.downloadFile(this.selectedSimulation.configFiles.INSTANCES_FILE, 'instances');
   }
 
-  private downloadFile(type: ConfigurationFile) {
-    this.configService.downloadFile(this.configResult?.directory, type);
-  }
-
-  private downloadFileMongo(id, type: ConfigurationFile) {
-    console.log("downloadFileMongo() called");
+  private downloadFile(id, type: ConfigurationFile) {
     this.configService.downloadFileMongo(id, type);
   }
 
-  public async getConfigurationResult(id) {
-    this.configResult = null;
-    this.showSpinner = true;
-    this.changeDetectorRef.detectChanges();
+  private downloadEmbeddedHtmlChart(htmlAsString, name) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([htmlAsString], {type: 'text/plain'}));
+    a.download = name;
+    a.click();
+  }
 
-    let res = await this.configService.getSelectedConfigurationResultMongo(id).toPromise();
+  public async sleep(milliseconds){
+    await new Promise(resolve => {
+      return setTimeout(resolve, milliseconds)
+    });
+  };
 
-    console.log(res);
-
-    if (res.job.simulatorJobStatus === "PROCESSED") {
-      const data = res.data.replace(/\r\n/g, '<br>');
-      this.configResultTemp =  {...res};
-      this.configResult = {...res, data};
-    } else {
-      this.configResultTemp = {...res};
-    }
-
-    while (this.configResultTemp.job.simulatorJobStatus !== "PROCESSED") {
-      await new Promise(resolve => setTimeout(resolve, 5000));
-      // await this.getConfigurationResult(this.jobs[0]);
-      // console.log("ASDASD getConfigurationResult() CALLED with ID=" + id);
-      res = await this.configService.getSelectedConfigurationResultMongo(id).toPromise();
-
-      console.log(res);
-
-      if (res.job.simulatorJobStatus === "PROCESSED") {
-        const data = res.data.replace(/\r\n/g, '<br>');
-        this.configResultTemp =  {...res};
-        this.configResult = {...res, data};
-      } else {
-        this.configResultTemp = {...res};
+  public areAllSimulationProcessed (config = this.configurationResult.config) {
+    for (const simulation of config.jobs) {
+      if (!['PROCESSED', 'FAILED'].includes(simulation.simulatorJobStatus)) {
+        return false;
       }
     }
+    return true;
+  }
 
-    this.showSpinner = false;
-    this.showActions.emit();
+  public setSelectedSimulation(simulationNumber: number) {
     this.changeDetectorRef.detectChanges();
+
+    this.selectedSimulation = this.configurationResult.config.jobs[simulationNumber];
+    this.simulationError = this.selectedSimulation.simulatorJobStatus !== 'PROCESSED';
+    this.selectedSimulationData = JSON.stringify(this.selectedSimulation.simulatorJobResult);
+
+    this.changeDetectorRef.detectChanges();
+  }
+
+  public stepForward() {
+    if (this.selectedSimulationNumber < this.configurationResult.config.jobs.length - 1) {
+      this.selectedSimulation = null;
+      this.setSelectedSimulation(++this.selectedSimulationNumber);
+      this.changeDetectorRef.detectChanges();
+    }
+  }
+
+  public stepBackward() {
+    if (this.selectedSimulationNumber > 0) {
+      this.selectedSimulation = null;
+      this.setSelectedSimulation(--this.selectedSimulationNumber);
+      this.changeDetectorRef.detectChanges();
+    }
   }
 }

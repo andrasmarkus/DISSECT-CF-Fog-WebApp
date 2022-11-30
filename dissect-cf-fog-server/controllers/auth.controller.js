@@ -11,8 +11,7 @@ const mongodb = require('../services/mongodb-service');
  */
 const signUp = async (req, res) => {
     try {
-        const user = await mongodb.addUser({email: req.body.email, password: bcrypt.hashSync(req.body.password, 8)});
-        console.log((user.insertedId));
+        await mongodb.addUser({email: req.body.email, password: bcrypt.hashSync(req.body.password, 8)});
         res.status(201).send({message: "User was registered successfully"});
     } catch (e) {
         res.status(500).send({message: "Error"});
@@ -33,8 +32,6 @@ const signIn = async (req, res) => {
         let user = await mongodb.getUser({
             email: req.body.email
         })
-
-        console.log(user);
 
         if (user == null) {
             return res.status(404).send({message: "User Not found."});

@@ -1,4 +1,3 @@
-const {MongoClient} = require("mongodb");
 const mongodb = require('../services/mongodb-service');
 
 /**
@@ -13,8 +12,6 @@ const mongodb = require('../services/mongodb-service');
 const checkSignUp = async (req, res, next) => {
     try {
         const user = await mongodb.getUser({ email: req.body.email })
-
-        console.log('check:' + JSON.stringify(user));
 
         if (user != null) {
             res.status(400).send({ message: "Failed! E-mail is already in use!" });

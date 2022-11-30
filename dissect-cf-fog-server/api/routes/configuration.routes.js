@@ -9,32 +9,24 @@ const mongodb = require('../../services/mongodb-service');
 
 // TODO remove console.logs
 /**
- * It parses the appliacnes and devices to xml and writes out into files. The path consists of the email and and the time.
+ * It parses the appliances and devices to xml and writes out into files. The path consists of the email and and the time.
  * It runs the dissect application, and sends the directory's name, the html file in string format, stdout and an error property,
  * if it is failed somehow, it will try to delete the created folder and it will send an error response.
  */
 router.post('/', [authJwt.verifyToken], async (req, res) => {
-  console.log("--------------------- REQUEST BODY --------------------")
-  console.log(JSON.stringify(req.body));
-  console.log("---------------------- REQUEST BODY END ---------------");
-
   const jobs = [];
   const configs = [];
 
   for (let config of req.body) {
-    console.log(config);
     configs.push(config.configuration);
   }
 
   for (let config of configs) {
-    console.log("FOR LOOP - actual config: " + config);
     if (!checkConfigurationRequestBody(config)) {
-      console.log('ERROR: Bad req body: ', config);
       throw new Error('Bad request!');
     }
 
     let obj = await saveResourceFiles(config);
-    console.log(obj);
 
     const prov = await mongodb.getProvidersFile({
       filename: "providers.xml"
@@ -65,22 +57,19 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
     })
 
     jobs.push(job.insertedId);
-
-    console.log("JOB ID=" + JSON.stringify(job));
-
-    console.log("Req user id: " + req.userId);
   }
-  console.log('jobs=' + jobs);
 
-  const user_config = await mongodb.addConfiguration({
+  const new_config_id = await mongodb.addConfiguration({
     user: req.userId,
     time: new Date().toISOString(),
     jobs: jobs
-  })
+  }).then(res => {
+    return res.insertedId;
+  });
 
-  console.log('user_config=' + user_config);
+  const config = await mongodb.getConfigurationById(new_config_id);
 
-  return res.status(201).json({jobs: jobs});
+  return res.status(201).json({config: config, err: null});
 });
 
 
@@ -97,23 +86,14 @@ async function saveResourceFiles(config) {
   const plainDevices = config.devices;
   const plainInstances = config.instances;
 
-  console.log("plainAppliances: " + config.appliances);
-  console.log("plainDevices: " + config.devices);
-  console.log("plainInstances: " + config.instances);
-
   const appliances = parser.parse(plainAppliances);
-  console.log("parsed appliances: " + appliances);
   const devices = parser.parse(plainDevices);
-  console.log("parsed devices: " + devices);
   const instances = parser.parse(plainInstances);
-  console.log("parsed instances: " + instances);
 
   const xmlFileHeader = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
 
   const appliancesId = await mongodb.saveFile('appliances.xml',xmlFileHeader + appliances);
-
   const devicesId = await mongodb.saveFile('devices.xml', xmlFileHeader + devices);
-
   const instancesId = await mongodb.saveFile('Instances.xml', xmlFileHeader + instances);
 
   return {
@@ -127,9 +107,7 @@ async function saveResourceFiles(config) {
  * @param {Request} req
  */
 function checkConfigurationRequestBody(req){
-  return req.appliances
-      && req.devices && !isEmpty(req.appliances)
-      && !isEmpty(req.devices)
+  return req.appliances && req.devices && !isEmpty(req.appliances) && !isEmpty(req.devices)
 }
 
 module.exports = router

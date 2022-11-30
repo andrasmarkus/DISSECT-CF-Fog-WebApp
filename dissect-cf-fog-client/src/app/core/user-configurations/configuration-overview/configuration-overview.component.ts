@@ -9,7 +9,7 @@ import { UserConfigurationService } from 'src/app/services/configuration/user-co
 })
 export class ConfigurationOverviewComponent {
   public showActions = false;
-  @Input() public directory: string;
+  @Input() public configId: string;
   @Output() public goBack = new EventEmitter<void>();
 
   constructor(public configService: UserConfigurationService) {}

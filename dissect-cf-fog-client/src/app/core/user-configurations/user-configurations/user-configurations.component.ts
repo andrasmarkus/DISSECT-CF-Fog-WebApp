@@ -15,21 +15,16 @@ import { map } from 'rxjs/operators';
 export class UserConfigurationsComponent implements AfterViewInit {
   public displayedColumns: string[] = ['time', 'clouds', 'compare', 'results'];
   public userConfigurationsDetails$: Observable<MatTableDataSource<UserConfigurationDetails>>;
-  /**
-   * Tells that one of the configuration is selected to watch the result.
-   */
-  public isConfigSelected = false;
-  public isComparisonSelected = false;
-  public configDirName: string;
-  public configName: string;
-  public simulations: any;
+  public isConfigResultSelected = false;
+  public isSimulationComparisonSelected = false;
+  public configId: any;
   @ViewChild(MatSort) public sort: MatSort;
   @ViewChild(MatPaginator) public paginator: MatPaginator;
 
   constructor(public userConfigurationService: UserConfigurationService) {}
 
   public ngAfterViewInit(): void {
-    this.userConfigurationsDetails$ = this.userConfigurationService.getUserConfigurationsDetailsMongo().pipe(
+    this.userConfigurationsDetails$ = this.userConfigurationService.getConfigList().pipe(
       map(details => new MatTableDataSource(details)),
       map(details => {
         if (details && this.sort && this.paginator) {
@@ -41,19 +36,19 @@ export class UserConfigurationsComponent implements AfterViewInit {
     );
   }
 
-  public overviewConfiguration(directory: string): void {
-    this.isConfigSelected = true;
-    this.configDirName = directory;
+  public overviewConfiguration(configId: string): void {
+    this.isConfigResultSelected = true;
+    this.configId = configId;
   }
 
-  public compareSimulations(simulations: any){
-    console.log('list simulations=' + simulations);
-    this.isComparisonSelected = true;
-    this.simulations = simulations;
+  public compareSimulations(configId: any){
+    console.log('configId' + configId);
+    this.isSimulationComparisonSelected = true;
+    this.configId = configId;
   }
 
   public showTable() {
-    this.isConfigSelected = false;
-    this.isComparisonSelected = false;
+    this.isConfigResultSelected = false;
+    this.isSimulationComparisonSelected = false;
   }
 }

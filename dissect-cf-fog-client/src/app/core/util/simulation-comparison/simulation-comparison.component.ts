@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -8,11 +9,10 @@ import {
   Output,
 } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import {ConfigurationFile, ConfigurationResult, SERVER_URL} from 'src/app/models/server-api/server-api';
+import { ConfigurationResult } from 'src/app/models/server-api/server-api';
 import { UserConfigurationService } from 'src/app/services/configuration/user-configuration/user-configuration.service';
-import { PanelService } from 'src/app/services/panel/panel.service';
 import {Chart} from "chart.js";
-
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-simulation-comparison',
@@ -20,168 +20,408 @@ import {Chart} from "chart.js";
   styleUrls: ['./simulation-comparison.component.css']
 })
 export class SimulationComparisonComponent implements OnInit, OnDestroy {
-  @Input() public simulations: any;
   private resultSub: Subscription;
-  public configResult: ConfigurationResult;
-  private configResultTemp: ConfigurationResult;
-  private configId: any;
-  private jobsdata: [
-    {
-      "actuatorEvents": {
-        "eventCount": 111113,
-        "nodeChange": 0,
-        "positionChange": 13,
-        "connectToNodeEventCount": 57100,
-        "disconnectFromNodeEventCount": 54000
-      },
-      "architecture": {
-        "usedVirtualMachines": 17,
-        "tasks": 18,
-        "totalEnergyConsumptionOfNodesInWatt": 35808208.125,
-        "totalEnergyConsumptionOfDevicesInWatt": null,
-        "sumOfMillisecondsOnNetwork": 6860,
-        "sumOfByteOnNetwork": 2430158,
-        "highestAppStopTimeInHour": 0.6444447222222223,
-        "highestDeviceStopTimeInHour": 0.3611111111111111
-      },
-      "cost": {
-        "totalCostInEuro": 2.2740001,
-        "bluemixCostInEuro": 0.00074005126953125,
-        "amazonCostInEuro": 0.0078225,
-        "azureCostInEuro": 929.9999999999808,
-        "oracleCostInEuro": 420.65
-      },
-      "dataVolume": {
-        "generatedDataInBytes": 800000,
-        "processedDataInBytes": 800000,
-        "arrivedDataInBytes": 800000
-      },
-      "timeoutInMinutes": 17.000016666666667
-    },
-    {
-      "actuatorEvents": {
-        "eventCount": 41104,
-        "nodeChange": 0,
-        "positionChange": 4,
-        "connectToNodeEventCount": 21100,
-        "disconnectFromNodeEventCount": 20000
-      },
-      "architecture": {
-        "usedVirtualMachines": 24,
-        "tasks": 29,
-        "totalEnergyConsumptionOfNodesInWatt": 719015193.13125,
-        "totalEnergyConsumptionOfDevicesInWatt": null,
-        "sumOfMillisecondsOnNetwork": 6860,
-        "sumOfByteOnNetwork": 2430158,
-        "highestAppStopTimeInHour": 0.5944447222222223,
-        "highestDeviceStopTimeInHour": 0.3611111111111111
-      },
-      "cost": {
-        "totalCostInEuro": 2.7660001999999997,
-        "bluemixCostInEuro": 0.00074005126953125,
-        "amazonCostInEuro": 0.0078225,
-        "azureCostInEuro": 930.0000000000058,
-        "oracleCostInEuro": 843.3
-      },
-      "dataVolume": {
-        "generatedDataInBytes": 800000,
-        "processedDataInBytes": 800000,
-        "arrivedDataInBytes": 800000
-      },
-      "timeoutInMinutes": 14.000016666666665
-    }
-  ];
-  public chart: any;
-  public jobs: any;
-  public defaultJob: any;
+  private configurationResult: ConfigurationResult;
+
+
+  public selectedChartNumber: number;
+  public chartId: string;
+  public chartName: string;
+  public chart: Chart;
+
+  @Input() public configId: any;
   @Input() public showSpinner = false;
-  @Input() public configResult$: Observable<ConfigurationResult>;
   @Input() public contentHeight: number;
   @Output() showActions = new EventEmitter<void>();
   @Output() public goBack = new EventEmitter<void>();
 
   constructor(
-    private changeDetectorRef: ChangeDetectorRef,
-    public configService: UserConfigurationService,
-    private panelService: PanelService
+    private http: HttpClient,
+    private userConfigurationService: UserConfigurationService,
+    private changeDetector: ChangeDetectorRef
   ) {}
 
   public async ngOnInit(): Promise<void> {
     console.log('Onint');
-    console.log(this.simulations);
-    this.getAllSimulations(this.simulations);
-    this.createChart();
-  }
+    console.log("CONFIG ID SIMU=" + this.configId);
+    this.chartId = "ActuatorEventsChart";
 
-  public createChart(){
-    this.chart = new Chart("MyChart", {
-      type: 'bar', //this denotes tha type of chart
-
-      data: {// values on X-Axis
-        labels: ["totalCostInEuro", "bluemixCostInEuro", "amazonCostInEuro","azureCostInEuro",
-          "oracleCostInEuro"],
-        datasets: [
-          {
-            label: "Simulation 1",
-            data: ['2.27400001','0.0000000000074005126953125', '0.78225', '10.5', '2.5'],
-            backgroundColor: 'blue'
-          },
-          {
-            label: "Simulation 2",
-            data: ['2.7660001999999997', '0.74005126953125', '0.78225', '15.5', '1.3'],
-            backgroundColor: 'limegreen'
-          }
-        ]
-      },
-      options: {
-        aspectRatio:2.5
-      }
-
+    await this.userConfigurationService.getConfig(this.configId).toPromise().then(res => {
+      this.configurationResult = res;
     });
+    console.log('-------- Simulation Comparison --------');
+    console.log(this.configurationResult);
+    console.log('----------------');
 
-    // this.chart = new Chart("MyChart", {
-    //   type: 'bar', //this denotes tha type of chart
-    //
-    //   data: {// values on X-Axis
-    //     labels: ['2022-05-10', '2022-05-11', '2022-05-12','2022-05-13',
-    //       '2022-05-14', '2022-05-15', '2022-05-16','2022-05-17', ],
-    //     datasets: [
-    //       {
-    //         label: "Sales",
-    //         data: ['467','576', '572', '79', '92',
-    //           '574', '573', '576'],
-    //         backgroundColor: 'blue'
-    //       },
-    //       {
-    //         label: "Profit",
-    //         data: ['542', '542', '536', '327', '17',
-    //           '0.00', '538', '541'],
-    //         backgroundColor: 'limegreen'
-    //       }
-    //     ]
-    //   },
-    //   options: {
-    //     aspectRatio:2.5
-    //   }
-    //
-    // });
+    this.chartId = "ActuatorEventsChart";
+    this.chartName = "Actuator Events Chart";
+    this.createActuatorEventsChart();
+    this.selectedChartNumber = 0;
+
+    this.changeDetector.detectChanges();
   }
 
   public ngOnDestroy(): void {
     this.resultSub?.unsubscribe();
   }
 
-  public openPanelInfoForConfigurationError() {
-    this.panelService.getConfigurationErrorData();
-    this.panelService.toogle();
+  public createActuatorEventsChart() {
+    const jobDataList = [];
+    let counter = 0;
+    this.configurationResult.config.jobs.forEach((job) => {
+        console.log(job);
+
+        const jobData = {
+          label: `Job ${++counter} (id: ${job._id})`,
+          data: [],
+          backgroundColor: 'blue'
+        };
+        for (const property in job.simulatorJobResult.actuatorEvents) {
+          console.log(`${property}: ${job.simulatorJobResult.actuatorEvents[property]}`);
+          jobData.data.push(job.simulatorJobResult.actuatorEvents[property]);
+        }
+        jobDataList.push(jobData);
+      }
+    );
+
+    console.log('-------- JOB DATA LIST ----------');
+    console.log(jobDataList);
+    console.log('-------- JOB DATA LIST -----------');
+
+    this.chart = new Chart('ActuatorEventsChart', {
+        type: 'bar',
+
+        data: {// values on X-Axis
+          labels: ['Event Count', 'Node Change', 'Position Change', 'Connect To Node Event Count', 'Disconnect From Node Event Count'],
+          datasets: jobDataList
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              type: 'logarithmic',
+              ticks: {
+                callback: function (value, index, values) {
+                  return Number(value.toString());//pass tick values as a string into Number function
+                }
+              },
+              afterBuildTicks: function (chartObj) {
+                const ticks = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000];
+                chartObj.ticks.splice(0, chartObj.ticks.length);
+                chartObj.ticks.push(...ticks);
+              }
+            }]
+          },
+          aspectRatio: 2.5
+        }
+
+      }
+    );
   }
 
-  public async getAllSimulations(simulations: any){
+  public createArchitectureChart() {
+    const jobDataList = [];
+    let counter = 0;
+    this.configurationResult.config.jobs.forEach((job) => {
+        console.log(job);
 
+        const jobData = {
+          label: `Job ${++counter} (id: ${job._id})`,
+          data: [],
+          backgroundColor: 'blue'
+        };
+        for (const property in job.simulatorJobResult.architecture) {
+          console.log(`${property}: ${job.simulatorJobResult.architecture[property]}`);
+          jobData.data.push(job.simulatorJobResult.architecture[property]);
+        }
+        jobDataList.push(jobData);
+      }
+    );
+
+    console.log('-------- JOB DATA LIST ----------');
+    console.log(jobDataList);
+    console.log('-------- JOB DATA LIST -----------');
+
+
+    this.chart = new Chart('ArchitectureChart', {
+        type: 'bar',
+
+        data: {// values on X-Axis
+          labels: ['Used Virtual Machines', 'Tasks', 'Total Energy Consumption Of Nodes (Watt)', 'Total Energy Consumption Of Devices (Watt)', 'Sum Of Milliseconds On Network', 'Sum Of Byte On Network', 'Highest App Stop Time (Hour)', 'Highest Device Stop Time (Hour)'],
+          datasets: jobDataList
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              type: 'logarithmic',
+              ticks: {
+                callback: function (value, index, values) {
+                  return Number(value.toString());
+                }
+              },
+              afterBuildTicks: function (chartObj) {
+                const ticks = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000];
+                chartObj.ticks.splice(0, chartObj.ticks.length);
+                chartObj.ticks.push(...ticks);
+              }
+            }]
+          },
+          aspectRatio: 2.5
+        }
+      }
+    );
   }
 
+  public createCostChart() {
+    const jobDataList = [];
+    let counter = 0;
+    this.configurationResult.config.jobs.forEach((job) => {
+        console.log(job);
+
+        const jobData = {
+          label: `Job ${++counter} (id: ${job._id})`,
+          data: [],
+          backgroundColor: 'blue'
+        };
+        for (const property in job.simulatorJobResult.cost) {
+          console.log(`${property}: ${job.simulatorJobResult.cost[property]}`);
+          jobData.data.push(job.simulatorJobResult.cost[property]);
+        }
+        jobDataList.push(jobData);
+      }
+    );
+
+    console.log('-------- JOB DATA LIST ----------');
+    console.log(jobDataList);
+    console.log('-------- JOB DATA LIST -----------');
 
 
+    this.chart = new Chart('CostChart', {
+        type: 'bar',
+        data: {// values on X-Axis
+          labels: ['Total Cost (EUR)', 'Bluemix (EUR)', 'Amazon (EUR)', 'Azure (EUR)', 'Oracle (EUR)'],
+          datasets: jobDataList
+        },
+      }
+    );
+  }
+
+  public createDataVolumeChart() {
+    const jobDataList = [];
+    let counter = 0;
+    this.configurationResult.config.jobs.forEach((job) => {
+        console.log(job);
+
+        const jobData = {
+          label: `Job ${++counter} (id: ${job._id})`,
+          data: [],
+          backgroundColor: 'blue'
+        };
+        for (const property in job.simulatorJobResult.dataVolume) {
+          console.log(`${property}: ${job.simulatorJobResult.dataVolume[property]}`);
+          jobData.data.push(job.simulatorJobResult.dataVolume[property]);
+        }
+        jobDataList.push(jobData);
+      }
+    );
+
+    console.log('-------- JOB DATA LIST ----------');
+    console.log(jobDataList);
+    console.log('-------- JOB DATA LIST -----------');
 
 
+    this.chart = new Chart('DataVolumeChart', {
+        type: 'bar',
+
+        data: {// values on X-Axis
+          labels: ['Generated Data (bytes)', 'Processed Data (bytes)', 'Arrived Data (Bytes)'],
+          datasets: jobDataList
+        },
+        options: {
+          yAxes: [{
+            type: 'logarithmic',
+            ticks: {
+              beginAtZero: true,
+              callback: function (value, index, values) {
+                return Number(value.toString());
+              }
+            },
+            afterBuildTicks: function (chartObj) {
+              const ticks = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000];
+              chartObj.ticks.splice(0, chartObj.ticks.length);
+              chartObj.ticks.push(...ticks);
+            }
+          }],
+          aspectRatio: 2.5
+        }
+      }
+    );
+  }
+
+  public createTimeoutInMinutesChart() {
+    const jobDataList = [];
+    let counter = 0;
+    this.configurationResult.config.jobs.forEach((job) => {
+        console.log(job);
+
+        const jobData = {
+          label: `Job ${++counter} (id: ${job._id})`,
+          data: [job.simulatorJobResult.timeoutInMinutes],
+          backgroundColor: 'blue'
+        };
+        jobDataList.push(jobData);
+      }
+    );
+
+    console.log('-------- JOB DATA LIST ----------');
+    console.log(jobDataList);
+    console.log('-------- JOB DATA LIST -----------');
+
+
+    this.chart = new Chart('TimeoutInMinutesChart', {
+        type: 'bar',
+
+        data: {// values on X-Axis
+          labels: ['Timeout (minutes)'],
+          datasets: jobDataList
+        },
+        options: {
+          yAxes: [{
+            type: 'logarithmic',
+            ticks: {
+              callback: function (value, index, values) {
+                return Number(value.toString());
+              }
+            },
+            afterBuildTicks: function (chartObj) {
+              const ticks = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000];
+              chartObj.ticks.splice(0, chartObj.ticks.length);
+              chartObj.ticks.push(...ticks);
+            }
+          }],
+          aspectRatio: 2.5
+        }
+      }
+    );
+  }
+
+  public downloadChart(chart: Chart) {
+    const a = document.createElement('a');
+    a.href = chart.toBase64Image();
+    a.download = this.chartName + '.png';
+    a.click();
+  }
+
+  public stepBackward() {
+    if (this.selectedChartNumber > 0) {
+      this.selectedChartNumber--;
+      this.chart.destroy();
+      this.changeDetector.detectChanges();
+
+      switch (this.selectedChartNumber) {
+        case 0:
+          console.log('BW 0');
+          this.chartId = 'ActuatorEventsChart';
+          this.changeDetector.detectChanges();
+          this.chartName = 'Actuator Events Chart';
+          this.createActuatorEventsChart();
+          this.changeDetector.detectChanges();
+
+          break;
+        case 1:
+          console.log('BW 1');
+          this.chartId = 'ArchitectureChart';
+          this.changeDetector.detectChanges();
+          this.chartName = 'Architecture Chart';
+          this.createArchitectureChart();
+          this.changeDetector.detectChanges();
+
+          break;
+        case 2:
+          console.log('BW 2');
+          this.chartId = 'CostChart';
+          this.changeDetector.detectChanges();
+          this.chartName = 'Cost Chart';
+          this.createCostChart();
+          this.changeDetector.detectChanges();
+
+          break;
+        case 3:
+          console.log('BW 3');
+          this.chartId = 'DataVolumeChart';
+          this.changeDetector.detectChanges();
+          this.chartName = 'Data Volume Chart';
+          this.createDataVolumeChart();
+          this.changeDetector.detectChanges();
+
+          break;
+        case 4:
+          console.log('BW 4');
+          this.chartId = 'TimeoutInMinutesChart';
+          this.changeDetector.detectChanges();
+          this.chartName = 'Timeout Chart (minutes)';
+          this.createTimeoutInMinutesChart();
+          this.changeDetector.detectChanges();
+          break;
+      }
+
+      this.changeDetector.detectChanges();
+    }
+  }
+
+  public stepForward() {
+    if (this.selectedChartNumber < 4) {
+      this.selectedChartNumber++;
+      this.chart.destroy();
+      this.changeDetector.detectChanges();
+
+      switch (this.selectedChartNumber) {
+        case 0:
+          console.log('FW 0');
+          this.chartId = 'ActuatorEventsChart';
+          this.changeDetector.detectChanges();
+          this.chartName = 'Actuator Events Chart';
+          this.createActuatorEventsChart();
+          this.changeDetector.detectChanges();
+
+          break;
+        case 1:
+          console.log('FW 1');
+          this.chartId = 'ArchitectureChart';
+          this.changeDetector.detectChanges();
+          this.chartName = 'Architecture Chart';
+          this.createArchitectureChart();
+          this.changeDetector.detectChanges();
+
+          break;
+        case 2:
+          console.log('FW 2');
+          this.chartId = 'CostChart';
+          this.changeDetector.detectChanges();
+          this.chartName = 'Cost Chart';
+          this.createCostChart();
+          this.changeDetector.detectChanges();
+
+          break;
+        case 3:
+          console.log('FW 3');
+          this.chartId = 'DataVolumeChart';
+          this.changeDetector.detectChanges();
+          this.chartName = 'Data Volume Chart';
+          this.createDataVolumeChart();
+          this.changeDetector.detectChanges();
+
+          break;
+        case 4:
+          console.log('FW 4');
+          this.chartId = 'TimeoutInMinutesChart';
+          this.changeDetector.detectChanges();
+          this.chartName = 'Timeout Chart (minutes)';
+          this.createTimeoutInMinutesChart();
+          this.changeDetector.detectChanges();
+          break;
+      }
+
+      this.changeDetector.detectChanges();
+    }
+  }
 }

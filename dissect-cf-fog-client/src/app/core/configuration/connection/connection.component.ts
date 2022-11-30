@@ -853,26 +853,6 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     // Combine the combined app and station strategies
     const combinedStrategies =  [appStrategyCombos, stationStrategyCombos].reduce((a, b) => a.flatMap(x => b.map(y => x.concat(y))));
 
-    console.log('------- App strategies -----------------');
-    console.log(JSON.stringify(appStrategies));
-    console.log('-----------------------------------------');
-
-    console.log('------- Station strategies -----------------');
-    console.log(JSON.stringify(stationStrategies));
-    console.log('-----------------------------------------');
-
-    console.log('------- App strategy combos ------------');
-    console.log(JSON.stringify(appStrategyCombos));
-    console.log('-----------------------------------------');
-
-    console.log('-------- Station strategy combos --------');
-    console.log(JSON.stringify(stationStrategyCombos));
-    console.log('-----------------------------------------');
-
-    console.log('-------- Combined strategies ------------');
-    console.log(JSON.stringify(combinedStrategies));
-    console.log('-----------------------------------------');
-
     // Generate server side configurations
     for (const combinedStrategy of combinedStrategies) {
       const newServerSideConfig: ServerSideConfigurationObject = JSON.parse(JSON.stringify(this.configuration));
@@ -893,9 +873,6 @@ export class ConnectionComponent implements OnInit, OnDestroy {
 
       serverSideconfigurations.push(newServerSideConfig);
     }
-
-    console.log(serverSideconfigurations);
-
     return serverSideconfigurations;
   }
 }

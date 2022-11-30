@@ -6,7 +6,7 @@ const userCollectionName = "users";
 const providersCollectionName = "providers";
 const resourceCollectionName = "resources";
 const strategiesCollectionName = "strategies";
-const jobCollectionName = "simulator_jobs";
+const simulationCollectionName = "simulator_jobs";
 const configurationCollectionName = "configurations";
 
 async function addUser(user) {
@@ -14,7 +14,8 @@ async function addUser(user) {
     try {
         return await client.db(databaseName).collection(userCollectionName).insertOne(user);
     } catch (e) {
-        console.log(' mongodb addUser() error:' + e.message);
+        console.log('mongodb-service: addUser() error:' + e.message);
+        throw e;
     } finally {
         await client.close();
     }
@@ -25,6 +26,7 @@ async function getUser(user) {
     try {
         return await client.db(databaseName).collection(userCollectionName).findOne(user);
     } catch (e) {
+        console.log('mongodb-service: getUser() error:' + e.message);
         throw e;
     } finally {
         await client.close();
@@ -36,6 +38,7 @@ async function getAllUsers() {
     try {
         return await client.db(databaseName).collection(userCollectionName).find();
     } catch (e) {
+        console.log('mongodb-service: getAllUsers() error:' + e.message);
         throw e;
     } finally {
         await client.close();
@@ -48,6 +51,7 @@ async function getProvidersFile(filename){
     try {
         return await client.db(databaseName).collection(providersCollectionName).findOne(filename);
     } catch (e) {
+        console.log('mongodb-service: getProvidersFile() error:' + e.message);
         throw e;
     } finally {
         await client.close();
@@ -61,6 +65,7 @@ async function getStrategyFile(filename) {
     try {
         return await client.db(databaseName).collection(strategiesCollectionName).findOne(filename);
     } catch (e) {
+        console.log('mongodb-service: getStrategyFile() error:' + e.message);
         throw e;
     } finally {
         await client.close();
@@ -73,6 +78,7 @@ async function getResourceFiles(){
     try {
         return await client.db(databaseName).collection(resourceCollectionName).find().toArray();
     } catch (e) {
+        console.log('mongodb-service: getResourceFiles() error:' + e.message);
         throw e;
     } finally {
         await client.close();
@@ -81,12 +87,12 @@ async function getResourceFiles(){
 
 async function addJob(job) {
     const client = await mongodb.MongoClient(connectionString).connect();
-    console.log("JOOOOOB " + job.user);
     job.user = new mongodb.ObjectId(job.user);
 
     try {
-        return await client.db(databaseName).collection(jobCollectionName).insertOne(job);
+        return await client.db(databaseName).collection(simulationCollectionName).insertOne(job);
     } catch (e) {
+        console.log('mongodb-service: addJob() error:' + e.message);
         throw e;
     } finally {
         await client.close();
@@ -95,24 +101,32 @@ async function addJob(job) {
 
 async function addConfiguration(configuration) {
     const client = await mongodb.MongoClient(connectionString).connect();
-    console.log('COOONFIG' + configuration.user);
     configuration.user = new mongodb.ObjectId(configuration.user);
 
     try {
         return await client.db(databaseName).collection(configurationCollectionName).insertOne(configuration);
     } catch (e) {
+        console.log('mongodb-service: addConfiguration() error:' + e.message);
         throw e;
     } finally {
         await client.close();
     }
 }
 
-async function getSimulatorJobById(id){
+async function getSimulationById(id){
     const client = await mongodb.MongoClient(connectionString).connect();
 
     try {
-        return await client.db(databaseName).collection(jobCollectionName).findOne(new mongodb.ObjectId(id));
+        const job = await client.db(databaseName).collection(simulationCollectionName).findOne(new mongodb.ObjectId(id));
+        for (const property in job.results) {
+            job.results[property] = await getFileById(job.results[property]).then(res => {
+                return "'" + res + "'";
+            });
+        }
+
+        return job;
     } catch (e) {
+        console.log('mongodb-service: getSimulationById() error:' + e.message);
         throw e;
     } finally {
         await client.close();
@@ -123,8 +137,23 @@ async function getConfigurationById(id) {
     const client = await mongodb.MongoClient(connectionString).connect();
 
     try {
-        return await client.db(databaseName).collection(configurationCollectionName).findOne(new mongodb.ObjectId(id));
+        const config = await client.db(databaseName).collection(configurationCollectionName).findOne(new mongodb.ObjectId(id)).then(res => {
+            return res;
+        });
+
+        let simulations = [];
+
+        for (const jobId of config.jobs) {
+            await getSimulationById(jobId).then(
+                res => simulations.push(res));
+        }
+
+        config.jobs = simulations;
+
+        return config;
+
     } catch (e) {
+        console.log('mongodb-service: getConfigurationById() error:' + e.message);
         throw e;
     } finally {
         await client.close();
@@ -133,14 +162,13 @@ async function getConfigurationById(id) {
 
 async function getConfigurationsByUserId(id) {
     const client = await mongodb.MongoClient(connectionString).connect();
-    console.log('IDDDD' + JSON.stringify(id));
-    const what = new mongodb.ObjectId(id);
 
     try {
         return await client.db(databaseName).collection(configurationCollectionName).find({
             user: new mongodb.ObjectId(id.toString())
         }).toArray();
     } catch (e) {
+        console.log('mongodb-service: getConfigurationsByUserId() error:' + e.message);
         throw e;
     } finally {
         await client.close();
@@ -168,6 +196,7 @@ async function getFileById(id){
             });
         });
     } catch (e){
+        console.log('mongodb-service: getFileById() error:' + e.message);
         throw e;
     } finally {
         await client.close();
@@ -195,6 +224,7 @@ async function saveFile(name, data) {
 
         return res._id;
     } catch (e) {
+        console.log('mongodb-service: saveFile() error:' + e.message);
         throw e;
     } finally {
         await client.close();
@@ -211,7 +241,7 @@ module.exports = {
     getStrategyFile,
     addJob,
     addConfiguration,
-    getSimulatorJobById,
+    getSimulationById,
     getConfigurationById,
     getConfigurationsByUserId,
     getFileById,
