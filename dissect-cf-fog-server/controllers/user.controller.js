@@ -10,7 +10,6 @@ const getAllUser = async (req, res) => {
 
   try {
     const users = await mongodb.getAllUsers();
-
     res.status(200).send({users: users})
   } catch (e) {
     res.status(500).send({message: e.message});

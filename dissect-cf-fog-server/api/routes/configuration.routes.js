@@ -7,11 +7,10 @@ const apiUtils = require('../util');
 const mongodb = require('../../services/mongodb-service');
 
 
-// TODO remove console.logs
 /**
- * It parses the appliances and devices to xml and writes out into files. The path consists of the email and and the time.
- * It runs the dissect application, and sends the directory's name, the html file in string format, stdout and an error property,
- * if it is failed somehow, it will try to delete the created folder and it will send an error response.
+ * It parses the different config files (appliances, devices, instances) for the simulations to XML ones and saves them to MongoDB.
+ * Then a configuration will be created in the MongoDB (among others) from the objects containing the IDs of the saved config files (for each simulation).
+ * The newly created configuration will be returned with all of its simulations as an answer to the request.
  */
 router.post('/', [authJwt.verifyToken], async (req, res) => {
   const jobs = [];
@@ -21,6 +20,7 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
     configs.push(config.configuration);
   }
 
+  // Creates the simulator jobs on by one and adds their id to the jobs array
   for (let config of configs) {
     if (!checkConfigurationRequestBody(config)) {
       throw new Error('Bad request!');
@@ -74,7 +74,8 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
 
 
 /**
- * It wrties the files into the given directory. The data comes from the request' body.
+ * Parses the retrieved config files to XMLs and saves them into the MongoDB,
+ * then returns an object containing the IDs of the newly created files.
  * @param {Request} req
  * @param {Parser} parser
  * @param {string} baseDirPath
@@ -104,6 +105,7 @@ async function saveResourceFiles(config) {
 }
 
 /**
+ * Checks whether the body of the configuration request meets the requirements or not.
  * @param {Request} req
  */
 function checkConfigurationRequestBody(req){

@@ -296,6 +296,9 @@ export class ConfigurableNodeComponent implements OnChanges, OnDestroy {
     this.panelService.toogle();
   }
 
+  /**
+   * Sets the config variables of this phase to their default values
+   */
   defaultConfiguration() {
     this.nodeCardForm.get('numOfApplications').setValue(1);
     this.nodeCardForm.get('quantity').setValue(1);

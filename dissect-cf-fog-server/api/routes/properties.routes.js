@@ -16,8 +16,7 @@ router.use((req, res, next) => {
 });
 
 /**
- * It sends the strategies from scanned file with 200 status.
- * Throws error if some error is occured.
+ * It sends the 'Application-strategies.xml' file which contains the list of the currently available app strategies.
  */
 router.get("/strategies/application", [authJwt.verifyToken], async (req, res) => {
   const file = await mongodb.getStrategyFile({
@@ -37,6 +36,9 @@ router.get("/strategies/application", [authJwt.verifyToken], async (req, res) =>
   res.status(200).json(result);
 });
 
+/**
+ * It sends the 'Device-strategies.xml' file which contains the list of the currently available device strategies.
+ */
 router.get("/strategies/device", [authJwt.verifyToken], async (req, res) => {
 
   const file = await mongodb.getStrategyFile({
@@ -55,7 +57,7 @@ router.get("/strategies/device", [authJwt.verifyToken], async (req, res) => {
 });
 
 /**
- * It sends the instances from scanned files with 200 status.
+ * It sends the currently available instances that is defined in the previously saved Instances.xml file in the MongoDB.
  * Throws error if some error is occured.
  */
 router.get("/resources", [authJwt.verifyToken], async (req, res) => {
@@ -75,7 +77,7 @@ router.get("/resources", [authJwt.verifyToken], async (req, res) => {
   contentsOfResourcesFiles.forEach(content => {
     const jsonObj = parser.parse(content.toString(), apiUtils.getParserOptions());
     const resource = {
-      name: resourceFilesList[i].filename.replace(".xml", ""), // getFileNameFromFilePath(resources[i].name),
+      name: resourceFilesList[i].filename.replace(".xml", ""),
       machines: getResponseMachines(jsonObj),
       repositories: getResponseRepositories(jsonObj)
     };

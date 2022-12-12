@@ -9,6 +9,11 @@ const strategiesCollectionName = "strategies";
 const simulationCollectionName = "simulator_jobs";
 const configurationCollectionName = "configurations";
 
+/**
+ * Saves the user to the database
+ * @param user
+ * @return {Promise<*>}
+ */
 async function addUser(user) {
     const client = await mongodb.MongoClient(connectionString).connect();
     try {
@@ -21,6 +26,11 @@ async function addUser(user) {
     }
 }
 
+/**
+ * Returns the user of the given ID
+ * @param user
+ * @return {Promise<*|Model|null>}
+ */
 async function getUser(user) {
     const client = await mongodb.MongoClient(connectionString).connect();
     try {
@@ -33,6 +43,10 @@ async function getUser(user) {
     }
 }
 
+/**
+ * Returns the list of all users contained in the database
+ * @return {Promise<*>}
+ */
 async function getAllUsers() {
     const client = await mongodb.MongoClient(connectionString).connect();
     try {
@@ -45,6 +59,11 @@ async function getAllUsers() {
     }
 }
 
+/**
+ * Returns the given providers file from the database
+ * @param filename The name of the file
+ * @return {Promise<*|Model|null>}
+ */
 async function getProvidersFile(filename){
     const client = await mongodb.MongoClient(connectionString).connect();
 
@@ -59,6 +78,11 @@ async function getProvidersFile(filename){
 
 }
 
+/**
+ * Returns the specified stratey file
+ * @param filename the name of the file
+ * @return {Promise<*|Model|null>}
+ */
 async function getStrategyFile(filename) {
     const client = await mongodb.MongoClient(connectionString).connect();
 
@@ -72,6 +96,10 @@ async function getStrategyFile(filename) {
     }
 }
 
+/**
+ * Returns the specified resource file from the database
+ * @return {Promise<*>}
+ */
 async function getResourceFiles(){
     const client = await mongodb.MongoClient(connectionString).connect();
 
@@ -85,6 +113,11 @@ async function getResourceFiles(){
     }
 }
 
+/**
+ * Saves the given job to the database
+ * @param job The job that equals to a simulation that equals to an unprocessed simulation at this point
+ * @return {Promise<*>}
+ */
 async function addJob(job) {
     const client = await mongodb.MongoClient(connectionString).connect();
     job.user = new mongodb.ObjectId(job.user);
@@ -99,6 +132,11 @@ async function addJob(job) {
     }
 }
 
+/**
+ * Saves the configuration to the database
+ * @param configuration The configuration containing simulations and other data
+ * @return {Promise<*>}
+ */
 async function addConfiguration(configuration) {
     const client = await mongodb.MongoClient(connectionString).connect();
     configuration.user = new mongodb.ObjectId(configuration.user);
@@ -113,6 +151,12 @@ async function addConfiguration(configuration) {
     }
 }
 
+
+/**
+ * Returns the simulation of the given ID
+ * @param id The ID of the simulation
+ * @return {Promise<*|Model|null>}
+ */
 async function getSimulationById(id){
     const client = await mongodb.MongoClient(connectionString).connect();
 
@@ -133,6 +177,11 @@ async function getSimulationById(id){
     }
 }
 
+/**
+ * Returns the configuration of the given ID
+ * @param id The ID of the configuration
+ * @return {Promise<T>}
+ */
 async function getConfigurationById(id) {
     const client = await mongodb.MongoClient(connectionString).connect();
 
@@ -160,6 +209,11 @@ async function getConfigurationById(id) {
     }
 }
 
+/**
+ * Returns the list of the configurations for the given user
+ * @param id
+ * @return {Promise<*>}
+ */
 async function getConfigurationsByUserId(id) {
     const client = await mongodb.MongoClient(connectionString).connect();
 
@@ -176,6 +230,11 @@ async function getConfigurationsByUserId(id) {
 
 }
 
+/**
+ * Returns the file of the given id
+ * @param id The ID of the file
+ * @return {Promise<unknown>}
+ */
 async function getFileById(id){
     const client = await mongodb.MongoClient(connectionString).connect();
     const stream = new mongodb.GridFSBucket(client.db(databaseName)).openDownloadStream(new mongodb.ObjectId(id));
@@ -203,6 +262,12 @@ async function getFileById(id){
     }
 }
 
+/**
+ * Saves the given file with the specified name
+ * @param name The name of the file
+ * @param data The content of the file
+ * @return {Promise<*>}
+ */
 async function saveFile(name, data) {
     const client = await mongodb.MongoClient(connectionString).connect();
     const bucket = new mongodb.GridFSBucket(client.db(databaseName));
@@ -232,6 +297,10 @@ async function saveFile(name, data) {
 
 }
 
+/**
+ * Export the functions, so will be available for import in other files.
+ * @type {{getAllUsers: ((function(): Promise<*>)|*), getProvidersFile: ((function(*): Promise<*|machineLearning.Model|null>)|*), addUser: ((function(*): Promise<*>)|*), getUser: ((function(*): Promise<*|machineLearning.Model|null>)|*), addJob: ((function(*): Promise<*>)|*), saveFile: ((function(*, *): Promise<*>)|*), getConfigurationById: ((function(*): Promise<T>)|*), getStrategyFile: ((function(*): Promise<*|machineLearning.Model|null>)|*), getResourceFiles: ((function(): Promise<*>)|*), getConfigurationsByUserId: ((function(*): Promise<*>)|*), getSimulationById: ((function(*): Promise<*|machineLearning.Model|null>)|*), addConfiguration: ((function(*): Promise<*>)|*), getFileById: ((function(*): Promise<*>)|*)}}
+ */
 module.exports = {
     addUser,
     getUser,

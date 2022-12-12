@@ -103,6 +103,9 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
     this.panelService.toogle();
   }
 
+  /**
+   * Sets the config variables to their default values
+   */
   defaultConfiguration(): void {
     this.instanceFormGroup.get('name').setValue("a1.large");
     this.instanceFormGroup.get('ram').setValue(1000000);

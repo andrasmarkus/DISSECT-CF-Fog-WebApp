@@ -119,6 +119,9 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
     this.panelService.toogle();
   }
 
+  /**
+   * Sets the config variables of this phase to their default values
+   */
   defaultConfiguration() {
     this.stationFormGroup.get('starttime').setValue(1);
     this.stationFormGroup.get('stoptime').setValue(1000000);

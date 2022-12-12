@@ -16,11 +16,13 @@ router.use((req, res, next) => {
   next();
 });
 
+/**
+ * Sends back all the list of all users
+ */
 router.get("/", [authJwt.verifyToken], controller.getAllUser);
 
 /**
- * It sends the configuration details with 200 status.
- * If the email is missing, it will send 404 response with message.
+ * Sends back the list of the configurations of the given user.
  */
 router.post("/configuration/list", [authJwt.verifyToken], async (req, res, next) => {
   if (isEmpty(req.body.id)) {
@@ -60,10 +62,21 @@ router.post("/configurations/download/nodesenergy", [authJwt.verifyToken], (req,
   return sendFileMongo(req,res);
 });
 
+/**
+ * Send back the list of the configurations for the given user
+ * @param id The id of the user
+ * @return {Promise<*|undefined>}
+ */
 async function getConfigurationList(id) {
   return await mongodb.getConfigurationsByUserId(id);
 }
 
+/**
+ * Send back the given file as a string
+ * @param req The received request
+ * @param res The returned response
+ * @return {Promise<void>}
+ */
 async function sendFileMongo(req, res) {
   checkResourceRequestBodyMongo(req, res);
   await mongodb.getFileById(req.body._id).then(file => {
@@ -72,12 +85,24 @@ async function sendFileMongo(req, res) {
   })
 }
 
+/**
+ * Check whether the request is valid or not
+ * @param req The received request
+ * @param res The returned response
+ * @return {*}
+ */
 function checkResourceRequestBodyMongo(req, res) {
   if (isEmpty(req.body._id)) {
     return res.status(404).send({ message: 'Bad request!' })
   }
 }
 
+/**
+ * Send back the config of the requested id
+ * @param req The received request
+ * @param res The returned response
+ * @return {Promise<*>}
+ */
 async function sendConfig(req,res){
   const config = await mongodb.getConfigurationById(req.body._id);
 

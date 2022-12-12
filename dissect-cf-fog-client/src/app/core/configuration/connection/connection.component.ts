@@ -813,9 +813,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     this.configuration.instances = this.configurationService.instanceNodes;
 
     const serverSideconfigurations: ServerSideConfigurationObject[] = this.generateAllConfigurations();
-
-    // this.userConfigurationService.sendConfiguration(serverSideconfigurations[0]);
     this.userConfigurationService.sendConfiguration(serverSideconfigurations);
+
     this.stepperService.stepForward();
     this.graphScale = 1;
     this.sliderValue = 50;
@@ -826,7 +825,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     this.panelService.toogle();
   }
 
-  // Generate all serverSideconfigurations based on the strategies
+  /**
+   *   Generates all configurations (from the strategies) that will be sent to the server
+   *   @returns An array containing ServerSideConfigurationObjects which equal 1:1 to a simulation
+   */
   public generateAllConfigurations(): ServerSideConfigurationObject[] {
     const serverSideconfigurations: ServerSideConfigurationObject[] = [];
     const appStrategies = [];
@@ -839,7 +841,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Retrive all strategies from stations
+    // Retrieve all strategies from stations
     for (const station of Object.keys(this.configuration.stations)) {
       stationStrategies.push(this.configuration.stations[station].strategy);
     }

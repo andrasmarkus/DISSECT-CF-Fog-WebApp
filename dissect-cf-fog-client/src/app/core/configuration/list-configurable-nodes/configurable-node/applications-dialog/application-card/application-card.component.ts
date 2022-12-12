@@ -85,6 +85,10 @@ export class ApplicationCardComponent implements OnInit {
     })
   }
 
+
+  /**
+   * Sets the config variables to their default values
+   */
   defaultConfiguration(): void {
     this.appFormGroup.get('tasksize').setValue(50000);
     this.appFormGroup.get('freq').setValue(60000);
