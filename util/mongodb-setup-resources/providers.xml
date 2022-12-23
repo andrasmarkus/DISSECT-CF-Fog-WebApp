@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<providers>
+
+	<bluemix> 
+		<price-per-MB mbfrom="0" mbto="499999">0.00097</price-per-MB> 
+		<price-per-MB mbfrom="450000" mbto="6999999">0.00068</price-per-MB>
+		<price-per-MB mbfrom="7000000" mbto="-1">0.00014</price-per-MB>	
+	</bluemix> 
+
+	<amazon>
+		<price>5</price>
+		<message-count>1000000</message-count>
+		<block-size>512</block-size>
+	</amazon> 
+
+	<oracle freq="2678400000"> 
+		<deviceprice-per-month>0.93</deviceprice-per-month>
+		<messages-per-month-per-device>15000</messages-per-month-per-device>
+		<am-messages-per-month-per-device>1000</am-messages-per-month-per-device>
+		<am-deviceprice-per-month>0.02344</am-deviceprice-per-month>
+	</oracle> 
+
+	<azure freq="86400000">
+		<price-per-month>421.65</price-per-month>
+		<messages-per-day>6000000</messages-per-day>
+		<messagesize-per-KB>4</messagesize-per-KB>
+	</azure>
+	
+</providers>

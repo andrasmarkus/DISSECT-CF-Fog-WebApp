@@ -6,31 +6,8 @@ It uses the [DISSECT-CF-Fog java application](https://github.com/andrasmarkus/di
 ## Setup the server
 Basicaly there are the required folders and files for running the server. The basic resource files are provided, and also the DISSET-CF-Fog java application too (from refactor branch with [a49f55e044](https://github.com/andrasmarkus/dissect-cf/commit/a49f55e044e9294ca84d871070a5b3ad1d9de7ce) commit - 26.09.2020) But in few points there are the required settings for the server:
 
-- Create/ modify **dissect-cf** folder for the java application directly into the *dissect-cf-fog-server* folder. The folder's name should be dissect-cf. You can download the app from [here](https://github.com/andrasmarkus/dissect-cf)
-- Create/use an existing Firebase account and place the projects private key in **config/** folder using the filename **"dissect-cf-firebase-config.json"**
-  - You can generate and save Firebase credentials json file with the private key by visiting https://console.firebase.google.com/ and opening Settings > Service Accounts menu
-  - Note that everytime you generate a new private key the previous one stops working immediately.
-  - Store this private key securely.
-  - The setup should be look like that:  
-![Alt File explorer](../readme-assets/server-setup-file-explorer.png)
-- Create/modify **configurations** folder for configurations and for resources directly into the *Firestore bucket*. The folder's name should be configurations.
-- Create/modify another folders for resources inside the configurations folder:
-  - **providers** - and create/modify file **Providers.xml** with the providers.
-  - **resources** - and create/modify **xml** files for cloud resources (e.g.: LPDS_Fog_T1.xml, LPDS_Fog_T2.xml)
-  - **strategies** - and create/modify xml files like:
-    - **Application-strategies.xml** - for application's strategies
-    - **Device-strategies.xml** - for device's strategies
-    - The xml file should be look like that:
-        ```xml
-        <?xml version="1.0" encoding="UTF-8"?>
-        <strategies>
-          <strategy>random</strategy>
-          <strategy>distance</strategy>
-        </strategies>
-        ```
-  - **user_configurations** - this folder conatins the users folders
-  - The setup should be look like that on Firebase Storage:  
-![Alt File explorer](../readme-assets/firebase-storage-setup-files.PNG)
+- Create and configure the MongoDB NoSQL database using the **MongoDB Setup Guide.docx** document and the **mongodb-setup.js** script.
+- Clone the [dissect-cf-fog](https://github.com/andrasmarkus/dissect-cf) project, configure the microservice (especially the database connection string) and run it.
 
 ## Development server
 
