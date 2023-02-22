@@ -1,0 +1,15 @@
+{
+  "name": "mongo-setup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "mongodb-setup.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node mongodb-setup.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "3.7.3"
+  }
+}
