@@ -1,4 +1,0 @@
-[submodule "dissect-cf-fog-server/dissect-cf"]
-	path = dissect-cf-fog-server/dissect-cf
-	url = git://github.com/andrasmarkus/dissect-cf.git
-        ignore = dirty
