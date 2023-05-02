@@ -30,4 +30,8 @@ help
 
 use dissect
 
+show collections
+
+db.users.find()
+
 cd DISSECT-CF-Fog-WebApp/util

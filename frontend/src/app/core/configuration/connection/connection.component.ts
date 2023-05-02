@@ -6,16 +6,16 @@ import { StationsObject } from 'src/app/models/station';
 import { ConfigurationObject, Neighbour, NODETYPES, Node, ServerSideConfigurationObject } from 'src/app/models/configuration';
 import { omit, cloneDeep } from 'lodash';
 import { Subscription } from 'rxjs';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { UntypedFormBuilder, UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { PanelService } from 'src/app/services/panel/panel.service';
 import { StepBackDialogService } from 'src/app/services/configuration/step-back/step-back-dialog.service';
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
 import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
 import { UserConfigurationService } from 'src/app/services/configuration/user-configuration/user-configuration.service';
-import { MatSliderChange } from '@angular/material/slider';
+import { MatLegacySliderChange as MatSliderChange } from '@angular/material/legacy-slider';
 import { StringUtlis } from '../utils/string-utlis';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { StepBackDialogComponent } from '../step-back-dialog/step-back-dialog.component';
 import { CIRCLE_RANGE_COLOR_CLOUD, CIRCLE_RANGE_COLOR_FOG, CIRCLE_RANGE_COLOR_STATION } from '../utils/constants';
 
@@ -38,8 +38,8 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   public numOfLayers: number;
   public verticalSpaceBetweenLayers: number;
 
-  public simpleConnectionForm: FormGroup;
-  public parentConnectionForm: FormGroup;
+  public simpleConnectionForm: UntypedFormGroup;
+  public parentConnectionForm: UntypedFormGroup;
 
   public paper: joint.dia.Paper;
   public graph: joint.dia.Graph;
@@ -79,7 +79,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
   private readonly SIDENAV_HEIGHT = 110;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private stepBackDialogService: StepBackDialogService,
     public configurationService: ConfigurationStateService,
     public stepperService: StepperService,
@@ -133,10 +133,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
 
   private initForm(): void {
     this.simpleConnectionForm = this.formBuilder.group({
-      latency: new FormControl('', [Validators.required, Validators.min(1)])
+      latency: new UntypedFormControl('', [Validators.required, Validators.min(1)])
     });
     this.parentConnectionForm = this.formBuilder.group({
-      parentLatency: new FormControl('', [Validators.required, Validators.min(1)])
+      parentLatency: new UntypedFormControl('', [Validators.required, Validators.min(1)])
     });
   }
 
@@ -202,18 +202,18 @@ export class ConnectionComponent implements OnInit, OnDestroy {
         const targetNodeId = targetCell.attributes.attrs.nodeId;
 
         if (cell.attributes.attrs.isParentLink && cell.attributes.attrs.isParentLink === 'true') {
-          this.addAttributeToCell(sourceCell.attributes.attrs.nodeId, 'parent', 'none');
+          this.addAttributeToCell(String(sourceCell.attributes.attrs.nodeId), 'parent', 'none');
           const fogIndex = this.selectedNodeQueue.findIndex(node => node.nodeType === NODETYPES.FOG);
           if (fogIndex !== -1) {
             this.selectedNodeQueue[fogIndex].parent = 'none';
           }
         }
 
-        if (this.configuration.nodes[sourceNodeId] && this.configuration.nodes[targetNodeId]) {
-          const sourceNeighbours = this.configuration.nodes[sourceNodeId].neighbours;
-          const targetNeighbours = this.configuration.nodes[targetNodeId].neighbours;
-          this.configuration.nodes[sourceNodeId].neighbours = omit(sourceNeighbours, targetNodeId);
-          this.configuration.nodes[targetNodeId].neighbours = omit(targetNeighbours, sourceNodeId);
+        if (this.configuration.nodes[String(sourceNodeId)] && this.configuration.nodes[String(targetNodeId)]) {
+          const sourceNeighbours = this.configuration.nodes[String(sourceNodeId)].neighbours;
+          const targetNeighbours = this.configuration.nodes[String(targetNodeId)].neighbours;
+          this.configuration.nodes[String(sourceNodeId)].neighbours = omit(sourceNeighbours, targetNodeId);
+          this.configuration.nodes[String(targetNodeId)].neighbours = omit(targetNeighbours, sourceNodeId);
         }
       }
     });
@@ -243,7 +243,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     const name = currentElement.attributes.attrs.nodeId;
     currentElement.attr(
       'label/text',
-      (name as string).replace('station', 'devices') + '\n[' + `${lon}` + ',' + `${lat}` + ']'
+      (name as unknown as string).replace('station', 'devices') + '\n[' + `${lon}` + ',' + `${lat}` + ']'
     );
   }
 
@@ -296,7 +296,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     this.paper.on('element:pointerclick', (elementView: joint.dia.ElementView) => {
       const currentElement = elementView.model;
       if (!currentElement.isEmbedded()) {
-        if (currentElement.attributes.attrs.selected === 'true') {
+        if (String(currentElement.attributes.attrs.selected) === 'true') {
           this.deselectNode(elementView);
         } else {
           this.selectNode(elementView);
@@ -475,7 +475,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
 
   private addAttributeToCell(nodeId: string, attrKey: string, attrValue: string): void {
     this.graph.getCells().forEach((cell: joint.shapes.standard.Image | joint.dia.Link | joint.dia.Cell) => {
-      if (cell.attributes.attrs.nodeId && nodeId === cell.attributes.attrs.nodeId) {
+      if (cell.attributes.attrs.nodeId && nodeId === String(cell.attributes.attrs.nodeId)) {
         cell.attr(attrKey, attrValue);
       }
     });
@@ -575,10 +575,10 @@ export class ConnectionComponent implements OnInit, OnDestroy {
     }
     this.selectedNodeQueue.push({
       id: elementView.model.id as string,
-      nodeId: elementView.model.attributes.attrs.nodeId as string,
-      nodeType: elementView.model.attributes.attrs.nodeTpye as string,
+      nodeId: elementView.model.attributes.attrs.nodeId as unknown as string,
+      nodeType: elementView.model.attributes.attrs.nodeTpye as unknown as string,
       parent: elementView.model.attributes.attrs.parent
-        ? (elementView.model.attributes.attrs.parent as string)
+        ? (elementView.model.attributes.attrs.parent as unknown as string)
         : undefined
     });
     elementView.highlight();
@@ -801,12 +801,12 @@ export class ConnectionComponent implements OnInit, OnDestroy {
       if (!cell.isLink() && cell.attributes.attrs.nodeId) {
         const nodeId = cell.attributes.attrs.nodeId;
         const [lon, lat] = this.convertXYCoordToLatLon(cell.attributes.position.x, cell.attributes.position.y);
-        if (this.configuration.nodes[nodeId]) {
-          this.configuration.nodes[nodeId].x = lon;
-          this.configuration.nodes[nodeId].y = lat;
-        } else if (this.configuration.stations[nodeId]) {
-          this.configuration.stations[nodeId].yCoord = lon;
-          this.configuration.stations[nodeId].xCoord = lat;
+        if (this.configuration.nodes[String(nodeId)]) {
+          this.configuration.nodes[String(nodeId)].x = lon;
+          this.configuration.nodes[String(nodeId)].y = lat;
+        } else if (this.configuration.stations[String(nodeId)]) {
+          this.configuration.stations[String(nodeId)].yCoord = lon;
+          this.configuration.stations[String(nodeId)].xCoord = lat;
         }
       }
     });

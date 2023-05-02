@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { take } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth/auth.service';
@@ -16,7 +16,7 @@ export interface CoverData {
   styleUrls: ['./user-entrance.component.css']
 })
 export class UserEntranceComponent implements OnInit {
-  public entranceForm: FormGroup;
+  public entranceForm: UntypedFormGroup;
   public isRegisterSuccessful = false;
   public isRegisterFailed = false;
   public isLoginSucessful = false;
@@ -29,7 +29,7 @@ export class UserEntranceComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private tokenStorageService: TokenStorageService
@@ -45,8 +45,8 @@ export class UserEntranceComponent implements OnInit {
 
   private initForm() {
     this.entranceForm = this.formBuilder.group({
-      email: new FormControl('', [Validators.required]),
-      password: new FormControl('', [Validators.required])
+      email: new UntypedFormControl('', [Validators.required]),
+      password: new UntypedFormControl('', [Validators.required])
     });
   }
 

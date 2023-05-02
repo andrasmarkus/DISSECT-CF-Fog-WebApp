@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularMaterialModule } from 'src/app/angular-material/angular-material.module';
 import { ComputingNode } from 'src/app/models/computing-node';
@@ -22,14 +22,14 @@ const mockResourceSelectionService = {
 describe('ConfigurableNodeComponent', () => {
   let component: ConfigurableNodeComponent;
   let fixture: ComponentFixture<ConfigurableNodeComponent>;
-  let formBuilder: FormBuilder;
+  let formBuilder: UntypedFormBuilder;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ConfigurableNodeComponent],
       imports: [BrowserAnimationsModule, AngularMaterialModule],
       providers: [
-        FormBuilder,
+        UntypedFormBuilder,
         { provide: WindowSizeService, useValue: {} },
         { provide: PanelService, useValue: {} },
         { provide: QuantityCounterService, useValue: mockResourceSelectionService }
@@ -41,9 +41,9 @@ describe('ConfigurableNodeComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ConfigurableNodeComponent);
     component = fixture.componentInstance;
-    formBuilder = TestBed.inject(FormBuilder);
+    formBuilder = TestBed.inject(UntypedFormBuilder);
     component.nodeCardForm = formBuilder.group({
-      numOfApplications: new FormControl({
+      numOfApplications: new UntypedFormControl({
         value: ['mock'],
         disabled: true
       })
