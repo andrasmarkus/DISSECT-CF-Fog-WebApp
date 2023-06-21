@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
 import { Application } from 'src/app/models/application';
 import { Instance } from 'src/app/models/server-api/server-api';
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
@@ -15,14 +15,14 @@ export class ApplicationCardComponent implements OnInit {
   @Input() public application: Application;
   @Output() public removeEmitter = new EventEmitter<string>();
 
-  public appFormGroup: FormGroup;
+  public appFormGroup: UntypedFormGroup;
   public canJoin: boolean;
   public instance: Instance;
   public strategy: string[];
   public userInstanceInputs: Instance[] = [];
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     public panelService: PanelService,
     public resourceSelectionService: ResourceSelectionService,
     public configurationStateService: ConfigurationStateService
@@ -40,12 +40,12 @@ export class ApplicationCardComponent implements OnInit {
       tasksize: this.createNumberFormControl(),
       freq: this.createNumberFormControl(),
       numOfInstruction: this.createNumberFormControl(),
-      threshold: this.createNumberFormControl()
+      //threshold: this.createNumberFormControl()
     });
   }
 
-  private createNumberFormControl(): FormControl {
-    return new FormControl('', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.min(1)]);
+  private createNumberFormControl(): UntypedFormControl {
+    return new UntypedFormControl('', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.min(1)]);
   }
 
   private initForm(): void {
@@ -93,7 +93,7 @@ export class ApplicationCardComponent implements OnInit {
     this.appFormGroup.get('tasksize').setValue(50000);
     this.appFormGroup.get('freq').setValue(60000);
     this.appFormGroup.get('numOfInstruction').setValue(1000);
-    this.appFormGroup.get('threshold').setValue(1);
+    //this.appFormGroup.get('threshold').setValue(1);
     this.canJoin = true;
     this.strategy = ['random'];
   }

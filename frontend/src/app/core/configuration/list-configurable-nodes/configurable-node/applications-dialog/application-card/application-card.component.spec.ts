@@ -1,7 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder } from '@angular/forms';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Application } from 'src/app/models/application';
 import { ResourceSelectionService } from 'src/app/services/configuration/resource-selection/resource-selection.service';
 
@@ -11,11 +11,11 @@ describe('ApplicationCardComponent', () => {
   let component: ApplicationCardComponent;
   let fixture: ComponentFixture<ApplicationCardComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ApplicationCardComponent],
       imports: [HttpClientTestingModule],
-      providers: [FormBuilder, { provide: ResourceSelectionService, useValue: {} }],
+      providers: [UntypedFormBuilder, { provide: ResourceSelectionService, useValue: {} }],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   }));

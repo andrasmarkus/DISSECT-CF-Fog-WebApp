@@ -32,7 +32,7 @@ import { UserConfigurationsComponent } from './core/user-configurations/user-con
 import { ConfigurationOverviewComponent } from './core/user-configurations/configuration-overview/configuration-overview.component';
 import { ConfigurationResultComponent } from './core/util/configuration-result/configuration-result.component';
 import { ResourceSelectionService } from './services/configuration/resource-selection/resource-selection.service';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { MAT_LEGACY_FORM_FIELD_DEFAULT_OPTIONS as MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/legacy-form-field';
 import { ListInstancesComponent } from './core/configuration/list-instances/list-instances.component';
 import { ConfigurableInstanceComponent } from './core/configuration/list-instances/configurable-instance/configurable-instance.component';
 import { SimulationComparisonComponent } from './core/util/simulation-comparison/simulation-comparison.component';

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { INPUT_VALIDATION_CPU_CORE, INPUT_VALIDATION_NAME, INPUT_VALIDATION_NETWORK_LOAD, INPUT_VALIDATION_POSITIVE_NUMBER, INPUT_VALIDATION_PRICE_PER_TICK } from 'src/app/core/configuration/utils/constants';
 import { Instance } from 'src/app/models/instance';
@@ -16,13 +16,13 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
   @Output() public instanceEmitter = new EventEmitter<Instance>();
   @Output() public removeEmitter = new EventEmitter<string>();
 
-  public instanceFormGroup: FormGroup;
+  public instanceFormGroup: UntypedFormGroup;
   public quantity = 1;
 
   private formChangeSub: Subscription;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     public panelService: PanelService
   ) {
     this.createForm();
@@ -52,7 +52,7 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
       cpuCores: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       cpuProcessingPower: this.createFormControl(INPUT_VALIDATION_CPU_CORE),
       startupProcess: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
-      networkLoad: this.createFormControl(INPUT_VALIDATION_NETWORK_LOAD),
+      //networkLoad: this.createFormControl(INPUT_VALIDATION_NETWORK_LOAD),
       reqDisk: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       pricePerTick: this.createFormControl(INPUT_VALIDATION_PRICE_PER_TICK)
     });
@@ -87,8 +87,8 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
     return this.instance;
   }
 
-  private createFormControl(validation: ValidatorFn[]): FormControl {
-    return new FormControl('', validation);
+  private createFormControl(validation: ValidatorFn[]): UntypedFormControl {
+    return new UntypedFormControl('', validation);
   }
 
   private updateForm(): void {
@@ -112,7 +112,7 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
     this.instanceFormGroup.get('cpuCores').setValue(1);
     this.instanceFormGroup.get('cpuProcessingPower').setValue(0.001);
     this.instanceFormGroup.get('startupProcess').setValue(100);
-    this.instanceFormGroup.get('networkLoad').setValue(0);
+    //this.instanceFormGroup.get('networkLoad').setValue(0);
     this.instanceFormGroup.get('reqDisk').setValue(1000000);
     this.instanceFormGroup.get('pricePerTick').setValue(0.0000001);
   }

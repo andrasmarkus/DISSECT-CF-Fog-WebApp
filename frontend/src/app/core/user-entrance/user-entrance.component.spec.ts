@@ -1,7 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder } from '@angular/forms';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from 'src/app/services/auth/auth.service';
@@ -13,12 +13,12 @@ describe('UserEntranceComponent', () => {
   let component: UserEntranceComponent;
   let fixture: ComponentFixture<UserEntranceComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [UserEntranceComponent],
       imports: [HttpClientTestingModule, RouterTestingModule],
       providers: [
-        FormBuilder,
+        UntypedFormBuilder,
         { provide: AuthService, useValue: {} },
         { provide: TokenStorageService, useValue: {} },
         { provide: ActivatedRoute, useValue: { snapshot: { routeConfig: { path: '' } } } }

@@ -20,7 +20,7 @@ router.use((req, res, next) => {
  */
 router.get("/strategies/application", [authJwt.verifyToken], async (req, res) => {
   const file = await mongodb.getStrategyFile({
-    filename: 'Application-strategies.xml'
+    filename: 'application-strategies.xml'
   })
 
   const fileContent = await mongodb.getFileById(file.fileId).then(file => {
@@ -42,7 +42,7 @@ router.get("/strategies/application", [authJwt.verifyToken], async (req, res) =>
 router.get("/strategies/device", [authJwt.verifyToken], async (req, res) => {
 
   const file = await mongodb.getStrategyFile({
-    filename: 'Device-strategies.xml'
+    filename: 'device-strategies.xml'
   })
 
   const fileContent = await mongodb.getFileById(file.fileId).then(file => {

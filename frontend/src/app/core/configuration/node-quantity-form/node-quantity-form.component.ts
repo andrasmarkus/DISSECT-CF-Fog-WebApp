@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl, Validators, UntypedFormBuilder } from '@angular/forms';
 import { ComputingNodesQuantityData } from 'src/app/models/computing-nodes-quantity-data';
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
 import { RestartConfigurationService } from 'src/app/services/configuration/restart-configuration/restart-configuration.service';
@@ -12,10 +12,10 @@ import { MAX_NUM_OF_NODES } from '../utils/constants';
   styleUrls: ['./node-quantity-form.component.css']
 })
 export class NodeQuantityFormComponent {
-  public numOfComputingNodes: FormGroup;
+  public numOfComputingNodes: UntypedFormGroup;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     public restartConfService: RestartConfigurationService,
     public configurationService: ConfigurationStateService,
     public stepperService: StepperService
@@ -25,13 +25,13 @@ export class NodeQuantityFormComponent {
 
   private initForm(): void {
     this.numOfComputingNodes = this.formBuilder.group({
-      numOfClouds: new FormControl('', [
+      numOfClouds: new UntypedFormControl('', [
         Validators.required,
         Validators.max(MAX_NUM_OF_NODES),
         Validators.pattern('^[0-9]*$'),
         Validators.min(1)
       ]),
-      numOfFogs: new FormControl('', [
+      numOfFogs: new UntypedFormControl('', [
         Validators.max(MAX_NUM_OF_NODES),
         Validators.pattern('^[0-9]*$'),
         Validators.min(1)

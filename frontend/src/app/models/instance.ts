@@ -5,7 +5,7 @@ export class Instance {
     cpuCores: number;
     cpuProcessingPower: number;
     startupProcess: number;
-    networkLoad: number;
+    //networkLoad: number;
     reqDisk: number;
     pricePerTick: number;
     quantity: number;

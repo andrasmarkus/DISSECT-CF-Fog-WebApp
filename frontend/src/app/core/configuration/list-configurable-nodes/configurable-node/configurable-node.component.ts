@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroupDirective, ControlContainer, Validators, FormGroup, FormControl } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { UntypedFormBuilder, FormGroupDirective, ControlContainer, Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { ApplicationsDialogComponent } from './applications-dialog/applications-dialog.component';
 import { ApplicationsObject } from 'src/app/models/application';
 import { ComputingNode } from 'src/app/models/computing-node';
@@ -39,7 +39,7 @@ export class ConfigurableNodeComponent implements OnChanges, OnDestroy {
    */
   public appsStatusIcon: string;
   public selectedResource: Resource;
-  public nodeCardForm: FormGroup;
+  public nodeCardForm: UntypedFormGroup;
   public nodeIcon: string;
   public errorTooltip: string;
   public showErrorTooltip = true;
@@ -53,7 +53,7 @@ export class ConfigurableNodeComponent implements OnChanges, OnDestroy {
   private readonly maxApplicationsQuantity = MAX_NUM_OF_APPLICATIONS;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     public dialog: MatDialog,
     public quantityCounterService: QuantityCounterService,
     public panelService: PanelService,
@@ -202,10 +202,10 @@ export class ConfigurableNodeComponent implements OnChanges, OnDestroy {
 
   private initForm(): void {
     this.nodeCardForm = this.formBuilder.group({
-      numOfApplications: new FormControl(0, INPUT_VALIDATION_POSITIVE_NUMBER),
+      numOfApplications: new UntypedFormControl(0, INPUT_VALIDATION_POSITIVE_NUMBER),
       allAppsConfigured: false,
       quantity: [1, [Validators.min(1)]],
-      range: new FormControl('', INPUT_VALIDATION_POSITIVE_NUMBER)
+      range: new UntypedFormControl('', INPUT_VALIDATION_POSITIVE_NUMBER)
     });
   }
 

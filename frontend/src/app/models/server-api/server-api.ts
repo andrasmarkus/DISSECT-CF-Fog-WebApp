@@ -15,7 +15,7 @@ export interface Instance {
   pricePerTick: number;
   coreProcessingPower: number;
   startupProcess: number;
-  networkLoad: number;
+  //networkLoad: number;
   reqDisk: number;
 }
 

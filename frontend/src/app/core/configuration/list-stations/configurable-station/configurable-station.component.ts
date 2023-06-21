@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   OnDestroy
 } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, Validators, ValidatorFn } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, UntypedFormControl, Validators, ValidatorFn } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Station } from 'src/app/models/station';
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
@@ -27,13 +27,13 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
   @Output() public stationEmitter = new EventEmitter<Station>();
   @Output() public removeEmitter = new EventEmitter<string>();
 
-  public stationFormGroup: FormGroup;
+  public stationFormGroup: UntypedFormGroup;
   public strategy: string[];
 
   private formChangeSub: Subscription;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     public configurationService: ConfigurationStateService,
     public panelService: PanelService,
     public resourceSelectionService: ResourceSelectionService
@@ -75,9 +75,9 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
       filesize: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       freq: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       sensorCount: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
-      maxinbw: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      //maxinbw: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       maxoutbw: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
-      diskbw: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      //diskbw: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       radius: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       speed: this.createFormControl(INPUT_VALIDATION_POSITIVE_FLOAT),
       cores: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
@@ -88,15 +88,15 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
       idlepower: this.createFormControl(INPUT_VALIDATION_POSITIVE_FLOAT),
       capacity: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       latency: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
-      ond: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
-      offd: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      //ond: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      //offd: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       quantity: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       range: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER)
     });
   }
 
-  private createFormControl(validation: ValidatorFn[]): FormControl {
-    return new FormControl('', validation);
+  private createFormControl(validation: ValidatorFn[]): UntypedFormControl {
+    return new UntypedFormControl('', validation);
   }
 
   private updateForm(): void {
@@ -128,9 +128,9 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
     this.stationFormGroup.get('filesize').setValue(50);
     this.stationFormGroup.get('freq').setValue(60000);
     this.stationFormGroup.get('sensorCount').setValue(1);
-    this.stationFormGroup.get('maxinbw').setValue(1000000);
+    //this.stationFormGroup.get('maxinbw').setValue(1000000);
     this.stationFormGroup.get('maxoutbw').setValue(1000000);
-    this.stationFormGroup.get('diskbw').setValue(1000000);
+    //this.stationFormGroup.get('diskbw').setValue(1000000);
     this.stationFormGroup.get('radius').setValue(10);
     this.stationFormGroup.get('speed').setValue(0.5);
     this.stationFormGroup.get('cores').setValue(1);
@@ -141,8 +141,8 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
     this.stationFormGroup.get('idlepower').setValue(1);
     this.stationFormGroup.get('capacity').setValue(1000000);
     this.stationFormGroup.get('latency').setValue(50);
-    this.stationFormGroup.get('ond').setValue(1);
-    this.stationFormGroup.get('offd').setValue(1);
+    //this.stationFormGroup.get('ond').setValue(1);
+    //this.stationFormGroup.get('offd').setValue(1);
     this.stationFormGroup.get('quantity').setValue(10);
     this.stationFormGroup.get('range').setValue(10);
     this.strategy = ['random'];

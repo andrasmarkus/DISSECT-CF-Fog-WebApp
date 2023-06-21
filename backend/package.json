@@ -20,13 +20,13 @@
     "he": "^1.2.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
+    "mongodb": "^3.7.3",
     "morgan": "^1.10.0",
     "mysql2": "^2.2.5",
     "node-dir": "^0.1.17",
     "os": "^0.1.1",
     "path": "^0.12.7",
-    "sequelize": "^6.3.5",
-    "mongodb": "3.7.3"
+    "sequelize": "^6.3.5"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 
 import { ApplicationsDialogComponent } from './applications-dialog.component';
 
@@ -8,7 +8,7 @@ describe('ApplicationsDialogComponent', () => {
   let component: ApplicationsDialogComponent;
   let fixture: ComponentFixture<ApplicationsDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ApplicationsDialogComponent],
       providers: [

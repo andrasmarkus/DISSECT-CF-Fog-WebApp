@@ -1,5 +1,5 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ListStationsComponent } from './list-stations.component';
 
@@ -7,7 +7,7 @@ describe('ListStationsComponent', () => {
   let component: ListStationsComponent;
   let fixture: ComponentFixture<ListStationsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ListStationsComponent],
       schemas: [NO_ERRORS_SCHEMA]
