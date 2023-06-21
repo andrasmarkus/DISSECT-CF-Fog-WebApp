@@ -89,6 +89,7 @@ async function saveResourceFiles(config) {
   const plainDevices = config.devices;
   const plainInstances = config.instances;
 
+
   const appliances = parser.parse(plainAppliances);
   const devices = parser.parse(plainDevices);
   const instances = parser.parse(plainInstances);
