@@ -16,122 +16,100 @@
         <div class="double-item-row space-top">
           <mat-form-field appearance="outline" class="input-size-min">
             <mat-label>Start time</mat-label>
-            <input class="setText-center app-input" matInput type="number" formControlName="starttime" placeholder="> 1"/>
+            <input class="setText-center app-input" matInput type="number" formControlName="starttime" placeholder="1"/>
             <mat-hint align="end">ms</mat-hint>
           </mat-form-field>
           <mat-form-field appearance="outline" class="input-size-min">
             <mat-label>Stop time</mat-label>
-            <input class="setText-center" matInput type="number" formControlName="stoptime" placeholder="1000"/>
+            <input class="setText-center" matInput type="number" formControlName="stoptime" placeholder="1_200_000"/>
             <mat-hint align="end">ms</mat-hint>
           </mat-form-field>
         </div>
         <div class="double-item-row">
           <mat-form-field appearance="outline" class="input-size-min">
             <mat-label>File size</mat-label>
-            <input class="setText-center" matInput type="number" formControlName="filesize" placeholder="> 49"/>
+            <input class="setText-center" matInput type="number" formControlName="filesize" placeholder="50"/>
             <mat-hint align="end">byte</mat-hint>
           </mat-form-field>
           <mat-form-field appearance="outline" class="input-size-min">
             <mat-label>Sensor count</mat-label>
-            <input class="setText-center" matInput type="number" formControlName="sensorCount" placeholder="> 0"/>
+            <input class="setText-center" matInput type="number" formControlName="sensorCount" placeholder="1"/>
             <mat-hint align="end">unit</mat-hint>
           </mat-form-field>
         </div>
         <div class="double-item-row">
           <mat-form-field appearance="outline" class="input-size-min">
             <mat-label>Frequency</mat-label>
-            <input class="setText-center" matInput type="number" formControlName="freq" placeholder="> 6000"/>
+            <input class="setText-center" matInput type="number" formControlName="freq" placeholder="60_000"/>
             <mat-hint align="end">ms</mat-hint>
           </mat-form-field>
           <mat-form-field appearance="outline" class="input-size-min">
             <mat-label>Outgoing bandwidth</mat-label>
-            <input class="setText-center" matInput type="number" formControlName="maxoutbw" placeholder="> 1"/>
+            <input class="setText-center" matInput type="number" formControlName="maxoutbw" placeholder="3250"/>
             <mat-hint align="end">byte/ms</mat-hint>
           </mat-form-field>
         </div>
-        <!--div class="double-item-row">
-          <mat-form-field appearance="outline" class="input-size-min">
-            <mat-label>Max in bw</mat-label>
-            <input class="setText-center" matInput type="number" formControlName="maxinbw" placeholder="> 1"/>
-            <span matSuffix>byte/tick</span>
-          </mat-form-field>
-          <mat-form-field appearance="outline" class="input-size-min">
-            <mat-label>Disk bw</mat-label>
-            <input class="setText-center" matInput type="number" formControlName="diskbw" placeholder="> 1"/>
-            <span matSuffix>byte/tick</span>
-          </mat-form-field>
-        </div-->
       </div>
       <div class="double-item-row">
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Latency</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="latency" placeholder="> 0"/>
+          <input class="setText-center" matInput type="number" formControlName="latency" placeholder="50"/>
           <mat-hint align="end">ms</mat-hint>
         </mat-form-field>
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Radius</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="radius" placeholder="> 0"/>
+          <input class="setText-center" matInput type="number" formControlName="radius" placeholder="1000"/>
           <mat-hint align="end">meter</mat-hint>
         </mat-form-field>
       </div>
       <div class="double-item-row">
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Speed</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="speed" placeholder="> 0"/>
+          <input class="setText-center" matInput type="number" formControlName="speed" placeholder="0.0025"/>
           <mat-hint align="end">meter/ms</mat-hint>
         </mat-form-field>
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Cores</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="cores" placeholder="> 0"/>
+          <input class="setText-center" matInput type="number" formControlName="cores" placeholder="1"/>
           <mat-hint align="end">unit</mat-hint>
         </mat-form-field>
       </div>
       <div class="double-item-row">
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Processing power</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="perCoreProcessing" placeholder="> 0"/>
+          <input class="setText-center" matInput type="number" formControlName="perCoreProcessing" placeholder="0.001"/>
           <mat-hint align="end">instruction/ms</mat-hint>
         </mat-form-field>
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>RAM</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="ram" placeholder="> 0"/>
+          <input class="setText-center" matInput type="number" formControlName="ram" placeholder="1073741824"/>
           <mat-hint align="end">byte</mat-hint>
         </mat-form-field>
       </div>
       <div class="double-item-row">
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Min power</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="minpower" placeholder="> 0"/>
+          <input class="setText-center" matInput type="number" formControlName="minpower" placeholder="0.025"/>
           <mat-hint align="end">watt</mat-hint>
         </mat-form-field>
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Idle power</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="idlepower" placeholder="> 0"/>
+          <input class="setText-center" matInput type="number" formControlName="idlepower" placeholder="0.155"/>
           <mat-hint align="end">watt</mat-hint>
         </mat-form-field>
       </div>
       <div class="double-item-row">
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Max power</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="maxpower" placeholder="> 5000"/>
+          <input class="setText-center" matInput type="number" formControlName="maxpower" placeholder="0.225"/>
           <mat-hint align="end">watt</mat-hint>
         </mat-form-field>
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Disk size</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="capacity" placeholder="> 5000"/>
+          <input class="setText-center" matInput type="number" formControlName="capacity" placeholder="1073741824"/>
           <mat-hint align="end">byte</mat-hint>
         </mat-form-field>
       </div>
-      <!--div class="double-item-row">
-        <mat-form-field appearance="outline" class="input-size-min">
-          <mat-label>onD</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="ond" placeholder="1"/>
-        </mat-form-field>
-        <mat-form-field appearance="outline" class="input-size-min">
-          <mat-label>offD</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="offd" placeholder="1"/>
-        </mat-form-field>
-      </div-->
       <div class="double-item-row">
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Quantity</mat-label>
@@ -139,7 +117,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Range</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="range" placeholder=" > 10"/>
+          <input class="setText-center" matInput type="number" formControlName="range" placeholder="10"/>
           <mat-hint align="end">meter</mat-hint>
         </mat-form-field>
       </div>

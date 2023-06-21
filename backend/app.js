@@ -9,7 +9,7 @@ const propertiesRoute = require('./api/routes/properties.routes');
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '2GB'}));
 
 /**
  * It handles the CORS problems.

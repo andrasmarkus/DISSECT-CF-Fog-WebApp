@@ -12,7 +12,7 @@ export interface Instance {
   name: string;
   ram: number;
   cpuCores: number;
-  pricePerTick: number;
+  hourlyPrice: number;
   coreProcessingPower: number;
   startupProcess: number;
   //networkLoad: number;

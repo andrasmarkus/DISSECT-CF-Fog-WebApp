@@ -12,7 +12,7 @@
       <div class="double-item-row space-top">
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Task size</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="tasksize" placeholder="> 5000"/>
+          <input class="setText-center" matInput type="number" formControlName="tasksize" placeholder="5000"/>
           <mat-hint align="end">byte</mat-hint>
         </mat-form-field>
         <mat-form-field appearance="outline" class="input-size-min">
@@ -27,12 +27,17 @@
           <input class="setText-center" matInput type="number" formControlName="numOfInstruction" placeholder="1000"/>
           <mat-hint align="end">unit</mat-hint>
         </mat-form-field>
-        <!--mat-form-field appearance="outline" class="input-size-min">
-          <mat-label>Threshold</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="threshold" placeholder="1-5"/>
-          <span matSuffix>unit</span>
-        </mat-form-field-->
+        <mat-form-field appearance="outline" class="input-size-min">
+          <mat-label>Activation ratio</mat-label>
+          <input class="setText-center" matInput type="number" formControlName="activationRatio" placeholder="0.9"/>
+        </mat-form-field>
     </div>
+    <div class="double-item-row space-top">
+      <mat-form-field appearance="outline" class="input-size-min">
+        <mat-label>Transfer devider</mat-label>
+        <input class="setText-center" matInput type="number" formControlName="transferDevicder" placeholder="2.0"/>
+      </mat-form-field>
+  </div>
     <div fxLayout="column" fxLayoutAlign="center center">
       <mat-checkbox color="primary" [checked]="canJoin" (change)="canJoin = !canJoin">Can join</mat-checkbox>
     </div>

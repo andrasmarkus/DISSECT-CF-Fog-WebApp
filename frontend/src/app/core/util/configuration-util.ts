@@ -27,7 +27,8 @@ export function parseConfigurationObjectToXml(object: ServerSideConfigurationObj
         tasksize: app.tasksize,
         instance: app.instance.name,
         countOfInstructions: app.numOfInstruction,
-        //threshold: app.threshold,
+        activationRatio : app.activationRatio,
+        transferDevider : app.transferDevicder,
         strategy: app.strategy,
         canJoin: app.canJoin
       } as ApplicationXml;
@@ -82,14 +83,10 @@ export function parseConfigurationObjectToXml(object: ServerSideConfigurationObj
         radius: station.radius,
         latency: station.latency,
         capacity: station.capacity,
-        //maxInBW: station.maxinbw,
         maxOutBW: station.maxoutbw,
-        //diskBW: station.diskbw,
         cores: station.cores,
         perCoreProcessing: station.perCoreProcessing,
         ram: station.ram,
-        //onD: station.ond,
-        //offD: station.offd,
         minpower: station.minpower,
         idlepower: station.idlepower,
         maxpower: station.maxpower
@@ -105,9 +102,8 @@ export function parseConfigurationObjectToXml(object: ServerSideConfigurationObj
       'cpu-cores': instance.cpuCores,
       'core-processing-power': instance.cpuProcessingPower,
       'startup-process': instance.startupProcess,
-      //'network-load': instance.networkLoad,
       'req-disk': instance.reqDisk,
-      'price-per-tick': instance.pricePerTick
+      'price-per-tick': instance.hourlyPrice
     } as InstanceXml;
     instances.push(tempInstance);
 }

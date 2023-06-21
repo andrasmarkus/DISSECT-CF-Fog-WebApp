@@ -7,7 +7,7 @@ export class Instance {
     startupProcess: number;
     //networkLoad: number;
     reqDisk: number;
-    pricePerTick: number;
+    hourlyPrice: number;
     quantity: number;
     valid = false;
   }
