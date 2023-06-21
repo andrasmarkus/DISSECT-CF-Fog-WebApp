@@ -40,7 +40,7 @@ export class ApplicationCardComponent implements OnInit {
       tasksize: this.createNumberFormControl(),
       freq: this.createNumberFormControl(),
       numOfInstruction: this.createNumberFormControl(),
-      threshold: this.createNumberFormControl()
+      //threshold: this.createNumberFormControl()
     });
   }
 
@@ -93,7 +93,7 @@ export class ApplicationCardComponent implements OnInit {
     this.appFormGroup.get('tasksize').setValue(50000);
     this.appFormGroup.get('freq').setValue(60000);
     this.appFormGroup.get('numOfInstruction').setValue(1000);
-    this.appFormGroup.get('threshold').setValue(1);
+    //this.appFormGroup.get('threshold').setValue(1);
     this.canJoin = true;
     this.strategy = ['random'];
   }

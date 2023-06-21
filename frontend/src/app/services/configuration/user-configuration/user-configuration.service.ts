@@ -41,7 +41,7 @@ export class UserConfigurationService {
     for (const object of objects) {
       xmlBaseConfigs.push(parseConfigurationObjectToXml(object, this.tokenService.getUser().email));
     }
-
+    console.log(xmlBaseConfigs);
     this.configObservable = this.http
       .post<ConfigurationResult>(SERVER_URL + 'configuration', JSON.stringify(xmlBaseConfigs), httpOptions)
       .pipe(shareReplay(1));

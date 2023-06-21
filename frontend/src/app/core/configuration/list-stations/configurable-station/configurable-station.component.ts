@@ -75,9 +75,9 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
       filesize: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       freq: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       sensorCount: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
-      maxinbw: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      //maxinbw: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       maxoutbw: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
-      diskbw: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      //diskbw: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       radius: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       speed: this.createFormControl(INPUT_VALIDATION_POSITIVE_FLOAT),
       cores: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
@@ -88,8 +88,8 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
       idlepower: this.createFormControl(INPUT_VALIDATION_POSITIVE_FLOAT),
       capacity: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       latency: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
-      ond: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
-      offd: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      //ond: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
+      //offd: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       quantity: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       range: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER)
     });
@@ -128,9 +128,9 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
     this.stationFormGroup.get('filesize').setValue(50);
     this.stationFormGroup.get('freq').setValue(60000);
     this.stationFormGroup.get('sensorCount').setValue(1);
-    this.stationFormGroup.get('maxinbw').setValue(1000000);
+    //this.stationFormGroup.get('maxinbw').setValue(1000000);
     this.stationFormGroup.get('maxoutbw').setValue(1000000);
-    this.stationFormGroup.get('diskbw').setValue(1000000);
+    //this.stationFormGroup.get('diskbw').setValue(1000000);
     this.stationFormGroup.get('radius').setValue(10);
     this.stationFormGroup.get('speed').setValue(0.5);
     this.stationFormGroup.get('cores').setValue(1);
@@ -141,8 +141,8 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
     this.stationFormGroup.get('idlepower').setValue(1);
     this.stationFormGroup.get('capacity').setValue(1000000);
     this.stationFormGroup.get('latency').setValue(50);
-    this.stationFormGroup.get('ond').setValue(1);
-    this.stationFormGroup.get('offd').setValue(1);
+    //this.stationFormGroup.get('ond').setValue(1);
+    //this.stationFormGroup.get('offd').setValue(1);
     this.stationFormGroup.get('quantity').setValue(10);
     this.stationFormGroup.get('range').setValue(10);
     this.strategy = ['random'];

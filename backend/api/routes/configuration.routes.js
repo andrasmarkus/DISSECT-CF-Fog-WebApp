@@ -28,15 +28,17 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
 
     let obj = await saveResourceFiles(config);
 
+    /*
     const prov = await mongodb.getProvidersFile({
       filename: "providers.xml"
     })
+    */
 
     let configFiles = {};
     configFiles["APPLIANCES_FILE"] = obj.appliancesId;
     configFiles["DEVICES_FILE"] = obj.devicesId;
     configFiles["INSTANCES_FILE"] = obj.instancesId;
-    configFiles["PROVIDERS_FILE"] = prov.fileId;
+    //configFiles["PROVIDERS_FILE"] = prov.fileId;
 
     const resources = await mongodb.getResourceFiles();
 
@@ -93,6 +95,10 @@ async function saveResourceFiles(config) {
 
   const xmlFileHeader = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
 
+  console.log(appliances);
+  console.log(devices);
+  console.log(instances);
+  
   const appliancesId = await mongodb.saveFile('appliances.xml',xmlFileHeader + appliances);
   const devicesId = await mongodb.saveFile('devices.xml', xmlFileHeader + devices);
   const instancesId = await mongodb.saveFile('Instances.xml', xmlFileHeader + instances);

@@ -8,31 +8,32 @@
     </div>
   </mat-card-header>
   <form [formGroup]="appFormGroup">
-    <div fxLayout="column" fxLayoutAlign="center center">
+    
       <div class="double-item-row space-top">
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Task size</mat-label>
           <input class="setText-center" matInput type="number" formControlName="tasksize" placeholder="> 5000"/>
-          <span matSuffix>byte</span>
+          <mat-hint align="end">byte</mat-hint>
         </mat-form-field>
         <mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Frequency</mat-label>
           <input class="setText-center" matInput type="number" formControlName="freq" placeholder="> 6000"/>
-          <span matSuffix>ms</span>
+          <mat-hint align="end">ms</mat-hint>
         </mat-form-field>
       </div>
-      <div class="double-item-row">
+      <div class="double-item-row space-top">
         <mat-form-field appearance="outline" class="input-size-min">
-          <mat-label>Number of Instruction</mat-label>
+          <mat-label>Instruction count</mat-label>
           <input class="setText-center" matInput type="number" formControlName="numOfInstruction" placeholder="1000"/>
-          <span matSuffix>unit</span>
+          <mat-hint align="end">unit</mat-hint>
         </mat-form-field>
-        <mat-form-field appearance="outline" class="input-size-min">
+        <!--mat-form-field appearance="outline" class="input-size-min">
           <mat-label>Threshold</mat-label>
           <input class="setText-center" matInput type="number" formControlName="threshold" placeholder="1-5"/>
           <span matSuffix>unit</span>
-        </mat-form-field>
-      </div>
+        </mat-form-field-->
+    </div>
+    <div fxLayout="column" fxLayoutAlign="center center">
       <mat-checkbox color="primary" [checked]="canJoin" (change)="canJoin = !canJoin">Can join</mat-checkbox>
     </div>
   <div class="double-item-row space-top">

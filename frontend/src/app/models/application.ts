@@ -6,7 +6,7 @@ export class Application {
   freq: number;
   instance: Instance;
   numOfInstruction: number;
-  threshold: number;
+  //hreshold: number;
   strategy: string[];
   canJoin: boolean;
   isConfigured: boolean;
@@ -22,7 +22,7 @@ export class ServerSideApplication {
   freq: number;
   instance: Instance;
   numOfInstruction: number;
-  threshold: number;
+  //threshold: number;
   strategy: string;
   canJoin: boolean;
   isConfigured: boolean;

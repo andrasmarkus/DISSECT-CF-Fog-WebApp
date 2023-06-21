@@ -811,7 +811,7 @@ export class ConnectionComponent implements OnInit, OnDestroy {
       }
     });
     this.configuration.instances = this.configurationService.instanceNodes;
-
+    
     const serverSideconfigurations: ServerSideConfigurationObject[] = this.generateAllConfigurations();
     this.userConfigurationService.sendConfiguration(serverSideconfigurations);
 
