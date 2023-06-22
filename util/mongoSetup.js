@@ -35,7 +35,7 @@ async function uploadFile(client, database, path, name) {
 }
 
 /**
- * The 'main' function creates the database and its collections,
+ * The function creates the database and its collections,
  * then uploads the files and adds their references to the corresponding collections.
  */
 async function main() {
