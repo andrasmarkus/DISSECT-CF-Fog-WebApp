@@ -52,7 +52,6 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
     const job = await mongodb.addJob({
       user: req.userId,
       priority: "101",
-      numberOfCalculation: 0,
       simulatorJobStatus: "SUBMITTED",
       configFiles: configFiles,
       createdDate: new Date().toISOString()

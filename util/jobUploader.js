@@ -27,29 +27,28 @@ async function uploadFile(client, database, path, name) {
 async function main() {
     const database = 'dissect';
     const uri = `mongodb://localhost:27017/${database}`;
-    const client = new mongodb.MongoClient(uri);
+    const client = new mongodb.MongoClient(uri, { useUnifiedTopology: true });
 
     try {
         await client.connect();
 
         // Upload the necessary XML files 
-        const instances = await uploadFile(client, database, '../demo/XML_examples/instances.xml', 'instances.xml');
-        const applications = await uploadFile(client, database, '../demo/XML_examples/applications.xml', 'applications.xml');
-        const devices = await uploadFile(client, database, '../demo/XML_examples/devices.xml', 'devices.xml');
+        const instances = await uploadFile(client, database, './resources/instances.xml', 'instances.xml');
+        const applications = await uploadFile(client, database, './resources/applications.xml', 'applications.xml');
+        const devices = await uploadFile(client, database, './resources/devices.xml', 'devices.xml');
 
         // Create the simulation job
         const createdDate = new Date().toISOString();
         const result = await client.db("dissect").collection("simulator_jobs").insertOne({
             user: "null",
             priority: "1000",
-            numberOfCalculation: 0,
             simulatorJobStatus: "SUBMITTED",
             configFiles: {
-                APPLIANCES_FILE: new mongodb.ObjectId("648acb33f171ac4f5752c216"),
-                DEVICES_FILE: new mongodb.ObjectId("648acb33f171ac4f5752c218"),
-                INSTANCES_FILE: new mongodb.ObjectId("648acb33f171ac4f5752c214"),
-                IAAS_FILE0: new mongodb.ObjectId("648ac76b8cf4514caa8a5c77"),
-                IAAS_FILE1: new mongodb.ObjectId("648ac76b8cf4514caa8a5c75"),
+                APPLIANCES_FILE: new mongodb.ObjectId(applications.ObjectId),
+                DEVICES_FILE: new mongodb.ObjectId(devices.ObjectId),
+                INSTANCES_FILE: new mongodb.ObjectId(instances.ObjectId),
+                IAAS_FILE0: new mongodb.ObjectId("6494464c4b47be551a90e99d"),
+                IAAS_FILE1: new mongodb.ObjectId("6494464c4b47be551a90e99e"),
             },
 
             createdDate: createdDate,
