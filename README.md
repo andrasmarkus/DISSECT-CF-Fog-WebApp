@@ -27,3 +27,7 @@ This allows the user to easily decide which strategy leads to the best simulatio
 The backend part of the application is a Spring microservice which executes the DISSECT-CF-Fog Java application with the generated XML's that the users have configured on the web application interface. The client is built in Angular framework, while the server is built using Node.js. The server uses a MongoDB NoSQL database to store the configurations submitted by the users. The DISSECT-CF-Fog Spring microservice reads the configurations from this database and saves the results of the simulations to it.
 
 ![Alt webapp](./readme-assets/webapp-architecture.svg)
+
+### Setup Guide
+
+TODO!!
