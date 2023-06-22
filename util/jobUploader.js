@@ -44,11 +44,11 @@ async function main() {
             priority: "1000",
             simulatorJobStatus: "SUBMITTED",
             configFiles: {
-                APPLIANCES_FILE: new mongodb.ObjectId(applications.ObjectId),
-                DEVICES_FILE: new mongodb.ObjectId(devices.ObjectId),
-                INSTANCES_FILE: new mongodb.ObjectId(instances.ObjectId),
-                IAAS_FILE0: new mongodb.ObjectId("6494464c4b47be551a90e99d"),
-                IAAS_FILE1: new mongodb.ObjectId("6494464c4b47be551a90e99e"),
+                APPLIANCES_FILE: new mongodb.ObjectId(applications._id),
+                DEVICES_FILE: new mongodb.ObjectId(devices._id),
+                INSTANCES_FILE: new mongodb.ObjectId(instances._id),
+                IAAS_FILE0: new mongodb.ObjectId("64945d787f86027186921749"), 
+                IAAS_FILE1: new mongodb.ObjectId("64945d787f8602718692174b"),
             },
 
             createdDate: createdDate,

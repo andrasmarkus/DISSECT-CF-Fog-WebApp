@@ -3,7 +3,7 @@
   <appliance name="cloud1">
     <latitude>0</latitude>
     <longitude>-60</longitude>
-    <range>100</range>
+    <range>100000</range>
     <file>LPDS_32</file>
     <applications>
       <application name="cloud1_app1">
@@ -22,7 +22,7 @@
   <appliance name="fog1">
     <latitude>0</latitude>
     <longitude>0</longitude>
-    <range>100</range>
+    <range>100000</range>
     <file>LPDS_16</file>
     <applications>
       <application name="fog1_app1">
