@@ -53,21 +53,21 @@ async function main(){
         await client.db(database).createCollection('fs.files');
         await client.db(database).createCollection('fs.chunks');
         await client.db(database).createCollection('configurations');
-        await client.db(database).createCollection('providers');
+        //await client.db(database).createCollection('providers');
         await client.db(database).createCollection('resources');
         await client.db(database).createCollection('simulator_jobs');
         await client.db(database).createCollection('strategies');
         await client.db(database).createCollection('users');
 
         // Upload files
-        const providers = await uploadFile(client, database,'./mongodb-setup-resources/providers.xml', 'providers.xml');
-        const lpds32 = await uploadFile(client, database, './mongodb-setup-resources/LPDS_32.xml', 'LPDS_32.xml');
-        const lpds16 = await uploadFile(client, database, './mongodb-setup-resources/LPDS_16.xml', 'LPDS_16.xml');
-        const application_strategies = await uploadFile(client, database,'./mongodb-setup-resources/Application-strategies.xml', 'Application-strategies.xml');
-        const device_strategies = await uploadFile(client, database,'./mongodb-setup-resources/Device-strategies.xml', 'Device-strategies.xml');
+        //const providers = await uploadFile(client, database,'./mongodb-setup-resources/providers.xml', 'providers.xml');
+        const lpds32 = await uploadFile(client, database, '../demo/XML_examples/LPDS_32.xml', 'LPDS_32.xml');
+        const lpds16 = await uploadFile(client, database, '../demo/XML_examples/LPDS_16.xml', 'LPDS_16.xml');
+        const application_strategies = await uploadFile(client, database,'./mongodb-setup-resources/application-strategies.xml', 'application-strategies.xml');
+        const device_strategies = await uploadFile(client, database,'./mongodb-setup-resources/device-strategies.xml', 'device-strategies.xml');
 
         // Add the references of the uploaded files to the right tables
-        await createFileReference(client, database, 'providers', providers._id, providers.filename);
+        //await createFileReference(client, database, 'providers', providers._id, providers.filename);
         await createFileReference(client, database, 'resources', lpds32._id, lpds32.filename);
         await createFileReference(client, database, 'resources', lpds16._id, lpds16.filename);
         await createFileReference(client, database, 'strategies', application_strategies._id, application_strategies.filename);
