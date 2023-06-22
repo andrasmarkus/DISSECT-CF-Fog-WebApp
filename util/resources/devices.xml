@@ -3,9 +3,9 @@
   <device name="station1.1">
     <startTime>1</startTime>
     <stopTime>1200000</stopTime>
-    <fileSize>50</fileSize>
+    <fileSize>5000000</fileSize>
     <sensorCount>1</sensorCount>
-    <strategy>CostAwareDeviceStrategy</strategy>
+    <strategy>RandomDeviceStrategy</strategy>
     <freq>60000</freq>
     <latitude>-32.4</latitude>
     <longitude>-22.4</longitude>
@@ -24,9 +24,9 @@
   <device name="station1.2">
     <startTime>1</startTime>
     <stopTime>1200000</stopTime>
-    <fileSize>50</fileSize>
+    <fileSize>5000000</fileSize>
     <sensorCount>1</sensorCount>
-    <strategy>CostAwareDeviceStrategy</strategy>
+    <strategy>RandomDeviceStrategy</strategy>
     <freq>60000</freq>
     <latitude>-21.5</latitude>
     <longitude>-11.5</longitude>
@@ -45,9 +45,9 @@
   <device name="station1.3">
     <startTime>1</startTime>
     <stopTime>1200000</stopTime>
-    <fileSize>50</fileSize>
+    <fileSize>5000000</fileSize>
     <sensorCount>1</sensorCount>
-    <strategy>CostAwareDeviceStrategy</strategy>
+    <strategy>RandomDeviceStrategy</strategy>
     <freq>60000</freq>
     <latitude>-39.5</latitude>
     <longitude>-29.5</longitude>
@@ -66,9 +66,9 @@
   <device name="station1.4">
     <startTime>1</startTime>
     <stopTime>1200000</stopTime>
-    <fileSize>50</fileSize>
+    <fileSize>5000000</fileSize>
     <sensorCount>1</sensorCount>
-    <strategy>CostAwareDeviceStrategy</strategy>
+    <strategy>RandomDeviceStrategy</strategy>
     <freq>60000</freq>
     <latitude>7.3</latitude>
     <longitude>-17.3</longitude>
@@ -87,9 +87,9 @@
   <device name="station1.5">
     <startTime>1</startTime>
     <stopTime>1200000</stopTime>
-    <fileSize>50</fileSize>
+    <fileSize>5000000</fileSize>
     <sensorCount>1</sensorCount>
-    <strategy>CostAwareDeviceStrategy</strategy>
+    <strategy>RandomDeviceStrategy</strategy>
     <freq>60000</freq>
     <latitude>-33.3</latitude>
     <longitude>-23.3</longitude>
