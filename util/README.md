@@ -14,7 +14,7 @@ This guide explains how to set up a MongoDB container and configure the database
 
 ### Configuring the MongoDB server
 
- - Create the necessary collections (its content may require further configuration): ```node mongoSetup.js```
+ - Create the necessary collections (its content may require further configuration): ```node mongo-setup.js```
 
    - *users*: contains the users
    
@@ -30,7 +30,7 @@ This guide explains how to set up a MongoDB container and configure the database
   
    - *configurations*: contains set of simulation jobs submitted by a user, which should be evaluated and visualised together
 
- - Upload a job manually (its content may require further configuration): ```node jobUploader.js```
+ - Upload a job manually (its content may require further configuration): ```node job-uploader.js```
 
  - You might need to resolve mongodb dependency: ```npm install```
 

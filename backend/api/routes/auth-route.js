@@ -1,5 +1,5 @@
 const checkSignUp = require("../../middleware").checkSignUp;
-const controller = require("../../controllers/auth.controller");
+const controller = require("../../controllers/auth-controller");
 const express = require('express');
 const router = express.Router({caseSensitive:true});
 

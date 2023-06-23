@@ -1,5 +1,5 @@
 const authJwt = require("../../middleware").authJwt;
-const controller = require("../../controllers/user.controller");
+const controller = require("../../controllers/user-controller");
 const express = require('express');
 const router = express.Router({ caseSensitive: true });
 const { isEmpty } = require('lodash');

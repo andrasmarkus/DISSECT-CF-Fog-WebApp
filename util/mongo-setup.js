@@ -16,9 +16,7 @@ async function createFileReference(client, database, collection, id, filename) {
     return result;
 }
 
-/**
- * Upload a file to MongoDB using GridFs.
- */
+// Upload a file to MongoDB using GridFs
 async function uploadFile(client, database, path, name) {
     const bucket = new mongodb.GridFSBucket(client.db(database));
 

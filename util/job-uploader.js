@@ -1,9 +1,7 @@
 const mongodb = require("mongodb");
 const fs = require('fs');
 
-/**
- * Upload a file to MongoDB using GridFs.
- */
+//  Upload a file to MongoDB using GridFs
 async function uploadFile(client, database, path, name) {
     const bucket = new mongodb.GridFSBucket(client.db(database));
 
