@@ -1,4 +1,4 @@
-const authJwt = require("../../middleware").authJwt;
+const authJwt = require("../../middleware/auth-jwt");
 const express = require('express');
 const router = express.Router({ caseSensitive: true });
 const parser = require('fast-xml-parser');

@@ -1,5 +1,5 @@
 const express = require('express');
-const authJwt = require("../../middleware").authJwt;
+const authJwt = require("../../middleware/auth-jwt");
 const router = express.Router({caseSensitive:true});
 const { isEmpty } = require('lodash');
 const Parser = require("fast-xml-parser").j2xParser;

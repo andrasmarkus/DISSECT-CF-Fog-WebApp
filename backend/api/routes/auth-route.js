@@ -1,6 +1,5 @@
-const checkSignUp = require("../../middleware").checkSignUp;
-const controller = require("../../controllers/auth-controller");
 const express = require('express');
+const controller = require("../../controllers/auth-controller");
 const router = express.Router({caseSensitive:true});
 
 /* Sets the response header. */
@@ -12,7 +11,7 @@ router.use((req, res, next)=>{
   next();
 });
 
-router.post("/signup", [checkSignUp], controller.signUp);
+router.post("/signup", controller.signUp);
 
 router.post("/signin", controller.signIn);
 

@@ -4,7 +4,7 @@ const config = require("../config/gen-config");
 
 // Save the user to the database
 async function addUser(user) {
-    const client = await mongodb.MongoClient(config.connectionString).connect();
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     try {
         return await client.db(config.databaseName).collection(config.userCollectionName).insertOne(user);
     } catch (e) {
@@ -17,7 +17,7 @@ async function addUser(user) {
 
 // Return the user with the given ID
 async function getUser(userid) {
-    const client = await mongodb.MongoClient(config.connectionString).connect();
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     try {
         return await client.db(config.databaseName).collection(config.userCollectionName).findOne(userid);
     } catch (e) {
@@ -30,7 +30,7 @@ async function getUser(userid) {
 
 // Return the list of all users in the database
 async function getAllUsers() {
-    const client = await mongodb.MongoClient(config.connectionString).connect();
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     try {
         return await client.db(config.databaseName).collection(config.userCollectionName).find();
     } catch (e) {
@@ -43,7 +43,7 @@ async function getAllUsers() {
 
 // Return the specified strategy file
 async function getStrategyFile(filename) {
-    const client = await mongodb.MongoClient(config.connectionString).connect();
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     try {
         return await client.db(config.databaseName).collection(config.strategiesCollectionName).findOne(filename);
     } catch (e) {
@@ -56,7 +56,7 @@ async function getStrategyFile(filename) {
 
 // Return the specified resource file
 async function getResourceFiles(){
-    const client = await mongodb.MongoClient(config.connectionString).connect();
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     try {
         return await client.db(config.databaseName).collection(config.resourceCollectionName).find().toArray();
     } catch (e) {
@@ -69,7 +69,7 @@ async function getResourceFiles(){
 
 // Save the given job to the database
 async function addJob(job) {
-    const client = await mongodb.MongoClient(config.connectionString).connect();
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     job.user = new mongodb.ObjectId(job.user);
     try {
         return await client.db(config.databaseName).collection(config.simulationCollectionName).insertOne(job);
@@ -83,7 +83,7 @@ async function addJob(job) {
 
 // Save the configuration to the database
 async function addConfiguration(configuration) {
-    const client = await mongodb.MongoClient(config.connectionString).connect();
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     configuration.user = new mongodb.ObjectId(configuration.user);
     try {
         return await client.db(config.databaseName).collection(config.configurationCollectionName).insertOne(configuration);
@@ -98,7 +98,7 @@ async function addConfiguration(configuration) {
 
 // Return the simulation of the given ID
 async function getSimulationById(id){
-    const client = await mongodb.MongoClient(config.connectionString).connect();
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     try {
         const job = await client.db(config.databaseName).collection(config.simulationCollectionName).findOne(new mongodb.ObjectId(id));
         for (const property in job.results) {
@@ -117,7 +117,7 @@ async function getSimulationById(id){
 
 // Return the configuration of the given ID
 async function getConfigurationById(id) {
-    const client = await mongodb.MongoClient(config.connectionString).connect();
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     try {
         const configuration = await client.db(config.databaseName).collection(config.configurationCollectionName).findOne(new mongodb.ObjectId(id)).then(res => {
             return res;
@@ -139,7 +139,7 @@ async function getConfigurationById(id) {
 
 // Return the list of the configurations for the given user
 async function getConfigurationsByUserId(id) {
-    const client = await mongodb.MongoClient(config.connectionString).connect();
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     try {
         return await client.db(config.databaseName).collection(config.configurationCollectionName).find({
             user: new mongodb.ObjectId(id.toString())
@@ -154,7 +154,7 @@ async function getConfigurationsByUserId(id) {
 
 // Return the file of the given id
 async function getFileById(id){
-    const client = await mongodb.MongoClient(config.connectionString).connect();
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     const stream = new mongodb.GridFSBucket(client.db(config.databaseName)).openDownloadStream(new mongodb.ObjectId(id));
     try {
         stream.read();
@@ -181,7 +181,7 @@ async function getFileById(id){
 
 // Save the given file with the specified name
 async function saveFile(name, data) {
-    const client = await mongodb.MongoClient(config.connectionString).connect();
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     const bucket = new mongodb.GridFSBucket(client.db(config.databaseName));
     try {
         const s = new stream.Readable();
