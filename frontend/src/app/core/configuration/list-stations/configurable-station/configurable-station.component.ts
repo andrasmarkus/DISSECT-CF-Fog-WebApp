@@ -91,7 +91,7 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
       //ond: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       //offd: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       quantity: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
-      range: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER)
+      //range: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER)
     });
   }
 
@@ -140,7 +140,6 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
     this.stationFormGroup.get('idlepower').setValue(0.155);
     this.stationFormGroup.get('capacity').setValue(1073741824);
     this.stationFormGroup.get('quantity').setValue(10);
-    this.stationFormGroup.get('range').setValue(10);
     this.strategy = ['random'];
     this.onStrategyChange();
   }

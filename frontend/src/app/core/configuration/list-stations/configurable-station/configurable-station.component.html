@@ -115,13 +115,6 @@
           <mat-label>Quantity</mat-label>
           <input class="setText-center" matInput type="number" formControlName="quantity" placeholder="10"/>
         </mat-form-field>
-        <mat-form-field appearance="outline" class="input-size-min">
-          <mat-label>Range</mat-label>
-          <input class="setText-center" matInput type="number" formControlName="range" placeholder="10"/>
-          <mat-hint align="end">meter</mat-hint>
-        </mat-form-field>
-      </div>
-      <div class="double-item-row">
         <mat-form-field appearance="outline" class="input-size-min no-padding">
           <mat-label>Strategy</mat-label>
           <mat-select [(ngModel)]="strategy" [ngModelOptions]="{ standalone: true }" (selectionChange)="onStrategyChange()" multiple>

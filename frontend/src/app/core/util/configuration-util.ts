@@ -62,12 +62,14 @@ export function parseConfigurationObjectToXml(object: ServerSideConfigurationObj
     appliances.push(appliance);
   }
 
+  // : https://www.usna.edu/Users/oceano/pguth/md_help/html/approx_equivalents.htm
+  // TODO: check if long/lat is greater or lass than -+90/180
   for (const station of Object.values(object.stations)) {
     for(let i = 0; i < station.quantity; i++) {
-      const randomX = station.xCoord + (Math.random() * station.range * 2);
-      const randomY = station.yCoord + (Math.random() * station.range * 2);
-      const x = randomX > station.range ? randomX - station.range : randomX;
-      const y = randomY > station.range ? randomX - station.range : randomY;
+      const plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+      const modifer = Math.floor(Math.random() * 6);
+      const longitude = station.xCoord + plusOrMinus * 0.0001 * modifer;
+      const latitude = station.yCoord + plusOrMinus * 0.0001 * modifer;
 
       const device = {
         $name: station.id + '.' + (i + 1),
@@ -77,8 +79,8 @@ export function parseConfigurationObjectToXml(object: ServerSideConfigurationObj
         sensorCount: station.sensorCount,
         strategy: station.strategy,
         freq: station.freq,
-        latitude: round(y, 1),
-        longitude: round(x, 1),
+        latitude: latitude,
+        longitude: longitude,
         speed: station.speed,
         radius: station.radius,
         latency: station.latency,
