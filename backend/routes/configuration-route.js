@@ -1,10 +1,10 @@
 const express = require('express');
-const authJwt = require("../../middleware/auth-jwt");
+const authJwt = require("..//middleware/auth-jwt");
 const router = express.Router({caseSensitive:true});
 const { isEmpty } = require('lodash');
 const Parser = require("fast-xml-parser").j2xParser;
-const apiUtils = require('../util');
-const mongodb = require('../../services/mongodb-service');
+const xmlParserOptions = require('../config/xml-parser-options');
+const mongodb = require('../services/mongodb-service');
 
 
 /**
@@ -20,7 +20,7 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
     configs.push(config.configuration);
   }
 
-  // Creates the simulator jobs on by one and adds their id to the jobs array
+  // Creates the simulator jobs one by one and adds their id to the jobs array
   for (let config of configs) {
     if (!checkConfigurationRequestBody(config)) {
       throw new Error('Bad request!');
@@ -28,22 +28,14 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
 
     let obj = await saveResourceFiles(config);
 
-    /*
-    const prov = await mongodb.getProvidersFile({
-      filename: "providers.xml"
-    })
-    */
-
     let configFiles = {};
     configFiles["APPLIANCES_FILE"] = obj.appliancesId;
     configFiles["DEVICES_FILE"] = obj.devicesId;
     configFiles["INSTANCES_FILE"] = obj.instancesId;
-    //configFiles["PROVIDERS_FILE"] = prov.fileId;
 
     const resources = await mongodb.getResourceFiles();
 
     let counter = 0;
-
     for (const item of resources) {
       configFiles["IAAS_FILE" + counter] = item.fileId;
       counter += 1;
@@ -51,7 +43,6 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
 
     const job = await mongodb.addJob({
       user: req.userId,
-      priority: "101",
       simulatorJobStatus: "SUBMITTED",
       configFiles: configFiles,
       createdDate: new Date().toISOString()
@@ -77,12 +68,9 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
 /**
  * Parses the retrieved config files to XMLs and saves them into the MongoDB,
  * then returns an object containing the IDs of the newly created files.
- * @param {Request} req
- * @param {Parser} parser
- * @param {string} baseDirPath
  */
 async function saveResourceFiles(config) {
-  const parser = new Parser(apiUtils.getParserOptions('$'));
+  const parser = new Parser(xmlParserOptions.getParserOptions('$'));
 
   const plainAppliances = config.appliances;
   const plainDevices = config.devices;
@@ -110,10 +98,7 @@ async function saveResourceFiles(config) {
   }
 }
 
-/**
- * Checks whether the body of the configuration request meets the requirements or not.
- * @param {Request} req
- */
+// Checks whether the body of the configuration request meets the requirements or not
 function checkConfigurationRequestBody(req){
   return req.appliances && req.devices && !isEmpty(req.appliances) && !isEmpty(req.devices)
 }

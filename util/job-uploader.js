@@ -39,7 +39,6 @@ async function main() {
         const createdDate = new Date().toISOString();
         const result = await client.db("dissect").collection("simulator_jobs").insertOne({
             user: "null",
-            priority: "1000",
             simulatorJobStatus: "SUBMITTED",
             configFiles: {
                 APPLIANCES_FILE: new mongodb.ObjectId(applications._id),

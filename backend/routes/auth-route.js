@@ -1,3 +1,5 @@
+const express = require('express');
+const router = express.Router({caseSensitive:true});
 const config = require("../config/gen-config");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -9,7 +11,7 @@ const mongodb = require('../services/mongodb-service');
  * - 400 -  email already used
  * - 500 -  other error
  */
-const signUp = async (req, res) => {
+router.post("/signup", async (req, res) => {
 
     try {
         const user = await mongodb.getUser({ email: req.body.email })
@@ -25,7 +27,7 @@ const signUp = async (req, res) => {
     } catch (e) {
         res.status(500).send({ message: "Error" });
     }
-};
+});
 
 /**
  * It tries the sign in the user. If it succeed it will send 200 response with the user id, the email and token.
@@ -34,7 +36,7 @@ const signUp = async (req, res) => {
  * - 401 - invalid password
  * - 500 - other
  */
-const signIn = async (req, res) => {
+router.post("/signin", async (req, res) => {
     try {
         // Get the user connected to the email of the sign in request
         let user = await mongodb.getUser({
@@ -74,11 +76,6 @@ const signIn = async (req, res) => {
     } catch (e) {
         res.status(500).send({ message: "Error" });
     }
-};
+});
 
-const authentication = {
-    signUp,
-    signIn
-};
-
-module.exports = authentication;
+module.exports = router;

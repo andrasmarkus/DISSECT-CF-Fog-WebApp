@@ -4,10 +4,10 @@ const bodyParser = require('body-parser');
 const http = require('http');
 
 // routes
-const configRoute = require('./api/routes/configuration-route');
-const authorizationRoute = require('./api/routes/auth-route');
-const userRoute = require('./api/routes/user-route');
-const propertiesRoute = require('./api/routes/properties-route');
+const configRoute = require('./routes/configuration-route');
+const authorizationRoute = require('./routes/auth-route');
+const userRoute = require('./routes/user-route');
+const propertiesRoute = require('./routes/properties-route');
 
 const app = express();
 app.use(morgan('dev'));
