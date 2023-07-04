@@ -140,7 +140,7 @@ export class ConfigurableStationComponent implements OnChanges, OnDestroy {
     this.stationFormGroup.get('idlepower').setValue(0.155);
     this.stationFormGroup.get('capacity').setValue(1073741824);
     this.stationFormGroup.get('quantity').setValue(10);
-    this.strategy = ['random'];
+    this.strategy = ['RandomDeviceStrategy'];
     this.onStrategyChange();
   }
 }

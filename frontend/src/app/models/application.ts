@@ -7,7 +7,7 @@ export class Application {
   instance: Instance;
   numOfInstruction: number;
   activationRatio: number;
-  transferDevicder: number;
+  transferDevider: number;
   strategy: string[];
   canJoin: boolean;
   isConfigured: boolean;
@@ -24,7 +24,7 @@ export class ServerSideApplication {
   instance: Instance;
   numOfInstruction: number;
   activationRatio: number;
-  transferDevicder: number;
+  transferDevider: number;
   strategy: string;
   canJoin: boolean;
   isConfigured: boolean;

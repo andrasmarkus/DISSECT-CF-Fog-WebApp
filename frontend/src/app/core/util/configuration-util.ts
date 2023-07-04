@@ -28,7 +28,7 @@ export function parseConfigurationObjectToXml(object: ServerSideConfigurationObj
         instance: app.instance.name,
         countOfInstructions: app.numOfInstruction,
         activationRatio : app.activationRatio,
-        transferDevider : app.transferDevicder,
+        transferDevider : app.transferDevider,
         strategy: app.strategy,
         canJoin: app.canJoin
       } as ApplicationXml;

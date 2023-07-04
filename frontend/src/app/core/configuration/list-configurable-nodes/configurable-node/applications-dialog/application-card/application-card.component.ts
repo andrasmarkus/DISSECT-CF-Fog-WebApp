@@ -41,7 +41,7 @@ export class ApplicationCardComponent implements OnInit {
       freq: this.createNumberFormControl(),
       numOfInstruction: this.createNumberFormControl(),
       activationRatio: this.createNumberFormControl2(),
-      transferDevicder: this.createNumberFormControl()
+      transferDevider: this.createNumberFormControl()
     });
   }
 
@@ -99,9 +99,9 @@ export class ApplicationCardComponent implements OnInit {
     this.appFormGroup.get('freq').setValue(60000);
     this.appFormGroup.get('numOfInstruction').setValue(1000);
     this.appFormGroup.get('activationRatio').setValue(0.9);
-    this.appFormGroup.get('transferDevicder').setValue(2.0);
+    this.appFormGroup.get('transferDevider').setValue(2.0);
     this.canJoin = true;
-    this.strategy = ['random'];
+    this.strategy = ['RandomApplicationStrategy'];
   }
 
 }
