@@ -27,7 +27,8 @@ export function parseConfigurationObjectToXml(object: ServerSideConfigurationObj
         tasksize: app.tasksize,
         instance: app.instance.name,
         countOfInstructions: app.numOfInstruction,
-        threshold: app.threshold,
+        activationRatio : app.activationRatio,
+        transferDevider : app.transferDevider,
         strategy: app.strategy,
         canJoin: app.canJoin
       } as ApplicationXml;
@@ -61,12 +62,14 @@ export function parseConfigurationObjectToXml(object: ServerSideConfigurationObj
     appliances.push(appliance);
   }
 
+  // : https://www.usna.edu/Users/oceano/pguth/md_help/html/approx_equivalents.htm
+  // TODO: check if long/lat is greater or lass than -+90/180
   for (const station of Object.values(object.stations)) {
     for(let i = 0; i < station.quantity; i++) {
-      const randomX = station.xCoord + (Math.random() * station.range * 2);
-      const randomY = station.yCoord + (Math.random() * station.range * 2);
-      const x = randomX > station.range ? randomX - station.range : randomX;
-      const y = randomY > station.range ? randomX - station.range : randomY;
+      const plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+      const modifer = Math.floor(Math.random() * 6);
+      const longitude = station.xCoord + plusOrMinus * 0.0001 * modifer;
+      const latitude = station.yCoord + plusOrMinus * 0.0001 * modifer;
 
       const device = {
         $name: station.id + '.' + (i + 1),
@@ -76,20 +79,16 @@ export function parseConfigurationObjectToXml(object: ServerSideConfigurationObj
         sensorCount: station.sensorCount,
         strategy: station.strategy,
         freq: station.freq,
-        latitude: round(y, 1),
-        longitude: round(x, 1),
+        latitude: latitude,
+        longitude: longitude,
         speed: station.speed,
         radius: station.radius,
         latency: station.latency,
         capacity: station.capacity,
-        maxInBW: station.maxinbw,
         maxOutBW: station.maxoutbw,
-        diskBW: station.diskbw,
         cores: station.cores,
         perCoreProcessing: station.perCoreProcessing,
         ram: station.ram,
-        onD: station.ond,
-        offD: station.offd,
         minpower: station.minpower,
         idlepower: station.idlepower,
         maxpower: station.maxpower
@@ -105,9 +104,8 @@ export function parseConfigurationObjectToXml(object: ServerSideConfigurationObj
       'cpu-cores': instance.cpuCores,
       'core-processing-power': instance.cpuProcessingPower,
       'startup-process': instance.startupProcess,
-      'network-load': instance.networkLoad,
       'req-disk': instance.reqDisk,
-      'price-per-tick': instance.pricePerTick
+      'price-per-tick': instance.hourlyPrice
     } as InstanceXml;
     instances.push(tempInstance);
 }

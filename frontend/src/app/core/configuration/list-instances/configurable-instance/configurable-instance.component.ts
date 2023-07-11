@@ -53,9 +53,9 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
       cpuCores: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
       cpuProcessingPower: this.createFormControl(INPUT_VALIDATION_CPU_CORE),
       startupProcess: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
-      networkLoad: this.createFormControl(INPUT_VALIDATION_NETWORK_LOAD),
+      //networkLoad: this.createFormControl(INPUT_VALIDATION_NETWORK_LOAD),
       reqDisk: this.createFormControl(INPUT_VALIDATION_POSITIVE_NUMBER),
-      pricePerTick: this.createFormControl(INPUT_VALIDATION_PRICE_PER_TICK)
+      hourlyPrice: this.createFormControl(INPUT_VALIDATION_PRICE_PER_TICK)
     });
   }
 
@@ -108,13 +108,12 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
    * Sets the config variables to their default values
    */
   defaultConfiguration(): void {
-    this.instanceFormGroup.get('name').setValue("a1.large");
-    this.instanceFormGroup.get('ram').setValue(1000000);
+    this.instanceFormGroup.get('ram').setValue(4294967296);
     this.instanceFormGroup.get('cpuCores').setValue(1);
     this.instanceFormGroup.get('cpuProcessingPower').setValue(0.001);
     this.instanceFormGroup.get('startupProcess').setValue(100);
-    this.instanceFormGroup.get('networkLoad').setValue(0);
-    this.instanceFormGroup.get('reqDisk').setValue(1000000);
-    this.instanceFormGroup.get('pricePerTick').setValue(0.0000001);
+    this.instanceFormGroup.get('reqDisk').setValue(1073741824);
+    this.instanceFormGroup.get('hourlyPrice').setValue(0.204);
+    this.instanceFormGroup.get('name').setValue("a1.large");
   }
 }

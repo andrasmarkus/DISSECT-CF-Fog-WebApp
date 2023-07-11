@@ -8,8 +8,6 @@ export interface Configuration {
 export interface Simulation {
   _id: any;
   user: any;
-  priority: any;
-  numberOfCalculation: any;
   simulatorJobStatus: string;
   configFiles: any;
   createdDate: any;

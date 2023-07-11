@@ -6,7 +6,8 @@ export class Application {
   freq: number;
   instance: Instance;
   numOfInstruction: number;
-  threshold: number;
+  activationRatio: number;
+  transferDevider: number;
   strategy: string[];
   canJoin: boolean;
   isConfigured: boolean;
@@ -22,7 +23,8 @@ export class ServerSideApplication {
   freq: number;
   instance: Instance;
   numOfInstruction: number;
-  threshold: number;
+  activationRatio: number;
+  transferDevider: number;
   strategy: string;
   canJoin: boolean;
   isConfigured: boolean;

@@ -26,4 +26,8 @@ DISSECT-CF-Fog-WebApp is a full stack web application that will make the DISSECT
 This allows the user to easily decide which strategy leads to the best simulation results. They can view the results of the simulations, including a diagram depicting the task schedule, node and device energy diagrams and the logged partial results.It is possible to run the same simulation with multiple application and device strategies within a configuration. The users can compare the results of simulations of different strategies using diagrams. The result and comparison diagrams and configuration files can also be downloaded for further use. It is also possible to view the results of previous simulations.
 The backend part of the application is a Spring microservice which executes the DISSECT-CF-Fog Java application with the generated XML's that the users have configured on the web application interface. The client is built in Angular framework, while the server is built using Node.js. The server uses a MongoDB NoSQL database to store the configurations submitted by the users. The DISSECT-CF-Fog Spring microservice reads the configurations from this database and saves the results of the simulations to it.
 
-![Alt webapp](./readme-assets/dissect-cf-fog-webapp-architecture.svg)
+![Alt webapp](./readme-assets/webapp-architecture.svg)
+
+### Setup Guide
+
+TODO!!

@@ -5,9 +5,9 @@
   <form class="form-width">
     <!-- Configuration of clouds -->
     <div class="node-warn-header">
-      <h2 class="node-title">Number of clouds: {{numOfClouds}}</h2>
+      <h2 class="node-title">Number of cloud nodes: {{numOfClouds}}</h2>
       <span class="warn-chip" *ngIf="quantityCounterService.getUndividedClouds() && quantityCounterService.getUndividedClouds() > 0">
-        Number of clouds to distribute: {{quantityCounterService.getUndividedClouds()}}
+        Number of cloud nodes to configure: {{quantityCounterService.getUndividedClouds()}}
       </span>
     </div>
     <ng-container *ngFor="let cloud of configurationService.computingNodes.clouds | keyvalue">
@@ -28,9 +28,9 @@
     <mat-divider *ngIf="quantityCounterService.numOfFogs > 0" class="nodeType-divider"></mat-divider>
     <!-- Configuration of fogs -->
     <div class="node-warn-header">
-      <h2 *ngIf="quantityCounterService.numOfFogs > 0">Number of fogs: {{numOfFogs}}</h2>
+      <h2 *ngIf="quantityCounterService.numOfFogs > 0">Number of fog nodes: {{numOfFogs}}</h2>
       <span class="warn-chip"*ngIf="quantityCounterService.getUndividedFogs() && quantityCounterService.getUndividedFogs() > 0">
-        Number of fogs to distribute: {{quantityCounterService.getUndividedFogs()}}
+        Number of fog nodes to configure: {{quantityCounterService.getUndividedFogs()}}
       </span>
     </div>
     <ng-container *ngFor="let fog of configurationService.computingNodes.fogs | keyvalue">

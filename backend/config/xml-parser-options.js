@@ -12,8 +12,8 @@ function getParserOptions(attributeNamePrefix = '') {
   }
 }
 
-const apiUtils = {
+const xmlParserOptions = {
   getParserOptions
 };
 
-module.exports = apiUtils;
+module.exports = xmlParserOptions;

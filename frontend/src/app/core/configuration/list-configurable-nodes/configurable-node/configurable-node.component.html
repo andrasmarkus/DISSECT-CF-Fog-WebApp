@@ -8,7 +8,7 @@
           <img alt="status" class="status-icon-img" [src]="statusIcon">
         </div>
       </div>
-      <div class="configuration-tools">
+      <div class="configuration-tools" layout="row" flex>
         <!-- Resource selection with info button-->
         <div class="resource">
           <mat-form-field class="resource-selector">
@@ -74,7 +74,8 @@
         <div class="quantity-container">
           <mat-form-field appearance="outline" class="input-size-min">
             <mat-label>Range</mat-label>
-            <input class="setText-center" matInput type="number" formControlName="range" placeholder="500"/>
+            <input class="setText-center" matInput type="number" formControlName="range" placeholder="100"/>
+            <mat-hint align="end">kilometer</mat-hint>
           </mat-form-field>
         </div>
       </div>

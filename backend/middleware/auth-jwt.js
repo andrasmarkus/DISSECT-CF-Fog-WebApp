@@ -1,13 +1,10 @@
 const jwt = require("jsonwebtoken");
-const config = require("../config/auth.config.js");
+const config = require("../config/gen-config");
 
 /**
  * Checks the given request token.
  * - 403 - Not token provided in request header.
  * - 401 - If the token verification fails.
- * @param {Request} req - request
- * @param {Response} res - response
- * @param {Function} next - forwards it
  */
 const verifyToken = (req, res, next) => {
   const token = req.headers["x-access-token"];

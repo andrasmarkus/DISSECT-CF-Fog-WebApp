@@ -40,12 +40,17 @@ export class ApplicationCardComponent implements OnInit {
       tasksize: this.createNumberFormControl(),
       freq: this.createNumberFormControl(),
       numOfInstruction: this.createNumberFormControl(),
-      threshold: this.createNumberFormControl()
+      activationRatio: this.createNumberFormControl2(),
+      transferDevider: this.createNumberFormControl()
     });
   }
 
   private createNumberFormControl(): UntypedFormControl {
     return new UntypedFormControl('', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.min(1)]);
+  }
+
+  private createNumberFormControl2(): UntypedFormControl { // TODO!
+    return new UntypedFormControl('', [Validators.required, /*Validators.pattern('^[0-9]*$')*/, Validators.min(0.1)]);
   }
 
   private initForm(): void {
@@ -93,9 +98,10 @@ export class ApplicationCardComponent implements OnInit {
     this.appFormGroup.get('tasksize').setValue(50000);
     this.appFormGroup.get('freq').setValue(60000);
     this.appFormGroup.get('numOfInstruction').setValue(1000);
-    this.appFormGroup.get('threshold').setValue(1);
+    this.appFormGroup.get('activationRatio').setValue(0.9);
+    this.appFormGroup.get('transferDevider').setValue(2.0);
     this.canJoin = true;
-    this.strategy = ['random'];
+    this.strategy = ['RandomApplicationStrategy'];
   }
 
 }

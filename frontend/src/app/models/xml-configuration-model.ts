@@ -42,7 +42,7 @@ export interface ApplicationXml {
   tasksize: number;
   instance: string;
   countOfInstructions: number;
-  threshold: number;
+  //threshold: number;
   strategy: string;
   canJoin: boolean;
 }
@@ -67,14 +67,14 @@ export interface DeviceXml {
   radius: number;
   latency: number;
   capacity: number;
-  maxInBW: number;
+  //maxInBW: number;
   maxOutBW: number;
-  diskBW: number;
+  //diskBW: number;
   cores: number;
   perCoreProcessing: number;
   ram: number;
-  onD: number;
-  offD: number;
+  //onD: number;
+  //offD: number;
   minpower: number;
   idlepower: number;
   maxpower: number;

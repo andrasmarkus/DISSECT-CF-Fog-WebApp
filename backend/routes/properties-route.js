@@ -1,35 +1,23 @@
-const authJwt = require("../../middleware").authJwt;
+const authJwt = require("../middleware/auth-jwt");
 const express = require('express');
 const router = express.Router({ caseSensitive: true });
 const parser = require('fast-xml-parser');
-const apiUtils = require('../util');
-const mongodb = require('../../services/mongodb-service');
-
-
-/* Sets the response header. */
-router.use((req, res, next) => {
-  res.header(
-      "Access-Control-Allow-Headers",
-      "x-access-token, Origin, Content-Type, Accept"
-  );
-  next();
-});
+const xmlParserOptions = require('../config/xml-parser-options');
+const mongodb = require('../services/mongodb-service');
 
 /**
  * It sends the 'Application-strategies.xml' file which contains the list of the currently available app strategies.
  */
 router.get("/strategies/application", [authJwt.verifyToken], async (req, res) => {
   const file = await mongodb.getStrategyFile({
-    filename: 'Application-strategies.xml'
+    filename: 'application-strategies.xml'
   })
 
   const fileContent = await mongodb.getFileById(file.fileId).then(file => {
     return file.toString();
   });
 
-
-  const jsonObj = parser.parse(fileContent.toString(), apiUtils.getParserOptions());
-
+  const jsonObj = parser.parse(fileContent.toString(), xmlParserOptions.getParserOptions());
 
   const result = jsonObj.strategies.strategy instanceof Array ?
       jsonObj.strategies : { strategy: [jsonObj.strategies.strategy] };
@@ -42,23 +30,24 @@ router.get("/strategies/application", [authJwt.verifyToken], async (req, res) =>
 router.get("/strategies/device", [authJwt.verifyToken], async (req, res) => {
 
   const file = await mongodb.getStrategyFile({
-    filename: 'Device-strategies.xml'
+    filename: 'device-strategies.xml'
   })
 
   const fileContent = await mongodb.getFileById(file.fileId).then(file => {
     return file.toString();
   });
 
-  const jsonObj = parser.parse(fileContent.toString(), apiUtils.getParserOptions());
+  const jsonObj = parser.parse(fileContent.toString(), xmlParserOptions.getParserOptions());
 
   const result = jsonObj.strategies.strategy instanceof Array ?
       jsonObj.strategies : { strategy: [jsonObj.strategies.strategy] };
   res.status(200).json(result);
 });
 
+module.exports = router;
+
 /**
  * It sends the currently available instances that is defined in the previously saved Instances.xml file in the MongoDB.
- * Throws error if some error is occured.
  */
 router.get("/resources", [authJwt.verifyToken], async (req, res) => {
   const data = []
@@ -75,7 +64,7 @@ router.get("/resources", [authJwt.verifyToken], async (req, res) => {
   let i = 0;
 
   contentsOfResourcesFiles.forEach(content => {
-    const jsonObj = parser.parse(content.toString(), apiUtils.getParserOptions());
+    const jsonObj = parser.parse(content.toString(), xmlParserOptions.getParserOptions());
     const resource = {
       name: resourceFilesList[i].filename.replace(".xml", ""),
       machines: getResponseMachines(jsonObj),
@@ -88,7 +77,7 @@ router.get("/resources", [authJwt.verifyToken], async (req, res) => {
   return res.status(200).json(data);
 });
 
-module.exports = router;
+
 
 function getResponseRepositories(jsonObj) {
   const result = [];
