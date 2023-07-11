@@ -25,6 +25,7 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
     private formBuilder: UntypedFormBuilder,
     public panelService: PanelService
   ) {
+    //Ellenőrizni hogy ha van Instance akkor betölteni őket
     this.createForm();
     this.formChangeSub = this.instanceFormGroup.valueChanges.subscribe(() => {
       this.saveInstance();
@@ -79,7 +80,7 @@ export class ConfigurableInstanceComponent implements OnChanges, OnDestroy {
     this.instanceEmitter.emit(this.instance);
   }
 
-  public setInstanceValues() {
+  public setInstanceValues() { // Ebben kellene meghívni egy service-t ami elmenti az adatokat
     const id = this.instance.id;
     this.instance = this.instanceFormGroup.value;
     this.instance.id = id;

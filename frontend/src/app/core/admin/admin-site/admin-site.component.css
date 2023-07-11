@@ -1,0 +1,47 @@
+tr:nth-child(even) {background: #ececec}
+tr:nth-child(odd) {background: #FFF}
+#table{
+    width: 100%;
+    margin: 2% 5% 5% 5%;
+    border: 1px solid lightslategrey;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+}
+.tableHead{
+    width: auto;
+    border: 1px solid lightslategrey;
+    
+    border-collapse: collapse;
+}
+.tableRow{
+    width: auto;
+    height: auto;
+    border: 1px solid lightslategrey;
+    
+    border-collapse: collapse;
+}
+.tableCell{
+    padding: 3px;
+    border: 1px solid lightslategrey;
+    border-collapse: collapse;
+    width: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.icon{
+ text-align: center;
+}
+#addUserForm{
+    float: right;
+    margin: 2% 20% 5% 5%;
+}
+#manageUsersTable{
+    width: 49%;
+    display: inline-block;
+    margin-top: 2%;
+}
+#addUserButton{
+    margin-top: 5px;
+}

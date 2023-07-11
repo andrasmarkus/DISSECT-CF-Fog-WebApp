@@ -1,14 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input} from '@angular/core';
 import { Instance } from 'src/app/models/instance';
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
 import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
+import { PanelService } from 'src/app/services/panel/panel.service';
 
 @Component({
   selector: 'app-list-instances',
   templateUrl: './list-instances.component.html',
   styleUrls: ['./list-instances.component.css']
 })
-export class ListInstancesComponent {
+export class ListInstancesComponent{
   @Input() public instances: Instance[] = [];
 
   public instanceIndex = 0;
@@ -16,9 +17,11 @@ export class ListInstancesComponent {
 
   constructor(
     public configurationService: ConfigurationStateService,
-    public stepperService: StepperService
+    public stepperService: StepperService,
+    public panelService: PanelService,
   ) {
-    this.createInstance();
+      this.createInstance();
+      this.panelService.getInstanceData();
    }
 
   private createInstance(): void {

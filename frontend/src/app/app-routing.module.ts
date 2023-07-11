@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AdminSiteComponent } from './core/admin/admin-site/admin-site.component';
 import { ConfigurationComponent } from './core/configuration/configuration.component';
 import { HomeComponent } from './core/home/home/home.component';
 import { UserConfigurationsComponent } from './core/user-configurations/user-configurations/user-configurations.component';
@@ -12,7 +13,8 @@ const routes: Routes = [
   { path: 'register', component: UserEntranceComponent },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'configure', component: ConfigurationComponent, canActivate: [AuthGuard] },
-  { path: 'user-configurations', component: UserConfigurationsComponent, canActivate: [AuthGuard] }
+  { path: 'user-configurations', component: UserConfigurationsComponent, canActivate: [AuthGuard] },
+  { path: 'admin-site', component: AdminSiteComponent, canActivate: [AuthGuard]}
 ];
 
 @NgModule({

@@ -19,7 +19,7 @@ router.use((req, res, next) => {
 /**
  * Sends back all the list of all users
  */
-router.get("/", [authJwt.verifyToken], controller.getAllUser);
+router.get("/allUsers", [authJwt.verifyToken], controller.getAllUser);
 
 /**
  * Sends back the list of the configurations of the given user.

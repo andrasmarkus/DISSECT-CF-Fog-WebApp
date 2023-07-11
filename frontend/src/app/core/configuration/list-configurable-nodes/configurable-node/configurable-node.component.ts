@@ -78,8 +78,11 @@ export class ConfigurableNodeComponent implements OnChanges, OnDestroy {
     this.formChangeSub = this.nodeCardForm.valueChanges.subscribe(value => {
       this.saveNodeInParent(value.allAppsConfigured);
     });
+    
   }
-
+  ngAfterViewInit(){
+    //this.panelService.getResourceData();
+  }
   public ngOnDestroy(): void {
     this.appsNumberInputSub?.unsubscribe();
     this.formChangeSub?.unsubscribe();
@@ -93,6 +96,7 @@ export class ConfigurableNodeComponent implements OnChanges, OnDestroy {
         this.updateForm();
       }
     }
+    //this.panelService.getResourceData();
   }
 
   private updateForm(): void {

@@ -1,0 +1,28 @@
+<div id="manageUsersTable">
+    <h2 style="margin-left: 5%;">Manage users</h2>
+    <table id="table">
+          <th class="tableHead">E-mail</th>
+          <th class="tableHead">Action1</th>
+          <th class="tableHead">Action2</th>
+          <th class="tableHead">Last login</th>
+          <th class="tableHead">Delete</th>
+        <tr *ngFor="let user of this.users" class="tableRow">
+            <td class="tableCell"><span>{{user}}</span></td>
+            <td class="tableCell icon"><i class="fa fa-question-circle"></i></td> 
+            <td class="tableCell icon"><i class="fa fa-question-circle"></i></td>
+            <td class="tableCell icon"><span>2 days ago</span></td>
+            <td class="tableCell icon"><i class="fa fa-trash icon"></i></td> 
+        </tr>
+    </table>
+</div>
+
+<div id="addUserForm">
+    <h2>Add user manualy</h2>
+    <form>
+        <span for="email">E-mail:</span><br>
+        <input name="email" placeholder="example@example.com"/><br>
+        <span for="password">Password(temporary):</span><br>
+        <input name="password" placeholder="abcd1234"/><br>
+        <button mat-raised-button color="primary"  id="addUserButton">Add</button>
+    </form>
+</div>

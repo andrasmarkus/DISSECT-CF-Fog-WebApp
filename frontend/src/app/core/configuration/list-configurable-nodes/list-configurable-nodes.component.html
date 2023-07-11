@@ -1,4 +1,7 @@
 <div fxLayout="column" fxLayoutAlign="space-around center">
+  <div class="helper form-width">
+    <app-info-panel [infoData]="panelService.infoData$ | async"></app-info-panel>
+</div>
   <form class="form-width">
     <!-- Configuration of clouds -->
     <div class="node-warn-header">
