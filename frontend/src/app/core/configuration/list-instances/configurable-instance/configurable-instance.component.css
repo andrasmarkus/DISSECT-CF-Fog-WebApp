@@ -21,9 +21,7 @@
 }
 
 .instance-card {
-  margin: 1rem;
-  display: block;
-  
+  margin: 0.5rem;
 }
 
 .instance-card.mat-card {

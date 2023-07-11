@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, OnDestroy, SimpleChange} from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, OnDestroy, SimpleChange } from '@angular/core';
 import { ComputingNode } from 'src/app/models/computing-node';
 import { CloudNodesObject, FogNodesObject } from 'src/app/models/computing-nodes-object';
 import { Subscription } from 'rxjs';
@@ -7,14 +7,13 @@ import { RestartConfigurationService } from 'src/app/services/configuration/rest
 import { ConfigurationStateService } from 'src/app/services/configuration/configuration-state/configuration-state.service';
 import { StepperService } from 'src/app/services/configuration/stepper/stepper.service';
 import { ResourceSelectionService } from 'src/app/services/configuration/resource-selection/resource-selection.service';
-import { PanelService } from 'src/app/services/panel/panel.service';
 
 @Component({
   selector: 'app-list-configurable-nodes',
   templateUrl: './list-configurable-nodes.component.html',
   styleUrls: ['./list-configurable-nodes.component.css']
 })
-export class ListConfigurableNodesComponent implements OnChanges, OnDestroy{
+export class ListConfigurableNodesComponent implements OnChanges, OnDestroy {
   @Input() public readonly numOfClouds: number;
   @Input() public readonly numOfFogs: number;
 
@@ -33,15 +32,13 @@ export class ListConfigurableNodesComponent implements OnChanges, OnDestroy{
     private restartConfService: RestartConfigurationService,
     public configurationService: ConfigurationStateService,
     public stepperService: StepperService,
-    public resourceSelectionService: ResourceSelectionService,
-    public panelService: PanelService,
+    public resourceSelectionService: ResourceSelectionService
   ) {
     this.restartSubscription = this.restartConfService.restartConfiguration$.subscribe(() => {
       this.cloudIndex = 1;
       this.fogIndex = 1;
       this.readyToSave = false;
     });
-    this.panelService.getResourceData();
   }
 
   public ngOnDestroy(): void {

@@ -36,7 +36,6 @@ import { MAT_LEGACY_FORM_FIELD_DEFAULT_OPTIONS as MAT_FORM_FIELD_DEFAULT_OPTIONS
 import { ListInstancesComponent } from './core/configuration/list-instances/list-instances.component';
 import { ConfigurableInstanceComponent } from './core/configuration/list-instances/configurable-instance/configurable-instance.component';
 import { SimulationComparisonComponent } from './core/util/simulation-comparison/simulation-comparison.component';
-import { AdminSiteComponent } from './core/admin/admin-site/admin-site.component';
 
 @NgModule({
   declarations: [
@@ -64,8 +63,7 @@ import { AdminSiteComponent } from './core/admin/admin-site/admin-site.component
     ConfigurationResultComponent,
     ListInstancesComponent,
     ConfigurableInstanceComponent,
-    SimulationComparisonComponent,
-    AdminSiteComponent
+    SimulationComparisonComponent
   ],
   imports: [
     BrowserModule,

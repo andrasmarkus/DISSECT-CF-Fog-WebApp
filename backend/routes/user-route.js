@@ -10,15 +10,7 @@ const {response} = require("express");
  * Sends all the users from the database with the given response.
  * If comes some error, 500 will be thrown with a message property.
  */
-router.get("/", [authJwt.verifyToken], async (req, res) => {
-
-  try {
-    const users = await mongodb.getAllUsers();
-    res.status(200).send({users: users})
-  } catch (e) {
-    res.status(500).send({message: e.message});
-  }
-});
+router.get("/", [authJwt.verifyToken], controller.getAllUser);
 
 /**
  * Sends back the list of the configurations of the given user.

@@ -6,42 +6,33 @@
   <div>
     <!-- Configuration stepper -->
     <mat-horizontal-stepper (animationDone)="stepperDone()" [linear]="isLinear" #stepper>
-      <mat-step #first_step>
+      <mat-step>
         <ng-template matStepLabel><span class="step-title">Quantity</span></ng-template>
-        <ng-container *ngIf="stepper.selected == first_step">
-          <app-node-quantity-form></app-node-quantity-form>
-        </ng-container>
+        <app-node-quantity-form></app-node-quantity-form>
       </mat-step>
-      <mat-step #second_step>
+      <mat-step>
         <ng-template matStepLabel><span class="step-title">Instances</span></ng-template>
-        <ng-container *ngIf="stepper.selected == second_step">
-          <app-list-instances ></app-list-instances>
-        </ng-container>
+        <app-list-instances></app-list-instances>
       </mat-step>
-      <mat-step #third_step>
+      <mat-step>
         <ng-template matStepLabel><span class="step-title">Nodes</span></ng-template>
-        <ng-container *ngIf="stepper.selected == third_step">
+        <ng-container ></ng-container>
         <app-list-configurable-nodes
           [numOfClouds]="(configurationStateService.nodesQuantity$ | async)?. numberOfClouds"
           [numOfFogs]="(configurationStateService.nodesQuantity$ | async)?. numberOfFogs"
         ></app-list-configurable-nodes>
-      </ng-container>
       </mat-step>
-      <mat-step #fourth_step>
+      <mat-step>
         <ng-template matStepLabel><span class="step-title">Devices</span></ng-template>
-        <ng-container *ngIf=" stepper.selected == fourth_step">
-          <app-list-stations [stations]="stations"></app-list-stations>
-        </ng-container>
+        <app-list-stations [stations]="stations"></app-list-stations>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel><span class="step-title">Connection</span></ng-template>
+        <app-connection></app-connection>
       </mat-step>
       <mat-step #fifth_step>
-        <ng-template matStepLabel><span class="step-title">Connection</span></ng-template>
-        <ng-container *ngIf="stepper.selected == fifth_step">
-          <app-connection></app-connection>
-        </ng-container>
-      </mat-step>
-      <mat-step #sixth_step>
         <ng-template matStepLabel><span class="step-title">Result</span></ng-template>
-        <ng-container *ngIf="stepper.selected == sixth_step">
+        <ng-container *ngIf="stepper.selected == fifth_step">
           <app-configuration-end [showSpinner]="stepperAnimationDone$ | async"></app-configuration-end>
         </ng-container>
       </mat-step>
