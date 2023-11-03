@@ -95,6 +95,18 @@ async function addConfiguration(configuration) {
     }
 }
 
+async function addAdminConfiguration(configuration) {
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
+    configuration.user = new mongodb.ObjectId(configuration.user);
+    try {
+        return await client.db(config.databaseName).collection(config.configurationAdminCollectionName).insertOne(configuration);
+    } catch (e) {
+        console.log('mongodb-service: addConfiguration() error:' + e.message);
+        throw e;
+    } finally {
+        await client.close();
+    }
+}
 
 // Return the simulation of the given ID
 async function getSimulationById(id){
@@ -214,6 +226,7 @@ module.exports = {
     getStrategyFile,
     addJob,
     addConfiguration,
+    addAdminConfiguration,
     getSimulationById,
     getConfigurationById,
     getConfigurationsByUserId,

@@ -6,5 +6,6 @@ module.exports = {
   resourceCollectionName: "resources",
   strategiesCollectionName: "strategies",
   simulationCollectionName: "simulator_jobs",
-  configurationCollectionName: "configurations"
+  configurationCollectionName: "configurations",
+  configurationAdminCollectionName: "admin_configurations"
 };

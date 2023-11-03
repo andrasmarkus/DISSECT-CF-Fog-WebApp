@@ -1,0 +1,14 @@
+<div class="container">
+    <div class="description">
+      <p class="text" style="text-align: center;">
+       Please upload your configuration xml file with the correct parameters! 
+      </p>
+    </div>
+    <div class="file-inputs">
+    <input type="file" class="file-input" (change)="onFileChange($event, 0)">
+    <input type="file" class="file-input" (change)="onFileChange($event, 1)">
+    <input type="file" class="file-input" (change)="onFileChange($event, 2)">
+  </div>
+    <button (click)="convertFilesToStrings()" class="configure-button" mat-raised-button color="primary" [disabled]="!areAllFilesUploaded()">Upload</button>
+    <button (click)="downloadinstances()">Download</button>
+  </div>

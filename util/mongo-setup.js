@@ -48,6 +48,7 @@ async function main() {
         await client.db(database).createCollection('fs.files');
         await client.db(database).createCollection('fs.chunks');
         await client.db(database).createCollection('configurations');
+        await client.db(database).createCollection('admin_configurations');
         await client.db(database).createCollection('resources');
         await client.db(database).createCollection('simulator_jobs');
         await client.db(database).createCollection('strategies');

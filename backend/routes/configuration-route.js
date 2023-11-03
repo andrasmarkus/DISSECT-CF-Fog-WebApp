@@ -5,7 +5,8 @@ const { isEmpty } = require('lodash');
 const Parser = require("fast-xml-parser").j2xParser;
 const xmlParserOptions = require('../config/xml-parser-options');
 const mongodb = require('../services/mongodb-service');
-
+const fs = require('fs');
+const path = require('path');
 
 /**
  * It parses the different config files (appliances, devices, instances) for the simulations to XML ones and saves them to MongoDB.
@@ -15,6 +16,7 @@ const mongodb = require('../services/mongodb-service');
 router.post('/', [authJwt.verifyToken], async (req, res) => {
   const jobs = [];
   const configs = [];
+ 
 
   for (let config of req.body) {
     configs.push(config.configuration);
@@ -64,6 +66,29 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
   return res.status(201).json({config: config, err: null});
 });
 
+router.post('/adminConfiguration', [authJwt.verifyToken], async (req, res) =>{
+
+  const appliancesId = await mongodb.saveFile('appliances.xml',req.body.configs[0]);
+  const devicesId = await mongodb.saveFile('devices.xml', req.body.configs[1]);
+  const instancesId = await mongodb.saveFile('Instances.xml', req.body.configs[2]);
+
+  let configFiles = {};
+  configFiles["APPLIANCES_FILE"] = appliancesId;
+  configFiles["DEVICES_FILE"] = devicesId;
+  configFiles["INSTANCES_FILE"] = instancesId;
+
+  await mongodb.addAdminConfiguration({
+    user: req.userId,
+    time: new Date().toISOString(),
+    configFiles: configFiles
+  })
+  try {
+    res.status(201)
+  } catch (error) {
+    res.status(500).json({ error: error.message }); // Mentési hiba esetén hibaüzenetet küld vissza
+  }
+})
+
 
 /**
  * Parses the retrieved config files to XMLs and saves them into the MongoDB,
@@ -86,7 +111,7 @@ async function saveResourceFiles(config) {
   console.log(appliances);
   console.log(devices);
   console.log(instances);
-  
+
   const appliancesId = await mongodb.saveFile('appliances.xml',xmlFileHeader + appliances);
   const devicesId = await mongodb.saveFile('devices.xml', xmlFileHeader + devices);
   const instancesId = await mongodb.saveFile('Instances.xml', xmlFileHeader + instances);
@@ -102,5 +127,4 @@ async function saveResourceFiles(config) {
 function checkConfigurationRequestBody(req){
   return req.appliances && req.devices && !isEmpty(req.appliances) && !isEmpty(req.devices)
 }
-
 module.exports = router

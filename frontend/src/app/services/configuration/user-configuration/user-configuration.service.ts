@@ -47,6 +47,15 @@ export class UserConfigurationService {
       .pipe(shareReplay(1));
   }
 
+  public sendAdminConfiguration(configs: string[]): any {
+    const config = {
+      userId: this.tokenService.getUser().id,
+      configs: configs
+    }
+    console.log(configs)
+    return this.http.post<any>(SERVER_URL + 'configuration/adminConfiguration', config, httpOptions)
+  }
+
   /**
    * Returns the list of the configurations of the current user
    * @returns An observable which returns an UserConfigurationDetails array

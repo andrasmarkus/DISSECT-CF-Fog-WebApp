@@ -5,6 +5,7 @@ import { HomeComponent } from './core/home/home/home.component';
 import { UserConfigurationsComponent } from './core/user-configurations/user-configurations/user-configurations.component';
 import { UserEntranceComponent } from './core/user-entrance/user-entrance.component';
 import { AuthGuard } from './guards/auth.guard';
+import { UploadConfigurationComponent } from './core/upload-configuration/upload-configuration.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -12,7 +13,8 @@ const routes: Routes = [
   { path: 'register', component: UserEntranceComponent },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'configure', component: ConfigurationComponent, canActivate: [AuthGuard] },
-  { path: 'user-configurations', component: UserConfigurationsComponent, canActivate: [AuthGuard] }
+  { path: 'user-configurations', component: UserConfigurationsComponent, canActivate: [AuthGuard] },
+  { path: 'upload-configuration', component: UploadConfigurationComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({
