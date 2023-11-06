@@ -47,13 +47,13 @@ export class UserConfigurationService {
       .pipe(shareReplay(1));
   }
 
-  public sendAdminConfiguration(configs: string[]): any {
+  public sendAdminConfiguration(configs: string[]): void {
     const config = {
       userId: this.tokenService.getUser().id,
       configs: configs
-    }
-    console.log(configs)
-    return this.http.post<any>(SERVER_URL + 'configuration/adminConfiguration', config, httpOptions)
+    };
+    this.http.post<any>(
+    SERVER_URL + 'configuration/adminConfiguration', config, httpOptions).toPromise()
   }
 
   /**

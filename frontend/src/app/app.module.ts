@@ -37,6 +37,7 @@ import { ListInstancesComponent } from './core/configuration/list-instances/list
 import { ConfigurableInstanceComponent } from './core/configuration/list-instances/configurable-instance/configurable-instance.component';
 import { SimulationComparisonComponent } from './core/util/simulation-comparison/simulation-comparison.component';
 import { UploadConfigurationComponent } from './core/upload-configuration/upload-configuration.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { UploadConfigurationComponent } from './core/upload-configuration/upload
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
-    HttpClientModule
+    HttpClientModule,
+    MatSnackBarModule
   ],
   providers: [
     UserConfigurationService,
