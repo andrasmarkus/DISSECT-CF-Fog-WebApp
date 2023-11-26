@@ -3,14 +3,14 @@
     <!-- Symbol Column -->
     <ng-container matColumnDef="shortDescription">
       <th mat-header-cell *matHeaderCellDef style="width: 500px;">Short description</th>
-      <td mat-cell *matCellDef="let element" style="width: 500px;">{{ element.shortDescription }}</td>
+      <td mat-cell *matCellDef="let element" style="width: 500px;">{{element._id}}</td>
     </ng-container>
 
     <!-- Position Column -->
     <ng-container matColumnDef="appliancesId">
       <th mat-header-cell *matHeaderCellDef>Appliances XML.</th>
       <td mat-cell *matCellDef="let element">
-        <button mat-raised-button color="accent" color="primary" (click)="logCellValue(element.position)">
+        <button mat-raised-button color="accent" color="primary" (click)="logCellValue(element.configFiles.APPLIANCES_FILE)">
             Appliances.xml
         </button>
       </td>
@@ -20,7 +20,7 @@
     <ng-container matColumnDef="devicesId">
       <th mat-header-cell *matHeaderCellDef>Devices XML</th>
       <td mat-cell *matCellDef="let element">
-        <button mat-raised-button color="accent" color="primary" (click)="logCellValue(element.position)">
+        <button mat-raised-button color="accent" color="primary" (click)="logCellValue(element.configFiles.DEVICES_FILE)">
             Devices.xml
         </button>
       </td>
@@ -30,7 +30,7 @@
     <ng-container matColumnDef="instancesId">
       <th mat-header-cell *matHeaderCellDef>Instances XML</th>
       <td mat-cell *matCellDef="let element">
-        <button mat-raised-button color="accent" color="primary" (click)="logCellValue(element.position)">
+        <button mat-raised-button color="accent" color="primary" (click)="logCellValue(element.configFiles.INSTANCES_FILE)">
           Instances.xml
         </button>
       </td>

@@ -68,9 +68,9 @@ export class UploadConfigurationComponent {
       this.snackBar.open('File uploaded successfully!', 'Close', {
         duration: 3000,
       });
-      this.router.navigateByUrl('/admin-configurations').then(
-        window.location.reload
-      )
+      this.router.navigateByUrl('/admin-configurations').then(() => {
+        window.location.reload();
+      });
     } catch (error) {
       console.error('Hiba történt:', error);
     }

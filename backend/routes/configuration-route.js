@@ -69,7 +69,7 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
 router.get('/getAdminConfigurations', [authJwt.verifyToken], async (req, res) => {
   try {
     const configurations = await mongodb.getAdminConfigurations();
-    return res.status(201).json({configurations: configurations, err: null});
+    return res.status(201).json(configurations);
   } catch (error) {
     return res.status(500).json({err: error.message});
   }
