@@ -66,6 +66,16 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
   return res.status(201).json({config: config, err: null});
 });
 
+router.get('/getAdminConfigurations', [authJwt.verifyToken], async (req, res) => {
+  try {
+    const configurations = await mongodb.getAdminConfigurations();
+    return res.status(201).json({configurations: configurations, err: null});
+  } catch (error) {
+    return res.status(500).json({err: error.message});
+  }
+  
+})
+
 router.post('/adminConfiguration', [authJwt.verifyToken], async (req, res) =>{
 
   const appliancesId = await mongodb.saveFile('appliances.xml',req.body.configs[0]);

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UserConfigurationService } from 'src/app/services/configuration/user-configuration/user-configuration.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-upload-configuration',
@@ -16,6 +17,7 @@ export class UploadConfigurationComponent {
       public userConfigurationService: UserConfigurationService,
       public configService: UserConfigurationService,
       private snackBar: MatSnackBar,
+      private router: Router,
     ){}
 
   onFileChange(event: any, index: number): void {
@@ -66,6 +68,9 @@ export class UploadConfigurationComponent {
       this.snackBar.open('File uploaded successfully!', 'Close', {
         duration: 3000,
       });
+      this.router.navigateByUrl('/admin-configurations').then(
+        window.location.reload
+      )
     } catch (error) {
       console.error('Hiba történt:', error);
     }
