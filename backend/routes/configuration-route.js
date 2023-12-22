@@ -66,6 +66,9 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
   return res.status(201).json({config: config, err: null});
 });
 
+/**
+ * Sends every row of the admincofigurations collection from the database to the frontend
+ */
 router.get('/getAdminConfigurations', [authJwt.verifyToken], async (req, res) => {
   try {
     const configurations = await mongodb.getAdminConfigurations();
@@ -76,6 +79,9 @@ router.get('/getAdminConfigurations', [authJwt.verifyToken], async (req, res) =>
   
 })
 
+/**
+ * Sends the configuration made by the admin to the database
+ */
 router.post('/adminConfiguration', [authJwt.verifyToken], async (req, res) =>{
 
   const appliancesId = await mongodb.saveFile('appliances.xml',req.body.configs[0]);
@@ -90,6 +96,7 @@ router.post('/adminConfiguration', [authJwt.verifyToken], async (req, res) =>{
   await mongodb.addAdminConfiguration({
     user: req.userId,
     time: new Date().toISOString(),
+    shortDescription: req.body.shortDescription,
     configFiles: configFiles
   })
   try {

@@ -47,10 +47,16 @@ export class UserConfigurationService {
       .pipe(shareReplay(1));
   }
 
-  public sendAdminConfiguration(configs: string[]): void {
+  /**
+   * Sends configuration to the server
+   * @param configs array of strings with the content of the uploaded files
+   * @param shortDescription A short description about the config itself by the admin
+   */
+  public sendAdminConfiguration(configs: string[], shortDescription: string): void {
     const config = {
       userId: this.tokenService.getUser().id,
-      configs: configs
+      configs: configs,
+      shortDescription: shortDescription
     };
     this.http.post<any>(
     SERVER_URL + 'configuration/adminConfiguration', config, httpOptions).toPromise()
