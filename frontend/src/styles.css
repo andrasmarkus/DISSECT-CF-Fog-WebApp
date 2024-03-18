@@ -32,3 +32,6 @@ body {
 .cdk-global-scrollblock{
   overflow: hidden !important;
 }
+
+@import "~codemirror/lib/codemirror.css";
+@import "~codemirror/theme/material.css";

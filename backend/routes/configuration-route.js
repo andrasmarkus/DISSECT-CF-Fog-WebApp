@@ -66,6 +66,43 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
   return res.status(201).json({config: config, err: null});
 });
 
+router.post('/ownAlgorithmConfiguration', [authJwt.verifyToken], async (req, res) => {
+  console.log(req.body.code)
+  let configFiles = {};
+  configFiles["APPLIANCES_FILE"] = req.body.ApplicationId;
+  configFiles["DEVICES_FILE"] = req.body.DevicesId;
+  configFiles["INSTANCES_FILE"] = req.body.InstancesId;
+
+  const resources = await mongodb.getResourceFiles();
+
+  let counter = 0;
+  for (const item of resources) {
+    configFiles["IAAS_FILE" + counter] = item.fileId;
+    counter += 1;
+  }
+
+    const job = await mongodb.addJob({
+      user: req.userId,
+      simulatorJobStatus: "SUBMITTED",
+      configFiles: configFiles,
+      createdDate: new Date().toISOString(),
+      code: req.body.code
+  })
+
+  const jobs = [];
+  jobs.push(job.insertedId)
+
+  await mongodb.addConfiguration({
+    user: req.userId,
+    time: new Date().toISOString(),
+    jobs: jobs
+  }).then(res => {
+    return res.insertedId;
+  });
+  
+  console.log(configFiles);
+  return res.status(201)
+})
 /**
  * Sends every row of the admincofigurations collection from the database to the frontend
  */
@@ -78,6 +115,17 @@ router.get('/getAdminConfigurations', [authJwt.verifyToken], async (req, res) =>
   }
   
 })
+
+router.get('/getAdminConfigurations/:id', [authJwt.verifyToken], async (req, res) => {
+  try {
+    const configuration = await mongodb.getAdminConfigurationById(req.params.id);
+    return res.status(201).json(configuration);
+  } catch (error) {
+    return res.status(500).json({err: error.message});
+  }
+  
+})
+
 
 /**
  * Sends the configuration made by the admin to the database

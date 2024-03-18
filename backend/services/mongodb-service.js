@@ -120,6 +120,18 @@ async function getAdminConfigurations() {
     }
 }
 
+async function getAdminConfigurationById(id) {
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
+    try {
+        return await client.db(config.databaseName).collection(config.configurationAdminCollectionName).findOne(new mongodb.ObjectId(id))
+    } catch (e) {
+        console.log('mongodb-service: getAdminConfigurations() error:' + e.message);
+        throw e;
+    } finally {
+        await client.close();
+    }
+}
+
 // Return the simulation of the given ID
 async function getSimulationById(id){
     const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
@@ -240,6 +252,7 @@ module.exports = {
     addConfiguration,
     addAdminConfiguration,
     getAdminConfigurations,
+    getAdminConfigurationById,
     getSimulationById,
     getConfigurationById,
     getConfigurationsByUserId,

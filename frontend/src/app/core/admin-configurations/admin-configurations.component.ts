@@ -6,8 +6,8 @@ import { AdminConfigurationService } from 'src/app/services/admin-configuration/
 import { UserConfigurationService } from 'src/app/services/configuration/user-configuration/user-configuration.service';
 
 interface cellValue {
-    id: string;
-    fileType: string;
+  id: string;
+  fileType: string;
 }
 
 @Component({
@@ -16,7 +16,7 @@ interface cellValue {
   styleUrls: ['./admin-configurations.component.css']
 })
 export class AdminConfigurationsComponent implements AfterViewInit, OnInit {
-  displayedColumns: string[] = ['shortDescription', 'appliancesId', 'devicesId', 'instancesId'];
+  displayedColumns: string[] = ['id', 'shortDescription', 'appliancesId', 'devicesId', 'instancesId'];
   adminConfigurations: adminConfiguration[] = [];
   dataSource = new MatTableDataSource<adminConfiguration>(this.adminConfigurations);
 

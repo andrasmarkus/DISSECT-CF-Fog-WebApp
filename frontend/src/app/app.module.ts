@@ -39,6 +39,9 @@ import { SimulationComparisonComponent } from './core/util/simulation-comparison
 import { UploadConfigurationComponent } from './core/upload-configuration/upload-configuration.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AdminConfigurationsComponent } from './core/admin-configurations/admin-configurations.component';
+import { AlgorithmUploadComponent } from './core/algorithm-upload/algorithm-upload.component';
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -68,7 +71,8 @@ import { AdminConfigurationsComponent } from './core/admin-configurations/admin-
     ConfigurableInstanceComponent,
     SimulationComparisonComponent,
     UploadConfigurationComponent,
-    AdminConfigurationsComponent
+    AdminConfigurationsComponent,
+    AlgorithmUploadComponent,
   ],
   imports: [
     BrowserModule,
@@ -80,6 +84,7 @@ import { AdminConfigurationsComponent } from './core/admin-configurations/admin-
     FlexLayoutModule,
     HttpClientModule,
     MatSnackBarModule,
+    CodemirrorModule,
   ],
   providers: [
     UserConfigurationService,

@@ -7,6 +7,7 @@ import { UserEntranceComponent } from './core/user-entrance/user-entrance.compon
 import { AuthGuard } from './guards/auth.guard';
 import { UploadConfigurationComponent } from './core/upload-configuration/upload-configuration.component';
 import { AdminConfigurationsComponent } from './core/admin-configurations/admin-configurations.component';
+import { AlgorithmUploadComponent } from './core/algorithm-upload/algorithm-upload.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'user-configurations', component: UserConfigurationsComponent, canActivate: [AuthGuard] },
   { path: 'upload-configuration', component: UploadConfigurationComponent, canActivate: [AuthGuard] },
   { path: 'admin-configurations', component: AdminConfigurationsComponent, canActivate: [AuthGuard] },
+  { path: 'algorithm-upload', component: AlgorithmUploadComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({
