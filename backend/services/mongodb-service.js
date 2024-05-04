@@ -132,6 +132,37 @@ async function getAdminConfigurationById(id) {
     }
 }
 
+async function getCustomSimulations(){
+    const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
+    try {
+        const query = {
+            $or: [
+                { 'deviceCode': { $exists: true } },
+                { 'applicationCode': { $exists: true } }
+            ]
+        };
+
+        const projection = {
+            user: 1,
+            createdDate: 1,
+            'simulatorJobResult.architecture.totalEnergyConsumptionOfNodesInWatt': 1,
+            'simulatorJobResult.architecture.totalEnergyConsumptionOfDevicesInWatt': 1,
+            'simulatorJobResult.cost': 1
+        };
+
+    return await client.db(config.databaseName)
+    .collection(config.simulationCollectionName)
+    .find(query)
+    .project(projection)
+    .toArray();
+    } catch (error) {
+        console.log('mongodb-service: getCustomSimulations() error:' + e.message);
+        throw e;
+    } finally {
+        await client.close();
+    }
+}
+
 // Return the simulation of the given ID
 async function getSimulationById(id){
     const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
@@ -253,6 +284,7 @@ module.exports = {
     addAdminConfiguration,
     getAdminConfigurations,
     getAdminConfigurationById,
+    getCustomSimulations,
     getSimulationById,
     getConfigurationById,
     getConfigurationsByUserId,

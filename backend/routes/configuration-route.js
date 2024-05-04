@@ -86,7 +86,8 @@ router.post('/ownAlgorithmConfiguration', [authJwt.verifyToken], async (req, res
       simulatorJobStatus: "SUBMITTED",
       configFiles: configFiles,
       createdDate: new Date().toISOString(),
-      code: req.body.code
+      deviceCode: req.body.deviceCode,
+      applicationCode: req.body.applicationCode
   })
 
   const jobs = [];
@@ -126,6 +127,16 @@ router.get('/getAdminConfigurations/:id', [authJwt.verifyToken], async (req, res
   
 })
 
+router.get('/getCustomSimulations', [authJwt.verifyToken], async (req, res) => {
+  try {
+    const customSimulations = await mongodb.getCustomSimulations();
+    console.log(customSimulations)
+    return res.status(201).json(customSimulations);
+  } catch (error) {
+    return res.status(500).json({err: error.message});
+  }
+  
+})
 
 /**
  * Sends the configuration made by the admin to the database

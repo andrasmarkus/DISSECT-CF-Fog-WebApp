@@ -33,11 +33,12 @@ export class AlgorithmUploadComponent implements OnInit {
     );
   }
 
-  @ViewChild('codeMirror') codeMirror: any;
+  @ViewChild('deviceCodemirror') deviceCodemirror: any;
+  @ViewChild('applicationCodeMirror') applicationCodeMirror: any;
   @ViewChild('id') id: any;
 
   sendData() {
-    console.log(this.codeMirror.codeMirror.getValue());
+    console.log(this.deviceCodemirror.codeMirror.getValue());
     console.log(this.id.nativeElement.value);
     if (this.id.nativeElement.value != '') {
       this.algorithmUploadConfigurationService
@@ -47,7 +48,8 @@ export class AlgorithmUploadComponent implements OnInit {
             ApplicationId: data.configFiles.APPLIANCES_FILE,
             DevicesId: data.configFiles.DEVICES_FILE,
             InstancesId: data.configFiles.INSTANCES_FILE,
-            code: this.codeMirror.codeMirror.getValue()
+            deviceCode: this.deviceCodemirror.codeMirror.getValue(),
+            applicationCode: this.applicationCodeMirror.codeMirror.getValue()
           };
           this.algorithmUploadConfigurationService.sendJobWithOwnAlgorithm(configFileIds).subscribe(
             response => {
