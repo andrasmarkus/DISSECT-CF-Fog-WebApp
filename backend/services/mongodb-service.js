@@ -132,18 +132,21 @@ async function getAdminConfigurationById(id) {
     }
 }
 
-async function getCustomSimulations(){
+async function getCustomSimulations(adminConfigId){
     const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     try {
         const query = {
-            $or: [
-                { 'deviceCode': { $exists: true } },
-                { 'applicationCode': { $exists: true } }
+            $and: [
+                { adminConfigId: adminConfigId },
+                { $or: [
+                    { 'deviceCode': { $exists: true } },
+                    { 'applicationCode': { $exists: true } }
+                ]}
             ]
         };
 
         const projection = {
-            user: 1,
+            nickname: 1,
             createdDate: 1,
             'simulatorJobResult.architecture.totalEnergyConsumptionOfNodesInWatt': 1,
             'simulatorJobResult.architecture.totalEnergyConsumptionOfDevicesInWatt': 1,

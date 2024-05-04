@@ -14,8 +14,8 @@ export class AlgorithmUploadConfigurationService {
     return this.http.get<adminConfiguration>(`${SERVER_URL}configuration/getAdminConfigurations/${id}`)
   }
 
-  getCustomConfigurations(): Observable<any>{
-    return this.http.get<any[]>(`${SERVER_URL}configuration/getCustomSimulations`);
+  getCustomConfigurations(id: string): Observable<any>{
+    return this.http.get<any[]>(`${SERVER_URL}configuration/getCustomSimulations/${id}`);
   }
 
   sendJobWithOwnAlgorithm(algorithmUploadData: algorithmUploadData){

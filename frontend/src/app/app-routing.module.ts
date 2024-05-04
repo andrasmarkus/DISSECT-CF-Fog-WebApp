@@ -8,6 +8,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { UploadConfigurationComponent } from './core/upload-configuration/upload-configuration.component';
 import { AdminConfigurationsComponent } from './core/admin-configurations/admin-configurations.component';
 import { AlgorithmUploadComponent } from './core/algorithm-upload/algorithm-upload.component';
+import { CustomAlgorithmsComponent } from './core/custom-algorithms/custom-algorithms.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'upload-configuration', component: UploadConfigurationComponent, canActivate: [AuthGuard] },
   { path: 'admin-configurations', component: AdminConfigurationsComponent, canActivate: [AuthGuard] },
   { path: 'algorithm-upload', component: AlgorithmUploadComponent, canActivate: [AuthGuard] },
+  { path: 'custom-algorithm', component: CustomAlgorithmsComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

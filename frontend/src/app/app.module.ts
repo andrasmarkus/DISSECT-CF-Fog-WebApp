@@ -41,7 +41,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AdminConfigurationsComponent } from './core/admin-configurations/admin-configurations.component';
 import { AlgorithmUploadComponent } from './core/algorithm-upload/algorithm-upload.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
-import { MatInputModule } from '@angular/material/input';
+import { CustomAlgorithmsComponent } from './core/custom-algorithms/custom-algorithms.component';
 
 @NgModule({
   declarations: [
@@ -73,6 +73,7 @@ import { MatInputModule } from '@angular/material/input';
     UploadConfigurationComponent,
     AdminConfigurationsComponent,
     AlgorithmUploadComponent,
+    CustomAlgorithmsComponent,
   ],
   imports: [
     BrowserModule,

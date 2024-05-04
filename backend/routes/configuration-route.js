@@ -87,7 +87,9 @@ router.post('/ownAlgorithmConfiguration', [authJwt.verifyToken], async (req, res
       configFiles: configFiles,
       createdDate: new Date().toISOString(),
       deviceCode: req.body.deviceCode,
-      applicationCode: req.body.applicationCode
+      applicationCode: req.body.applicationCode,
+      adminConfigId: req.body.adminConfigId,
+      nickname: req.body.nickname
   })
 
   const jobs = [];
@@ -127,10 +129,9 @@ router.get('/getAdminConfigurations/:id', [authJwt.verifyToken], async (req, res
   
 })
 
-router.get('/getCustomSimulations', [authJwt.verifyToken], async (req, res) => {
+router.get('/getCustomSimulations/:id', [authJwt.verifyToken], async (req, res) => {
   try {
-    const customSimulations = await mongodb.getCustomSimulations();
-    console.log(customSimulations)
+    const customSimulations = await mongodb.getCustomSimulations(req.params.id);
     return res.status(201).json(customSimulations);
   } catch (error) {
     return res.status(500).json({err: error.message});
