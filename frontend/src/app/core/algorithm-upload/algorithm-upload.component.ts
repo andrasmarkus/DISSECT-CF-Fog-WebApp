@@ -1,7 +1,31 @@
 import { AlgorithmUploadConfigurationService } from './../../services/algorithm-upload-configuration/algorithm-upload-configuration.service';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { algorithmUploadData } from 'src/app/models/algorithm-upload-data';
 import { AdminConfigurationService } from 'src/app/services/admin-configuration/admin-configuration.service';
+
+interface Application {
+  value: string;
+  viewValue: string;
+}
+
+interface ApplicationGroup {
+  disabled?: boolean;
+  name: string;
+  strategy: Application[];
+}
+
+interface Device {
+  value: string;
+  viewValue: string;
+}
+
+interface DeviceGroup {
+  disabled?: boolean;
+  name: string;
+  strategy: Device[];
+}
+
 
 @Component({
   selector: 'app-algorithm-upload',
@@ -13,6 +37,10 @@ export class AlgorithmUploadComponent implements OnInit {
   applicationCode: string = '// Write your Application strategy java code here\n';
   options: any = [];
   filteredOptions: string[];
+  applicationCodeValue: string;
+  deviceCodeValue:  string;
+  isApplicationCustom: string = "false";
+  isDeviceCustom: string = "false";
 
   constructor(
     private adminConfigurationService: AdminConfigurationService,
@@ -33,15 +61,65 @@ export class AlgorithmUploadComponent implements OnInit {
     );
   }
 
+
+  applicationControl = new FormControl('');
+  applicationGroups: ApplicationGroup[] = [
+    {
+      name: 'Custom alg',
+      strategy: [
+        {value: 'custom', viewValue: 'Custom Strategy'},
+      ],
+    },
+    {
+      name: 'Pre built appliaction strategies',
+      strategy: [
+        {value: 'HoldDownApplicationStrategy', viewValue: 'Hold Down Strategy'},
+        {value: 'PliantApplicationStrategy', viewValue: 'Pliant Application Strategy'},
+        {value: 'PushUpApplicationStrategy', viewValue: 'Push Up Application Strategy'},
+        {value: 'RuntimeAwareApplicationStrategy', viewValue: 'Runtime Aware Application Strategy'},
+      ],
+    },
+  ];
+
+  deviceControl = new FormControl('');
+  deviceGroups: DeviceGroup[] = [
+    {
+      name: 'Custom alg',
+      strategy: [
+        {value: 'custom', viewValue: 'Custom Strategy'},
+      ],
+    },
+    {
+      name: 'Pre built device strategies',
+      strategy: [
+        {value: 'CostAwareDeviceStrategy', viewValue: 'Cost Aware Device Strategy'},
+        {value: 'DistanceBasedDeviceStrategy', viewValue: 'Distance Based Device Strategy'},
+        {value: 'LoadBalancedDeviceStrategy', viewValue: 'Load Balanced Device Strategy'},
+        {value: 'PliantDeviceStrategy', viewValue: 'Pliant Device Strategy'},
+      ],
+    },
+  ];
+
   @ViewChild('deviceCodemirror') deviceCodemirror: any;
   @ViewChild('applicationCodeMirror') applicationCodeMirror: any;
   @ViewChild('id') id: any;
   @ViewChild('nickname') nickname: any;
 
   sendData() {
-    console.log(this.deviceCodemirror.codeMirror.getValue());
-    console.log(this.id.nativeElement.value);
-    console.log(this.nickname.nativeElement.value)
+    
+    if(this.applicationControl.value == "custom"){
+      this.isApplicationCustom = "true";
+      this.applicationCodeValue = this.applicationCodeMirror.codeMirror.getValue()
+   }else{
+    this.applicationCodeValue = this.applicationControl.value
+   }
+
+   if(this.deviceControl.value == "custom"){
+    this.isDeviceCustom = "true";
+    this.deviceCodeValue = this.deviceCodemirror.codeMirror.getValue()
+ }else{
+  this.deviceCodeValue = this.deviceControl.value
+ }
     if (this.id.nativeElement.value != '') {
       this.algorithmUploadConfigurationService
         .getAdminConfigurationFilesById(this.id.nativeElement.value)
@@ -50,8 +128,10 @@ export class AlgorithmUploadComponent implements OnInit {
             ApplicationId: data.configFiles.APPLIANCES_FILE,
             DevicesId: data.configFiles.DEVICES_FILE,
             InstancesId: data.configFiles.INSTANCES_FILE,
-            deviceCode: this.deviceCodemirror.codeMirror.getValue(),
-            applicationCode: this.applicationCodeMirror.codeMirror.getValue(),
+            deviceCode: this.deviceCodeValue,
+            isDeviceCodeCustom: this.isDeviceCustom,
+            applicationCode: this.applicationCodeValue,
+            isApplicationCodeCustom: this.isApplicationCustom,
             adminConfigId: this.id.nativeElement.value,
             nickname: this.nickname.nativeElement.value
           };

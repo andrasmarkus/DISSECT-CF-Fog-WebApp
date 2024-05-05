@@ -3,7 +3,9 @@ export interface algorithmUploadData{
   DevicesId: { $oid: string },
   InstancesId: { $oid: string },
   deviceCode: string,
+  isDeviceCodeCustom: string,
   applicationCode: string,
+  isApplicationCodeCustom: string,
   adminConfigId: string,
   nickname: string
 }

@@ -87,7 +87,9 @@ router.post('/ownAlgorithmConfiguration', [authJwt.verifyToken], async (req, res
       configFiles: configFiles,
       createdDate: new Date().toISOString(),
       deviceCode: req.body.deviceCode,
+      isDeviceCodeCustom: req.body.isDeviceCodeCustom,
       applicationCode: req.body.applicationCode,
+      isApplicationCodeCustom: req.body.isApplicationCodeCustom,
       adminConfigId: req.body.adminConfigId,
       nickname: req.body.nickname
   })
