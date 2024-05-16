@@ -4,6 +4,7 @@ import { FormControl } from '@angular/forms';
 import { algorithmUploadData } from 'src/app/models/algorithm-upload-data';
 import { AdminConfigurationService } from 'src/app/services/admin-configuration/admin-configuration.service';
 
+//Interfaces for the angular material dropdown with groups
 interface Application {
   value: string;
   viewValue: string;
@@ -62,6 +63,7 @@ export class AlgorithmUploadComponent implements OnInit {
   }
 
 
+  //setting up the angular material dropdown select with groups
   applicationControl = new FormControl('');
   applicationGroups: ApplicationGroup[] = [
     {
@@ -100,13 +102,18 @@ export class AlgorithmUploadComponent implements OnInit {
     },
   ];
 
+  //getting the values from the inputs
   @ViewChild('deviceCodemirror') deviceCodemirror: any;
   @ViewChild('applicationCodeMirror') applicationCodeMirror: any;
   @ViewChild('id') id: any;
   @ViewChild('nickname') nickname: any;
 
   sendData() {
-    
+    //Setting the bolleans value based on the users algorithm choice
+    /**
+     * @isApplicationCustom if true then custom  appalgorithm if false then prebuilt appalgorithm
+     * @isDeviceCustom if true then custom  device algorithm if false then prebuilt device algorithm
+     */
     if(this.applicationControl.value == "custom"){
       this.isApplicationCustom = "true";
       this.applicationCodeValue = this.applicationCodeMirror.codeMirror.getValue()

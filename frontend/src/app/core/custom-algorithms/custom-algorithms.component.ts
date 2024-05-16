@@ -50,6 +50,7 @@ export class CustomAlgorithmsComponent implements OnInit, AfterViewInit {
     );
   }
 
+  //angular material table setup
   ngAfterViewInit() {
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
@@ -83,6 +84,7 @@ export class CustomAlgorithmsComponent implements OnInit, AfterViewInit {
     )
   }
 
+  //sorting with selected date 
   applySort() {
     if (this.sort) {
       this.dataSource.sort = this.sort;

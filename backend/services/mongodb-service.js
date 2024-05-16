@@ -95,6 +95,7 @@ async function addConfiguration(configuration) {
     }
 }
 
+// Adds the admin configuration to the database
 async function addAdminConfiguration(configuration) {
     const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     configuration.user = new mongodb.ObjectId(configuration.user);
@@ -108,6 +109,7 @@ async function addAdminConfiguration(configuration) {
     }
 }
 
+// returns the admin configurations from the database
 async function getAdminConfigurations() {
     const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     try {
@@ -120,6 +122,7 @@ async function getAdminConfigurations() {
     }
 }
 
+// Gets one specific admin configuration from the database based on it's id
 async function getAdminConfigurationById(id) {
     const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     try {
@@ -132,6 +135,7 @@ async function getAdminConfigurationById(id) {
     }
 }
 
+// Gets custom simulations from the database and only returns specific rows of it
 async function getCustomSimulations(adminConfigId){
     const client = await mongodb.MongoClient(config.connectionString, { useUnifiedTopology: true }).connect();
     try {

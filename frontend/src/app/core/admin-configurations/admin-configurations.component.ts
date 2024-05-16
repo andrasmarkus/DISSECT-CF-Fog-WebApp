@@ -29,7 +29,6 @@ export class AdminConfigurationsComponent implements AfterViewInit, OnInit {
     this.adminConfigurationService.getAdminConfigurations().subscribe(
       data => {
         this.adminConfigurations = data;
-        console.log(this.adminConfigurations);
         this.dataSource.data = this.adminConfigurations;
       },
       error => {

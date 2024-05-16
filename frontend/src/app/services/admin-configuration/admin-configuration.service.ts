@@ -11,6 +11,7 @@ export class AdminConfigurationService {
 
   constructor(private http: HttpClient) {}
 
+  //gets admin configurations from the database
   getAdminConfigurations(): Observable<adminConfiguration[]> {
     const url = `${SERVER_URL}configuration/getAdminConfigurations`;
 

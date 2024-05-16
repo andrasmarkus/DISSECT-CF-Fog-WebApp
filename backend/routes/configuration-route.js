@@ -66,6 +66,11 @@ router.post('/', [authJwt.verifyToken], async (req, res) => {
   return res.status(201).json({config: config, err: null});
 });
 
+/**
+ * gets the admin configuration xml file ids and the users own algorithm code from the frontend
+ * It builds a job object with the additional data what the java simulator needs
+ * 
+ */
 router.post('/ownAlgorithmConfiguration', [authJwt.verifyToken], async (req, res) => {
   console.log(req.body.code)
   let configFiles = {};
@@ -121,6 +126,9 @@ router.get('/getAdminConfigurations', [authJwt.verifyToken], async (req, res) =>
   
 })
 
+/**
+ * Sends a specific adminconfiguration for the frontend by id
+ */
 router.get('/getAdminConfigurations/:id', [authJwt.verifyToken], async (req, res) => {
   try {
     const configuration = await mongodb.getAdminConfigurationById(req.params.id);
@@ -131,6 +139,9 @@ router.get('/getAdminConfigurations/:id', [authJwt.verifyToken], async (req, res
   
 })
 
+/**
+ * Sends a specific custom simulation for the frontend by id
+ */
 router.get('/getCustomSimulations/:id', [authJwt.verifyToken], async (req, res) => {
   try {
     const customSimulations = await mongodb.getCustomSimulations(req.params.id);
