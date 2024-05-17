@@ -1,6 +1,7 @@
 import { AlgorithmUploadConfigurationService } from './../../services/algorithm-upload-configuration/algorithm-upload-configuration.service';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { algorithmUploadData } from 'src/app/models/algorithm-upload-data';
 import { AdminConfigurationService } from 'src/app/services/admin-configuration/admin-configuration.service';
 
@@ -45,7 +46,8 @@ export class AlgorithmUploadComponent implements OnInit {
 
   constructor(
     private adminConfigurationService: AdminConfigurationService,
-    private algorithmUploadConfigurationService: AlgorithmUploadConfigurationService
+    private algorithmUploadConfigurationService: AlgorithmUploadConfigurationService,
+    private snackBar: MatSnackBar,
   ) {
     this.filteredOptions = this.options.slice();
   }
@@ -144,10 +146,13 @@ export class AlgorithmUploadComponent implements OnInit {
           };
           this.algorithmUploadConfigurationService.sendJobWithOwnAlgorithm(configFileIds).subscribe(
             response => {
-              console.log(response);
+              console.log(response)
             },
             error => console.log(error)
           );
+          this.snackBar.open('uploaded successfully!', 'Close', {
+            duration: 3000
+          });
         });
     }
   }
