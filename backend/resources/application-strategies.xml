@@ -1,7 +1,0 @@
-<strategies>
-  <strategy>HoldDownApplicationStrategy</strategy>
-  <strategy>PushUpApplicationStrategy</strategy>
-  <strategy>PliantApplicationStrategy</strategy>
-  <strategy>RuntimeAwareApplicationStrategy</strategy>
-  <strategy>RandomApplicationStrategy</strategy>
-</strategies>
