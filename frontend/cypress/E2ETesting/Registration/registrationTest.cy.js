@@ -10,9 +10,9 @@ describe('Registration test suit',()=>{
     it('R01- Login and Logout with good data test case',()=>{
         cy.visit('/');
         cy.get('#registerButton').click();
-        cy.get('#email',{timeout:10000}).clear().type('asdf@asdf.hu');
-        cy.get('#password',{timeout:10000}).clear().type('ASdf1234');
-        cy.get('#mat-select-value-1',{timeout:10000}).should('have.length.gt', 0);
+        cy.get('#email',{timeout:10000}).clear().type('teszt@teszt.hu');
+        cy.get('#password',{timeout:10000}).clear().type('TEszt1234');
+        cy.get('mat-select',{timeout:10000}).should('have.text', 'West Herts College');
         cy.get('#submitButton',{timeout:10000}).should('have.text',' Register ');
         cy.get('#submitButton',{timeout:10000}).click();
         cy.get('#registrationSuccesfullText').should('be.visible');
@@ -22,7 +22,7 @@ describe('Registration test suit',()=>{
         cy.get('#registerButton').click();
         cy.get('#email',{timeout:10000}).clear().type('asdf.hu');
         cy.get('#password',{timeout:10000}).clear().type('df1234');
-        cy.get('#mat-select-value-1',{timeout:10000}).should('have.length.gt', 0);
+        cy.get('mat-select',{timeout:10000}).should('have.text', 'West Herts College');
         cy.get('#submitButton',{timeout:10000}).should('have.text',' Register ');
         cy.get('#submitButton',{timeout:10000}).click();
         cy.get('#dataFailedText').should('be.visible');
@@ -33,7 +33,7 @@ describe('Registration test suit',()=>{
         cy.get('#registerButton').click();
         cy.get('#email',{timeout:10000}).clear().type('asdf@asdf.hu');
         cy.get('#password',{timeout:10000}).clear().type('df1234');
-        cy.get('#mat-select-value-1',{timeout:10000}).should('have.length.gt', 0);
+        cy.get('mat-select',{timeout:10000}).should('have.text', 'West Herts College');
         cy.get('#submitButton',{timeout:10000}).should('have.text',' Register ');
         cy.get('#submitButton',{timeout:10000}).click();
         cy.get('#dataFailedText').should('be.visible');

@@ -134,23 +134,33 @@ export class ConnectionComponent implements OnInit, OnDestroy, OnChanges {
    * @param label the id of the element
    */
   addNewLocationToMap(e: any, radius: number, label: string) {
+    let isok = true
     if (this.currentRange != null) {
-      let item = L.circle(e.latlng, { radius: radius })
-      if (label.includes('cloud')) {
-        item.setStyle({ color: 'blue' })
-      } else if (label.includes('fog')) {
-        item.setStyle({ color: 'darkgrey' })
-      } else if (label.includes('station')) {
-        item.setStyle({ color: 'darkgreen' })
+      this.markers.forEach(element => {
+        if (element.id == label) {
+          isok = false;
+        }
+      });
+      if (isok) {
+        let item = L.circle(e.latlng, { radius: radius })
+        if (label.includes('cloud')) {
+          item.setStyle({ color: 'blue' })
+        } else if (label.includes('fog')) {
+          item.setStyle({ color: 'darkgrey' })
+        } else if (label.includes('station')) {
+          item.setStyle({ color: 'darkgreen' })
+        }
+        let tip = L.tooltip({ permanent: true, direction: 'center' }).setContent(label).setLatLng(item.getLatLng()).addTo(this.map);
+        tip.addTo(this.layerGroup);
+        item.addEventListener('click', (e) => { this.clickHandle(e) })
+        this.markers.push({ latl: item.getLatLng(), id: this.currentId });
+        item.addTo(this.map)
+        item.addTo(this.layerGroup)
+        this.currentId = '';
+        this.currentRange = null;
+      } else {
+        alert('You already added to the map this node: ' + label);
       }
-      let tip = L.tooltip({ permanent: true, direction: 'center' }).setContent(label).setLatLng(item.getLatLng()).addTo(this.map);
-      tip.addTo(this.layerGroup);
-      item.addEventListener('click', (e) => { this.clickHandle(e) })
-      this.markers.push({ latl: item.getLatLng(), id: this.currentId });
-      item.addTo(this.map)
-      item.addTo(this.layerGroup)
-      this.currentId = '';
-      this.currentRange = null;
     }
   }
 
@@ -226,7 +236,7 @@ export class ConnectionComponent implements OnInit, OnDestroy, OnChanges {
    * @param circules 2 clicked circules latlngs (only the latlngs)
    * @param latAndId stores the latlng and ids of the clicked elements
    */
-  createConnection(circules: any, latAndId: any) { 
+  createConnection(circules: any, latAndId: any) {
     let latency;
     let tempIds = [];
 
@@ -242,19 +252,23 @@ export class ConnectionComponent implements OnInit, OnDestroy, OnChanges {
       alert('Latency must be > 0');
       this.selectedNodeQueue = [{ id: '', nodeType: '', latLANG: L.LatLng[''], parent: '' }, { id: '', nodeType: '', latLANG: L.LatLng[''], parent: '' }];
     } else {
-      if (!this.checkExistingConnections(tempIds[0], tempIds[1]) && this.isConnectionBetweenNonStationNodes()) {
-        let line = L.polyline(circules, { color: 'blue' })
-        line.bindTooltip(String(latency), { permanent: true });
-        line.addTo(this.map);
-        line.addTo(this.layerGroup);
-        this.createNeighbours(Number(latency));
-        this.existingConnections.push(tempIds[0] + ' + ' + tempIds[1]);
-        this.existingConnectionsOnMap.push(line)
-        this.selectedNodeQueue = [{ id: '', nodeType: '', latLANG: L.LatLng[''], parent: '' }, { id: '', nodeType: '', latLANG: L.LatLng[''], parent: '' }];
-        this.changeDetector.detectChanges();
+      if (!this.isConnectionBetweenNonStationNodes() || tempIds[0] == tempIds[1]) {
+        alert('You can not connect!');
       } else {
-        alert('The connection already exists');
-        this.selectedNodeQueue = [{ id: '', nodeType: '', latLANG: L.LatLng[''], parent: '' }, { id: '', nodeType: '', latLANG: L.LatLng[''], parent: '' }];
+        if (!this.checkExistingConnections(tempIds[0], tempIds[1]) ) {
+          let line = L.polyline(circules, { color: 'blue' })
+          line.bindTooltip(String(latency), { permanent: true });
+          line.addTo(this.map);
+          line.addTo(this.layerGroup);
+          this.createNeighbours(Number(latency));
+          this.existingConnections.push(tempIds[0] + ' + ' + tempIds[1]);
+          this.existingConnectionsOnMap.push(line)
+          this.selectedNodeQueue = [{ id: '', nodeType: '', latLANG: L.LatLng[''], parent: '' }, { id: '', nodeType: '', latLANG: L.LatLng[''], parent: '' }];
+          this.changeDetector.detectChanges();
+        } else {
+          alert('The connection already exists');
+          this.selectedNodeQueue = [{ id: '', nodeType: '', latLANG: L.LatLng[''], parent: '' }, { id: '', nodeType: '', latLANG: L.LatLng[''], parent: '' }];
+        }
       }
     }
   }

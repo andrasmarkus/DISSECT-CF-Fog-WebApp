@@ -11,7 +11,7 @@ describe('Login and Logout test suit',()=>{
         cy.visit('/');
         cy.get('#email',{timeout:10000}).clear().type('teszt@teszt.hu');
         cy.get('#password',{timeout:10000}).clear().type('TEszt1234');
-        cy.get('#mat-select-value-1',{timeout:10000}).should('have.length.gt', 0);
+        cy.get('mat-select',{timeout:10000}).should('have.text', 'West Herts College');
         cy.get('#submitButton',{timeout:10000}).should('have.text',' Login ');
         cy.get('#submitButton',{timeout:10000}).click();
         cy.get('.nav-list',{timeout:10000}).should('exist');
@@ -21,7 +21,7 @@ describe('Login and Logout test suit',()=>{
         cy.visit('/');
         cy.get('#email',{timeout:10000}).clear().type('as@asdf.hu');
         cy.get('#password',{timeout:10000}).clear().type('ASdf1234');
-        cy.get('#mat-select-value-1',{timeout:10000}).should('have.length.gt', 0);
+        cy.get('mat-select',{timeout:10000}).should('have.text', 'West Herts College');
         cy.get('#submitButton',{timeout:10000}).should('have.text',' Login ');
         cy.get('#submitButton',{timeout:10000}).click();
         cy.get('#dataFailedText').should('be.visible');
@@ -31,7 +31,7 @@ describe('Login and Logout test suit',()=>{
         cy.visit('/');
         cy.get('#email',{timeout:10000}).clear().type('asdf@asdf.hu');
         cy.get('#password',{timeout:10000}).clear().type('df1234');
-        cy.get('#mat-select-value-1',{timeout:10000}).should('have.length.gt', 0);
+        cy.get('mat-select',{timeout:10000}).should('have.text', 'West Herts College');
         cy.get('#submitButton',{timeout:10000}).should('have.text',' Login ');
         cy.get('#submitButton',{timeout:10000}).click();
         cy.get('#dataFailedText').should('be.visible');

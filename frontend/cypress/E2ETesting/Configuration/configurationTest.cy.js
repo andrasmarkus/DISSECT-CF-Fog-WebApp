@@ -11,9 +11,9 @@ describe('Configuration test',()=>{
     it('C01 - Base configuration',()=>{
         cy.visit('/');
         //Login start
-        cy.get('#email',{timeout:10000}).clear().type('asdf@asdf.hu');
-        cy.get('#password',{timeout:10000}).clear().type('ASdf1234');
-        cy.get('#mat-select-value-1',{timeout:10000}).should('have.length.gt', 0);
+        cy.get('#email',{timeout:10000}).clear().type('teszt@teszt.hu');
+        cy.get('#password',{timeout:10000}).clear().type('TEszt1234');
+        cy.get('mat-select',{timeout:10000}).should('have.text', 'West Herts College');
         cy.get('#submitButton',{timeout:10000}).should('have.text',' Login ');
         cy.get('#submitButton',{timeout:10000}).click();
         //Login end
